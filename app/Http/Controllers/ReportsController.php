@@ -16,7 +16,7 @@ class ReportsController extends Controller
         $employee = auth()->user()->employee;
         switch ($employee->role) {
             case 'employee':
-                $employees = collect([]);
+                $employees = collect([$employee]);
                 break;
             case 'supervisor':
                 $employees = $employee->department->employees->with('missionOrders', 'tournees');

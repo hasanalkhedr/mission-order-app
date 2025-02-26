@@ -6,7 +6,11 @@
 @section('content')
 
     <div class="bg-white max-w-4xl mx-auto py-4 sm:px-2 lg:px-4 printable">
-        <div id="report-content">
+        <div id="report-content" style="#report-content {
+    width: 8.27in; /* A4 width */
+    height: 11.69in; /* A4 height */
+    overflow: hidden; /* Prevent content overflow */
+}">
             <div class="bg-white p-2">
                 <div class="flex flex-wrap mb-2">
                     <x-application-logo class="w-2/5"></x-application-logo>
