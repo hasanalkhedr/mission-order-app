@@ -14,6 +14,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TourneeExpenseController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
+use Livewire\Livewire;
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -108,7 +109,7 @@ Route::post('/reports', [ReportsController::class, 'generateReport'])->middlewar
 // Authentication routes (Laravel Breeze)
 require __DIR__ . '/auth.php';
 
-
+//Livewire::setUpdateRoute();
 Route::get('/{anything}', function(){
     return view('errors.404');
 });

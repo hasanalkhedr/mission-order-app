@@ -1,6 +1,9 @@
-<!-- resources/views/mission_orders/show.blade.php -->
+@php
+    use App\Models\Department;
+@endphp
 @extends('layouts.app')
-@section('title', $missionOrder->order_number.'-'.$missionOrder->employee->first_name.' '.$missionOrder->employee->last_name)
+@section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .
+    $missionOrder->employee->last_name)
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une mission</h2>
     <div class="w-11/12">
@@ -17,7 +20,7 @@
                     Ordre de Mission Date
                 </x-label>
                 <label
-                    class="ms-1 text-sm font-bold {{$missionOrder->order_date > $missionOrder->start_date ? 'text-red-600 bg-yellow-400' : 'text-blue-600'}} dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->order_date->format('d/m/Y') }}</label>
+                    class="ms-1 text-sm font-bold {{ $missionOrder->order_date > $missionOrder->start_date ? 'text-red-600 bg-yellow-400' : 'text-blue-600' }} dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->order_date->format('d/m/Y') }}</label>
             </div>
             <div class="w-1/5 px-3">
                 <x-label>
@@ -75,7 +78,7 @@
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->start_date->format('d/m/Y') }}
                     at {{ $missionOrder->start_time }}</label>
-                <x-label  class="inline">
+                <x-label class="inline">
                     S'achève le : Date & Heure :<span class="text-red-500">*</span>
                 </x-label>
                 <label
@@ -84,9 +87,10 @@
 
             </div>
             <div class="w-1/4">
-                @if (auth()->user()->employee->role === 'hr' && $missionOrder->status==='hr_approve')
-                <x-primary-button data-modal-toggle="editDatesModal-{{ $missionOrder->id }}">{{__('Change Dates')}}</x-primary-button>
-                @include('partials.modals._change-dates')
+                @if (auth()->user()->employee->role === 'hr' && $missionOrder->status === 'hr_approve')
+                    <x-primary-button
+                        data-modal-toggle="editDatesModal-{{ $missionOrder->id }}">{{ __('Change Dates') }}</x-primary-button>
+                    @include('partials.modals._change-dates')
                 @endif
             </div>
         </div>
@@ -163,8 +167,11 @@
                 @break
 
                 @case('sup_approve')
-                    @if (auth()->user()->employee->role === 'supervisor' &&
-                            auth()->user()->employee->department_id === $missionOrder->employee->department_id)
+                    @if (
+                        (auth()->user()->employee->role === 'supervisor') &&
+                            in_array(
+                                $missionOrder->employee->department_id,
+                                Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
@@ -235,11 +242,12 @@
 
                 @case('paid')
                 @break
+
             @endswitch
         </div>
     </div>
     <div class="w-11/12 flex flex-wrap -mx-1 mb-2 border border-gray-200">
-        <h4 class="text-1xl text-blue-600 w-full text-center">{{__('Mission Approves:')}}</h4>
+        <h4 class="text-1xl text-blue-600 w-full text-center">{{ __('Mission Approves:') }}</h4>
 
         <table class="w-full text-sm text-left text-gray-500">
             @unless ($missionOrder->getMissionAprroves()->isEmpty())
@@ -267,7 +275,7 @@
                         <tr class="bg-white hover:bg-gray-50">
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
-                                    {{ config('globals.roles.'.$approve->employee->role) }}
+                                    {{ config('globals.roles.' . $approve->employee->role) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

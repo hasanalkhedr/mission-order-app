@@ -437,7 +437,7 @@
 
         <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
 
-
+        {{-- <script src="/livewire/livewire.js?id=ec3a716b" data-csrf="znlJ7vCx5XLVdruOolHXeVy5IAbTnO9BrjXFUiSc" data-update-uri="/livewire/updatejh g" data-navigate-once="true"></script> --}}
         {{--
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}

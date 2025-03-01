@@ -18,7 +18,8 @@
                 </x-label>
                 <x-date-time-input
                     class="appearance-none block h-12 w-full bg-white text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    name="memor_date" value="{{ old('memor_date', $tournee->end_date->format('Y-m-d')) }}" type="date" required>
+                    name="memor_date" value="{{ old('memor_date', $tournee->end_date->format('Y-m-d')) }}" type="date"
+                    required>
                 </x-date-time-input>
             </div>
             <div class="w-1/3 px-3">
@@ -36,8 +37,7 @@
                 <x-label>
                     Nom, Prénom
                 </x-label>
-                <x-readonly-text-input
-                    value="{{ $tournee->employee->first_name }} {{ $tournee->employee->last_name }}" />
+                <x-readonly-text-input value="{{ $tournee->employee->first_name }} {{ $tournee->employee->last_name }}" />
             </div>
             <div class="w-1/2 px-3">
                 <x-label>
@@ -109,11 +109,11 @@
                 </x-label>
                 <x-disabled-select-input>
                     <option value="{{ $tournee->bareme->id }}">
-                            {{ $tournee->bareme->pays }}
-                            (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }} /
-                            Repas:{{ $tournee->bareme->meal_cost }} /
-                            Hebergement:{{ $tournee->bareme->accomodation_cost }})
-                        </option>
+                        {{ $tournee->bareme->pays }}
+                        (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }} /
+                        Repas:{{ $tournee->bareme->meal_cost }} /
+                        Hebergement:{{ $tournee->bareme->accomodation_cost }})
+                    </option>
                 </x-disabled-select-input>
             </div>
         </div>
@@ -123,7 +123,7 @@
                     Nuitées à déduire des IJM<span class="text-red-500">*</span>
                 </x-label>
                 <x-text-input type="number" name="no_ded_accomodation" id="no_ded_accomodation"
-                    value="{{old('no_ded_accomodation', $tournee->no_ded_accomodation) }}" />
+                    value="{{ old('no_ded_accomodation', $tournee->no_ded_accomodation) }}" />
             </div>
             <div class="w-1/2 px-3">
                 <x-label>
@@ -138,11 +138,13 @@
                 <x-label>
                     Avance sur IJM (EURO ou USD)<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input type="number" step="any" name="advance" value="{{ old('advance',$tournee->advance) }}" />
+                <x-text-input type="number" step="any" name="advance"
+                    value="{{ old('advance', $tournee->advance) }}" />
             </div>
             <div class="w-1/2 px-3">
-                <x-label>{{__('Submit Values before add expenses')}}</x-label>
-                <x-primary-button name="action" value="partialSubmit" class="h-11">Soumettre des valeurs</x-primary-button>
+                <x-label>{{ __('Submit Values before add expenses') }}</x-label>
+                <x-primary-button name="action" value="partialSubmit" class="h-11">Soumettre des
+                    valeurs</x-primary-button>
             </div>
         </div>
         <x-form-divider>Frais Tournee</x-form-divider>
@@ -180,11 +182,14 @@
                             <div class="p-6">
                                 <div class="text-base leading-relaxed text-gray-500 text-start">
                                     <ul>
-                                        <li>{{__('When save the tournee as draft, you can edit or delete it later.')}}</li>
-                                        <li>{{__('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.')}}</li>
+                                        <li>{{ __('When save the tournee as draft, you can edit or delete it later.') }}
+                                        </li>
+                                        <li>{{ __('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.') }}
+                                        </li>
                                     </ul>
                                 </div>
-                                <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+                                <div
+                                    class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                                     <div>
                                         <button data-modal-toggle="draftOrSubmitModal" name="action" value="draft"
                                             class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
@@ -194,7 +199,7 @@
                                     <div>
                                         <button name="action" value="submit"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                            data-modal-toggle="draftOrSubmitModal">{{ __('Submit Tournee') }}
+                                            data-modal-toggle="draftOrSubmitModal">{{ __('Submit Memoire') }}
                                         </button>
                                     </div>
                                 </div>

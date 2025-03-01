@@ -1,4 +1,7 @@
 <!-- resources/views/tournees/show.blade.php -->
+@php
+    use App\Models\Department;
+@endphp
 @extends('layouts.app')
 @section('title', $tournee->order_number.'-'.$tournee->employee->first_name.' '.$tournee->employee->last_name)
 @section('content')
@@ -149,8 +152,11 @@
                 @break
 
                 @case('sup_approve')
-                    @if (auth()->user()->employee->role === 'supervisor' &&
-                            auth()->user()->employee->department_id === $tournee->employee->department_id)
+                @if (
+                    (auth()->user()->employee->role === 'supervisor') &&
+                        in_array(
+                            $tournee->employee->department_id,
+                            Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">

@@ -205,7 +205,7 @@
                                 <div class="mt-2 flex flex-row">
                                     <input type="hidden" name="allow_order" value="0" />
                                     <input type="checkbox" name="allow_order" value="1"
-                                        id="can-submit-requests--0" onchange="toggleOffDaysContainer(this)">
+                                        id="can-submit-requests--0">
                                 </div>
                                 @error('allow_order')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

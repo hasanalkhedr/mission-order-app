@@ -185,7 +185,7 @@
                                 <input type="checkbox" name="allow_order" value="1"
                                     id="can-submit-requests--{{ $employee->id }}"
                                     {{ $employee->allow_order ? 'checked' : '' }}
-                                    onchange="toggleOffDaysContainer(this)">
+                                    >
                             </div>
                             @error('allow_order')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

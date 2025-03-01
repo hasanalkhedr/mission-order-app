@@ -1,4 +1,6 @@
-<!-- resources/views/mission_orders/show.blade.php -->
+@php
+    use App\Models\Department;
+@endphp
 @extends('layouts.app')
 @section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .
     $missionOrder->employee->last_name)
@@ -126,87 +128,87 @@
             <div class="-m-1.5 overflow-x-auto">
                 <div class="p-1.5 min-w-full inline-block align-middle">
                     <div class="overflow-hidden">
-                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-                            <thead>
-                                <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
-                                        la dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date
-                                        dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($missionOrder->expenses as $expense)
-                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            {{ $expense->description }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->amount }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->currency }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            <button
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                                                type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
-                                                {{ __('Voir le document') }}
-                                            </button>
-                                            <a href="{{route('expenses.download_document', $expense)}}"><button
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                                                type="button">
-                                                {{ __('Télécharger le document') }}
-                                            </button>
-                                        </a>
-                                            @include('partials.modals._view-document')
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                        <td colspan="4"
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            {{ __('No Expenses Found') }}</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                            <tfoot>
-                                @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col"
-                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                                            SOMME
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                                            {{ $currencyAmount }}
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                                            {{ $currency }}
-                                        </th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                @empty
-                                @endforelse
-                            </tfoot>
-                        </table>
+<table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+    <thead>
+        <tr>
+            <th scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
+                la dépense</th>
+            <th scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date
+                dépense</th>
+            <th scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant
+            </th>
+            <th scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
+            </th>
+            <th scope="col"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($missionOrder->expenses as $expense)
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                <td
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                    {{ $expense->description }}</td>
+                <td
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
+                <td
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {{ $expense->amount }}</td>
+                <td
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {{ $expense->currency }}</td>
+                <td
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                    <button
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                        type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
+                        {{ __('Voir le document') }}
+                    </button>
+                    <a href="{{ route('expenses.download_document', $expense) }}"><button
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                            type="button">
+                            {{ __('Télécharger le document') }}
+                        </button>
+                    </a>
+                    @include('partials.modals._view-document')
+                </td>
+            </tr>
+        @empty
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                <td colspan="4"
+                    class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                    {{ __('No Expenses Found') }}</td>
+            </tr>
+        @endforelse
+    </tbody>
+    <tfoot>
+        @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
+            <tr>
+                <th scope="col"></th>
+                <th scope="col"
+                    class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                    SOMME
+                </th>
+                <th scope="col"
+                    class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                    {{ $currencyAmount }}
+                </th>
+                <th scope="col"
+                    class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                    {{ $currency }}
+                </th>
+                <th scope="col"></th>
+            </tr>
+        @empty
+        @endforelse
+    </tfoot>
+</table>
                     </div>
                 </div>
             </div>
@@ -229,8 +231,11 @@
                 @break
 
                 @case('sup_approve')
-                    @if (auth()->user()->employee->role === 'supervisor' &&
-                            auth()->user()->employee->department_id === $missionOrder->employee->department_id)
+                    @if (
+                        (auth()->user()->employee->role === 'supervisor') &&
+                            in_array(
+                                $missionOrder->employee->department_id,
+                                Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
@@ -334,7 +339,7 @@
                         <tr class="bg-white hover:bg-gray-50">
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
-                                    {{ config('globals.roles.'.$approve->employee->role) }}
+                                    {{ config('globals.roles.' . $approve->employee->role) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

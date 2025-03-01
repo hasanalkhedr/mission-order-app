@@ -1,6 +1,9 @@
 <!-- resources/views/tournees/show.blade.php -->
+@php
+    use App\Models\Department;
+@endphp
 @extends('layouts.app')
-@section('title', $tournee->order_number.'-'.$tournee->employee->first_name.' '.$tournee->employee->last_name)
+@section('title', $tournee->order_number . '-' . $tournee->employee->first_name . ' ' . $tournee->employee->last_name)
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">MÉMOIRE DE FRAIS / TOURNEE</h2>
     <div class="w-11/12">
@@ -134,7 +137,8 @@
                                         class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
                                     </th>
                                     <th scope="col"
-                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document</th>
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -152,27 +156,29 @@
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             {{ $expense->currency }}</td>
+                                        {{-- </tr> --}}
+
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                            <button
+                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                                                type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
+                                                {{ __('Voir le document') }}
+                                            </button>
+                                            <a href="{{ route('expenses.download_document', $expense) }}"><button
+                                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                                                    type="button">
+                                                    {{ __('Télécharger le document') }}
+                                                </button>
+                                            </a>
+                                            @include('partials.modals._tournee-view-document')
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                         <td colspan="4"
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            {{__('No Expenses Found')}}</td>
-                                            <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                    <button
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                            type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
-                            {{ __('Voir le document') }}
-                        </button>
-                        <a href="{{route('expenses.download_document', $expense)}}"><button
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                            type="button">
-                            {{ __('Télécharger le document') }}
-                        </button>
-                    </a>
-                        @include('partials.modals._tournee-view-document')
-                        </td>
-                                    </tr>
+                                            {{ __('No Expenses Found') }}</td>
                                 @endforelse
                             </tbody>
                             <tfoot>
@@ -220,7 +226,9 @@
 
                 @case('sup_approve')
                     @if (auth()->user()->employee->role === 'supervisor' &&
-                            auth()->user()->employee->department_id === $tournee->employee->department_id)
+                            in_array(
+                                $tournee->employee->department_id,
+                                Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
@@ -291,11 +299,12 @@
 
                 @case('paid')
                 @break
+
             @endswitch
         </div>
     </div>
     <div class="w-11/12 flex flex-wrap -mx-1 mb-2 border border-gray-200">
-        <h4 class="text-1xl text-blue-600 w-full text-center">{{__('Memoire Approves:')}}</h4>
+        <h4 class="text-1xl text-blue-600 w-full text-center">{{ __('Memoire Approves:') }}</h4>
 
         <table class="w-full text-sm text-left text-gray-500">
             @unless ($tournee->getTourneeMemoirApproves()->isEmpty())
@@ -323,7 +332,7 @@
                         <tr class="bg-white hover:bg-gray-50">
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
-                                    {{config('globals.roles.'. $approve->employee->role) }}
+                                    {{ config('globals.roles.' . $approve->employee->role) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">
