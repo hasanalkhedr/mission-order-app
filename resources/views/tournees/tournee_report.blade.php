@@ -78,10 +78,9 @@
                     <tbody>
                         <tr>
                             <td class="w-full">
-                                {{ $tournee->bareme->pays }}
-                                (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }}
-                                / Repas:{{ $tournee->bareme->meal_cost }} /
-                                Hebergement:{{ $tournee->bareme->accomodation_cost }})
+                                {{ $tournee->bareme->pays }} |
+                                {{  $tournee->bareme->currency }}
+
                             </td>
                         </tr>
                     </tbody>

@@ -131,7 +131,7 @@
                     </x-select-input>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
+        <div x-data="myData()" class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
                     Prise en charge des frais de transport<span class="text-red-500">*</span>
@@ -147,15 +147,44 @@
                 <x-label class="w-1/3 inline-flex">
                     Prise en charge des indemnités journalières de mission<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('ijm', $tournee->ijm) == 1) type="radio" value="1" name="ijm"
+                <input required @checked(old('ijm', $tournee->ijm) == 1) type="radio" value="1" name="ijm" id="ijm_yes" @change= "toggleActualFees()"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
-                <input required @checked(old('ijm', $tournee->ijm) == 0) type="radio" value="0" name="ijm"
+                <input required @checked(old('ijm', $tournee->ijm) == 0) type="radio" value="0" name="ijm" id="ijm_no" @change= "toggleActualFees()"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
-
+            </div>
+            <!-- Additional radio group that appears only when IJM is OUI -->
+            <div x-show="showActualFees" x-transition class="w-full px-3 py-1 mt-2">
+                <x-label class="w-1/3 inline-flex">
+                    source des Frais<span class="text-red-500">*</span>
+                </x-label>
+                <input @checked(old('actual_fees', $tournee->actual_fees) ==0) required type="radio" value="0" name="actual_fees" id="actual_fees_yes" @change="toggleTextInput()" checked
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="actual_fees_yes"
+                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">utiliser le BAREME</label>
+                <input @checked(old('actual_fees', $tournee->actual_fees) ==1) required type="radio" value="1" name="actual_fees"  id="actual_fees_no" @change="toggleTextInput()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="actual_fees_no"
+                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">FRAIS Réel</label>
+                    <input x-show="disableTextInput" type="number" class="appearance-none bg-white text-gray-700 border border-blue-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" name="actual_fees_amount" value="{{old('actual_fees_amount', $tournee->actual_fees_amount)}}">
             </div>
         </div>
+        <script>
+            function myData() {
+                return {
+                    showActualFees: {{ $tournee->ijm }},
+                    disableTextInput: {{$tournee->actual_fees_amount }},
+                    toggleActualFees() {
+                        this.showActualFees = !this.showActualFees;
+                        this.disableTextInput = false;
+                    },
+                    toggleTextInput() {
+                        this.disableTextInput = !this.disableTextInput;
+                    }
+                };
+            }
+        </script>
         <x-form-divider>Observations</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">

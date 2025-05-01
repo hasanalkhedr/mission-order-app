@@ -125,7 +125,10 @@ class TourneeController extends Controller
                     break;
             }
         }
-        $tournee = Tournee::create(array_merge($request->all(), ['status' => $status]));
+        if($request->actual_fees_amount == null) {
+            $request->actual_fees_amount = 0;
+        }
+        $tournee = Tournee::create(array_merge($request->all(), ['status' => $status,'actual_fees_amount'=> $request->actual_fees_amount], ));
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':
@@ -221,7 +224,10 @@ class TourneeController extends Controller
                     break;
             }
         }
-        $tournee->update(array_merge($request->all(), ['status' => $status]));
+        if($request->actual_fees_amount == null) {
+            $request->actual_fees_amount = 0;
+        }
+        $tournee->update(array_merge($request->all(), ['status' => $status, 'actual_fees_amount'=> $request->actual_fees_amount]));
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':

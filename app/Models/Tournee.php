@@ -62,6 +62,8 @@ class Tournee extends Model
         'start_time','end_time', 'arrive_location','departure_location','total_amount', 'currency', 'status','charge','ijm', 'budget_text','memor_status',
         'memor_date',
         'advance',
+        'actual_fees',
+        'actual_fees_amount',
     ];
     protected $casts = [
         'order_date' => 'date',
