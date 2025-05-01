@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Bareme extends Model
 {
     protected static function booted() {
-
+        //when creating bareme
         static::creating(function($bareme) {
             if($bareme->meal_cost==0 && $bareme->accomodation_cost==0)
             {
