@@ -17,20 +17,15 @@ class CalendarController extends Controller
         $missions = collect();
         $tournees = collect();
         $employee = auth()->user()->employee;
-        switch ($employee->role) {
-            case 'employee':
-                $missions = $employee->missionOrders;
-                $tournees = $employee->tournees;
-                break;
-            case 'supervisor':
-                $missions = $employee->department->missionOrders;
-                $tournees = $employee->department->tournees;
-                break;
-            case 'hr':
-            case 'sg':
-                $missions = MissionOrder::all();
-                $tournees = Tournee::all();
-                break;
+        if($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            $missions = MissionOrder::all();
+            $tournees = Tournee::all();
+        } else if($employee->hasRole('supervisor')) {
+            $missions = $employee->department->missionOrders;
+            $tournees = $employee->department->tournees;
+        } else {
+            $missions = $employee->missionOrders;
+            $tournees = $employee->tournees;
         }
 
         foreach ($missions as $mission) {

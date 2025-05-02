@@ -41,7 +41,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => auth()->user()->employee->role,
+            'approval_role' => implode(',',auth()->user()->employee->roles) ,
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -60,7 +60,7 @@ class MissionApproveController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -68,7 +68,7 @@ class MissionApproveController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -105,7 +105,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => auth()->user()->employee->role,
+            'approval_role' => implode(',',auth()->user()->employee->roles),
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);
@@ -126,7 +126,7 @@ class MissionApproveController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -134,7 +134,7 @@ class MissionApproveController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);

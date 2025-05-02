@@ -41,7 +41,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => auth()->user()->employee->role,
+            'approval_role' => implode(',',auth()->user()->employee->roles) ,
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -61,7 +61,7 @@ class TourneeApproveController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -69,7 +69,7 @@ class TourneeApproveController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -106,7 +106,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => auth()->user()->employee->role,
+            'approval_role' => implode(',',auth()->user()->employee->roles) ,
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);
@@ -127,7 +127,7 @@ class TourneeApproveController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -135,16 +135,13 @@ class TourneeApproveController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
                 }
                 break;
         }
-
-
-
         return redirect()->route('tournees.m_index');
     }
 }

@@ -14,29 +14,20 @@ class EmployeeController extends Controller
         $search = $request->input('search');
         $roles = config('globals.roles');
         $departments = Department::all();
-        $currentRole = auth()->user()->employee->role;
-        switch ($currentRole) {
-            case 'employee':
-                $employees = Employee::where('id','=',auth()->user()->employee->id)->paginate(10);
-                break;
-            case 'supervisor':
-                $employees = Employee::where('department_id', '=', auth()->user()->employee->department_id)->when($search, function ($query, $search) {
-                    return $query->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            case 'hr':
-            case 'sg':
-                $employees = Employee::when($search, function ($query, $search) {
-                    return $query->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            default:
-                # code...
-                break;
+        $employee = auth()->user()->employee;
+        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            $employees = Employee::when($search, function ($query, $search) {
+                return $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            })->paginate(10);
+        } else if ($employee->hasRole('supervisor')) {
+            $employees = Employee::where('department_id', '=', auth()->user()->employee->department_id)->when($search, function ($query, $search) {
+                return $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            })->paginate(10);
+        } else {
+            $employees = Employee::where('id', '=', auth()->user()->employee->id)->paginate(10);
         }
-        //$employees = Employee::with('department')->paginate(10);
 
         return view('employees.index', compact('employees', 'departments', 'roles', 'search'));
     }
@@ -54,7 +45,8 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees',
             'password' => ['required', 'confirmed'],
             'phone' => 'nullable|numeric',
-            'role' => 'required|in:employee,supervisor,hr,sg',
+            'roles' => 'nullable|array',
+            'roles.*' => 'in:employee,supervisor,hr,sg',
             'department_id' => 'required',
             /*'position' => 'required',
             'administrativ_residence' => 'required',
@@ -69,6 +61,7 @@ class EmployeeController extends Controller
         ]);
 
         $employee = Employee::create(array_merge($request->all(), ['user_id' => $user->id]));
+        $employee->syncRoles($request->role);
         if ($request->hasFile('profile_image')) {
             // Store the image in 'storage/app/public/profile_pictures'
             $file = $request->file('profile_image');
@@ -78,8 +71,8 @@ class EmployeeController extends Controller
 
             // Save the image path to the user's profile
             $employee->profile_image = $path;
-            $employee->save();
         }
+        $employee->save();
         return redirect()->route('employees.index');
     }
     public function update(Request $request, Employee $employee)
@@ -89,7 +82,8 @@ class EmployeeController extends Controller
             'last_name' => 'required',
             'email' => ['required', 'email', 'unique:employees,email,' . $employee->id],
             'phone' => 'nullable|numeric',
-            'role' => 'required|in:employee,supervisor,hr,sg',
+            'roles' => 'nullable|array',
+            'roles.*' => 'in:employee,supervisor,hr,sg',
             'department_id' => 'required',
             /*'position' => 'required',
             'administrativ_residence' => 'required',
@@ -101,6 +95,7 @@ class EmployeeController extends Controller
         $user->email = $request->email;
         $user->save();
         $employee->update($request->all());
+        $employee->syncRoles($request->role);
         if ($request->hasFile('profile_image')) {
             // Store the image in 'storage/app/public/profile_pictures'
             $file = $request->file('profile_image');
@@ -109,8 +104,8 @@ class EmployeeController extends Controller
             $path = $file->storeAs('profile_images', $filename, 'public');
             // Save the image path to the user's profile
             $employee->profile_image = $path;
-            $employee->save();
         }
+        $employee->save();
         return redirect()->route('employees.index');
     }
     public function updatePassword(Request $request, Employee $employee)

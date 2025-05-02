@@ -26,22 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Home route, which redirects based on user roles
+// Home route
 Route::get('/', function () {
     if (auth()->check()) {
-        /*$role = auth()->user()->employee->role;
-
-        switch ($role) {
-            case 'employee':
-            case 'supervisor':
-                return redirect()->route('mission_orders.index');
-            case 'hr':
-                return redirect()->route('mission_orders.hrIndex');
-            case 'sg':
-                return redirect()->route('mission_orders.sgIndex');
-            default:
-                return redirect()->route('login');
-        }*/
         return redirect()->route('mission_orders.index');
     } else {
         return redirect()->route('login');

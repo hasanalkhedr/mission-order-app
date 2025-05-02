@@ -7,7 +7,7 @@
         {{ __('Departments') }}
     </div>
     <div>
-        @if (auth()->user()->employee->role == 'hr' || auth()->user()->employee->role == 'sg')
+        @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg" data-modal-toggle="createModal">
                 {{ __('Add Department') }}
             </button>
@@ -26,7 +26,7 @@
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Supervisor') }}
                     </th>
-                    @if (auth()->user()->employee->role == 'hr' || auth()->user()->employee->role == 'sg')
+                    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6">
                             <span class="sr-only">{{ __('Edit') }}</span>
                         </th>
@@ -59,7 +59,7 @@
                                 </div>
                             </td>
                         @endif
-                        @if (auth()->user()->employee->role == 'hr' || auth()->user()->employee->role == 'sg')
+                        @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">
                                 <button class="font-medium hover:underline blue-color" type="button"
                                     data-modal-toggle="editModal-{{ $department->id }}">

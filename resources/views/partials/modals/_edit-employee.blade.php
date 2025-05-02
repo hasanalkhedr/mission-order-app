@@ -143,12 +143,12 @@
                         <label for="role_ids" class="mb-2 text-sm font-medium blue-color">
                             {{ __('Select Role(s)') }}
                         </label>
-                        <select name="role"
+                        <select name="role[]" multiple
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             @if (count($roles))
                                 @foreach ($roles as $roleKey=>$roleValue)
                                     {{-- @if ($employee->hasRole($role->name)) --}}
-                                    @if ($employee->role == $roleKey)
+                                    @if ($employee->hasRole($roleKey))
                                         <option selected value="{{ $roleKey }}">
                                             {{ __($roleValue) }}</option>
                                     @else

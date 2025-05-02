@@ -249,8 +249,8 @@
                             {{ auth()->user()->employee->full_name }} {{ auth()->user()->employee->full_name }}
                         </div>
                         <div class="px-2 text-md italic text-black">
-                            {{-- (implode(' | ', auth()->user()->getRoleNamesCustom())) --}}
-                            {{auth()->user()->employee->role}}
+                            ({{implode(' | ', auth()->user()->employee->roles)}})
+                            {{-- {{auth()->user()->employee->role}} --}}
                         </div>
                     </div>
                     <div class="flex mx-2">

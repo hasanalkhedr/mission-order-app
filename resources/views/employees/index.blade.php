@@ -6,7 +6,7 @@
         {{ __('Users') }}
     </div>
     {{-- @hasanyrole('human_resource|sg|head') --}}
-    @if (auth()->user()->employee->role == 'hr' || auth()->user()->employee->role == 'sg')
+    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
         <div>
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg" data-modal-toggle="createModal">
                 {{ __('Create User') }}
@@ -28,7 +28,7 @@
                         {{ __('Department') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Role') }}
+                        {{ __('Roles') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Fonction Administrative') }}
@@ -40,7 +40,7 @@
                         {{ __('Service') }}
                     </th>
                     {{-- @if (auth()->user()->hasRole('human_resource')) --}}
-                    @if (auth()->user()->employee->role == 'hr')
+                    @if (auth()->user()->employee->hasRole('hr'))
                         <th scope="col" class="py-3 px-6 blue-color">
                             <span class="sr-only">{{ __('Edit') }}</span>
                         </th>
@@ -74,8 +74,8 @@
                             </td>
                         @endif
                         <td class="py-4 px-6 border-b">
-                            {{-- {{(implode(' | ', $employee->getRoleNamesCustom())) }} --}}
-                            {{ config('globals.roles.'.$employee->role) }}
+                            {{implode(' | ', $employee->roles) }}
+                            {{-- {{ config('globals.roles.'.$employee->role) }} --}}
                         </td>
                         @if ($employee->position == null)
                             <td class="py-4 px-6 border-b">
@@ -117,7 +117,7 @@
                             </td>
                         @endif
                         {{-- @hasanyrole('human_resource|sg|head') --}}
-                        @if (auth()->user()->employee->role == 'hr' || auth()->user()->employee->role == 'sg')
+                        @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">
                                 <button class="font-medium hover:underline blue-color" type="button"
                                     data-modal-toggle="editProfileModal-{{ $employee->id }}">

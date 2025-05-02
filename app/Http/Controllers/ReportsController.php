@@ -14,17 +14,12 @@ class ReportsController extends Controller
     public function index()
     {
         $employee = auth()->user()->employee;
-        switch ($employee->role) {
-            case 'employee':
-                $employees = collect([$employee]);
-                break;
-            case 'supervisor':
-                $employees = $employee->department->employees->with('missionOrders', 'tournees');
-                break;
-            case 'hr':
-            case 'sg':
-                $employees = Employee::all();
-                break;
+        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            $employees = Employee::all();
+        } else if ($employee->hasRole('supervisor')) {
+            $employees = $employee->department->employees->with('missionOrders', 'tournees');
+        } else {
+            $employees = collect([$employee]);
         }
         return view('reports.index', compact('employees'));
     }

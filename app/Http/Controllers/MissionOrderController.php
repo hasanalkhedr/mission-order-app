@@ -16,41 +16,35 @@ class MissionOrderController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $role = auth()->user()->employee->role;
-        switch ($role) {
-            case 'employee':
-                $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
-                    return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            case 'supervisor':
-                $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
-
-                $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
-                    $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-                })->when($search, function ($query, $search) {
-                    return $query->where('order_number', 'like', '%' . $search . '%')
-                        ->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            case 'hr':
-            case 'sg':
-                $missionOrders = MissionOrder::when($search, function ($query, $search) {
-                    return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            default:
-                $missionOrders = null;
-                break;
+        $employee = auth()->user()->employee;
+        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            $missionOrders = MissionOrder::when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->paginate(10);
+        } else if ($employee->hasRole('supervisor')) {
+            $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
+            $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
+            })->when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('purpose', 'like', '%' . $search . '%');
+            })->paginate(10);
+        } else {
+            $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->paginate(10);
         }
+
         return view('mission_orders.index', compact('missionOrders', 'search'));
     }
     public function show(MissionOrder $missionOrder)
     {
-        $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
+        $employee = auth()->user()->employee;
+        $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
         if (
-            (auth()->user()->employee->role == 'supervisor' && !in_array($missionOrder->employee->department_id,$dep_ids))
-            || (auth()->user()->employee->role == 'employee' && $missionOrder->employee->id != auth()->user()->employee->id)
+            !$employee->hasRole('sg') && !$employee->hasRole('hr') &&
+            ($employee->hasRole('supervisor') && !in_array($missionOrder->employee->department_id, $dep_ids))
+            || ($employee->hasRole('employee') && $missionOrder->employee->id != $employee->id)
         ) {
             abort(404);
         } else {
@@ -107,34 +101,27 @@ class MissionOrderController extends Controller
         if ($action === 'draft') {
             $status = 'draft';
         } else if ($action === 'submit') {
-            switch (Auth::user()->employee->role) {
-                case 'employee':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (in_array($employee_dep_id, $sg_dep_id))
-                        $status = 'hr_approve';
-                    else {
-                        $status = 'sup_approve';
-                    }
-                    //$status = 'sup_approve';
-                    break;
-                case 'supervisor':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (!in_array($employee_dep_id, $sg_dep_id))
-                        $status = 'hr_approve';
-                    else {
-                        $status = 'sg_approve';
-                    }
-                    break;
-                case 'hr':
+            $employee = auth()->user()->employee;
+            if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+                $status = 'sg_approve';
+            } else if ($employee->hasRole('supervisor')) {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (!in_array($employee_dep_id, $sg_dep_id))
+                    $status = 'hr_approve';
+                else {
                     $status = 'sg_approve';
-                    break;
-                case 'sg':
-                    $status = 'sg_approve';
-                    break;
+                }
+            } else {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (in_array($employee_dep_id, $sg_dep_id))
+                    $status = 'hr_approve';
+                else {
+                    $status = 'sup_approve';
+                }
             }
         }
         $missionOrder = MissionOrder::create(array_merge($request->all(), ['budget_text' => $budget_text, 'status' => $status]));
@@ -147,7 +134,7 @@ class MissionOrderController extends Controller
                     $missionOrder->status = 'hr_approve';
                     $missionOrder->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->where('role', 'hr');
+                        $query->whereJsonContains('roles', 'hr');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
@@ -156,7 +143,7 @@ class MissionOrderController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -164,7 +151,7 @@ class MissionOrderController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -216,34 +203,27 @@ class MissionOrderController extends Controller
         if ($action === 'draft') {
             $status = 'draft';
         } else if ($action === 'submit') {
-            switch (Auth::user()->employee->role) {
-                case 'employee':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (in_array($employee_dep_id, $sg_dep_id))
-                        $status = 'hr_approve';
-                    else {
-                        $status = 'sup_approve';
-                    }
-                    //$status = 'sup_approve';
-                    break;
-                case 'supervisor':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (!in_array($employee_dep_id, $sg_dep_id))
-                        $status = 'hr_approve';
-                    else {
-                        $status = 'sg_approve';
-                    }
-                    break;
-                case 'hr':
+            $employee = auth()->user()->employee;
+            if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+                $status = 'sg_approve';
+            } else if ($employee->hasRole('supervisor')) {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (!in_array($employee_dep_id, $sg_dep_id))
+                    $status = 'hr_approve';
+                else {
                     $status = 'sg_approve';
-                    break;
-                case 'sg':
-                    $status = 'sg_approve';
-                    break;
+                }
+            } else {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (in_array($employee_dep_id, $sg_dep_id))
+                    $status = 'hr_approve';
+                else {
+                    $status = 'sup_approve';
+                }
             }
         }
         $missionOrder->update(array_merge($request->all(), ['budget_text' => $budget_text, 'status' => $status]));
@@ -256,7 +236,7 @@ class MissionOrderController extends Controller
                     $missionOrder->status = 'hr_approve';
                     $missionOrder->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->where('role', 'hr');
+                        $query->whereJsonContains('roles', 'hr');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
@@ -265,7 +245,7 @@ class MissionOrderController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -273,7 +253,7 @@ class MissionOrderController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -303,42 +283,35 @@ class MissionOrderController extends Controller
     public function m_index(Request $request)
     {
         $search = $request->input('search');
-        $role = auth()->user()->employee->role;
-        switch ($role) {
-            case 'employee':
-                $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)
-                    ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
-                        return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                    })->paginate(10);
-                break;
-            case 'supervisor':
-                $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
-
-                $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
-                    $query->whereIn('department_id', $dep_ids);
-                })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
-                    return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
-                break;
-            case 'hr':
-            case 'sg':
-                $missionOrders = MissionOrder::when($search, function ($query, $search) {
-                    return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->where('status', 'like', 'approved')->paginate(10);
-                break;
-            default:
-                $missionOrders = null;
-                break;
+        $employee = auth()->user()->employee;
+        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            $missionOrders = MissionOrder::when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->where('status', 'like', 'approved')->paginate(10);
+        } else if ($employee->hasRole('supervisor')) {
+            $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
+            $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids);
+            })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->paginate(10);
+        } else {
+            $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)
+            ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->paginate(10);
         }
+
         return view('mission_orders.m_index', compact('missionOrders', 'search'));
     }
     public function m_show(Request $request, MissionOrder $missionOrder)
     {
-        $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
+        $employee = auth()->user()->employee;
+        $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
 
-        if (
-            (auth()->user()->employee->role == 'supervisor' && !in_array($missionOrder->employee->department_id,$dep_ids))
-            || (auth()->user()->employee->role == 'employee' && $missionOrder->employee->id != auth()->user()->employee->id)
+        if ( !$employee->hasRole('sg') && !$employee->hasRole('hr') &&
+            ($employee->role == 'supervisor' && !in_array($missionOrder->employee->department_id, $dep_ids))
+            || ($employee->role == 'employee' && $missionOrder->employee->id != $employee->id)
         ) {
             abort(404);
         } else {
@@ -366,33 +339,27 @@ class MissionOrderController extends Controller
         } else if ($action === 'draft') {
             $memor_status = 'draft';
         } else if ($action === 'submit') {
-            switch (Auth::user()->employee->role) {
-                case 'employee':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (in_array($employee_dep_id, $sg_dep_id))
-                        $memor_status = 'hr_approve';
-                    else {
-                        $memor_status = 'sup_approve';
-                    }
-                    break;
-                case 'supervisor':
-                    $employee_dep_id = Auth::user()->employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (!in_array($employee_dep_id, $sg_dep_id))
-                        $memor_status = 'hr_approve';
-                    else {
-                        $memor_status = 'sg_approve';
-                    }
-                    break;
-                case 'hr':
+            $employee = auth()->user()->employee;
+            if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+                $memor_status = 'sg_approve';
+            } else if ($employee->hasRole('supervisor')) {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (!in_array($employee_dep_id, $sg_dep_id))
+                    $memor_status = 'hr_approve';
+                else {
                     $memor_status = 'sg_approve';
-                    break;
-                case 'sg':
-                    $memor_status = 'sg_approve';
-                    break;
+                }
+            } else {
+                $employee_dep_id = $employee->department_id;
+                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
+                    ->get('id')->toArray(), 'id');
+                if (in_array($employee_dep_id, $sg_dep_id))
+                    $memor_status = 'hr_approve';
+                else {
+                    $memor_status = 'sup_approve';
+                }
             }
         }
         $missionOrder->update(array_merge($request->all(), ['memor_status' => $memor_status]));
@@ -406,7 +373,7 @@ class MissionOrderController extends Controller
                     $missionOrder->memor_status = 'hr_approve';
                     $missionOrder->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->where('role', 'hr');
+                        $query->whereJsonContains('roles', 'hr');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
@@ -415,7 +382,7 @@ class MissionOrderController extends Controller
                 break;
             case 'hr_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'hr');
+                    $query->whereJsonContains('roles', 'hr');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -423,7 +390,7 @@ class MissionOrderController extends Controller
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->where('role', 'sg');
+                    $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);

@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    protected $fillable = ['id', 'first_name', 'last_name', 'email', 'phone', 'department_id', 'profile_image', 'is_supervisor', 'recieve_email', 'allow_order', 'user_id', 'role', 'position', 'administrativ_residence', 'service'];
+    protected $fillable = ['id', 'first_name', 'last_name', 'email', 'phone', 'department_id', 'profile_image', 'is_supervisor', 'recieve_email', 'allow_order', 'user_id', 'roles', 'position', 'administrativ_residence', 'service'];
+
+    protected $casts = [
+        'roles' => 'array',
+    ];
 
     public function department()
     {
@@ -35,6 +39,41 @@ class Employee extends Model
     public function managed_departments()
     {
         return $this->hasMany(Department::class);
+    }
+
+    public function hasRole($role)
+    {
+        return in_array($role, $this->roles ?? []);
+    }
+
+    public function addRole($role)
+    {
+        $roles = $this->roles ?? [];
+
+        if (!in_array($role, $roles)) {
+            $roles[] = $role;
+            $this->roles = $roles;
+        }
+
+        return $this;
+    }
+
+    public function removeRole($role)
+    {
+        $roles = $this->roles ?? [];
+
+        if (($key = array_search($role, $roles)) !== false) {
+            unset($roles[$key]);
+            $this->roles = array_values($roles); // Reindex array
+        }
+
+        return $this;
+    }
+
+    public function syncRoles(array $roles)
+    {
+        $this->roles = array_unique($roles);
+        return $this;
     }
 }
 

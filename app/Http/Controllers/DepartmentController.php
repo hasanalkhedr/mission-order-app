@@ -38,16 +38,13 @@ class DepartmentController extends Controller
         $manager = Employee::find(request('manager_id'));
         if ($old_manager != null) {
             $old_manager->is_supervisor = false;
-            if ($old_manager->role === 'supervisor') {
-                $old_manager->role = 'employee';
-            }
+            $old_manager->removeRole('supervisor');
+            $old_manager->addRole('employee');
             $old_manager->save();
         }
         if ($manager != null) {
             $manager->is_supervisor = true;
-            if ($manager->role === 'employee') {
-                $manager->role = 'supervisor';
-            }
+            $manager->addRole('supervisor');
             $manager->save();
         }
         //}
