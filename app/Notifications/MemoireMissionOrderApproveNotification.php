@@ -41,15 +41,15 @@ class MemoireMissionOrderApproveNotification extends BaseAnnouncement
                     . $this->missionApprove->comment;
                     $this->icon = 'reject';
                 break;
-            case 'hr_approve':
-                $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
-                    $this->icon = 'ok';
-                break;
+            // case 'controller_approve':
+            //     $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
+            //         . $this->missionOrder->purpose . ' Approuvé!';
+            //     $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
+            //         . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
+            //         . $this->missionApprove->approval_role. '\nCommentaire de révision:'
+            //         . $this->missionApprove->comment. "\nEn attente d'un examen des Contrôleur maintenant";
+            //         $this->icon = 'ok';
+            //     break;
             case 'sg_approve':
                 $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
                     . $this->missionOrder->purpose . ' Approuvé!';

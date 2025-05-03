@@ -48,7 +48,7 @@ Route::get('mission_orders/{missionOrder}/m_edit', [MissionOrderController::clas
 Route::put('mission_orders/{missionOrder}/m_update', [MissionOrderController::class, 'm_update'])->middleware('auth')->name('mission_orders.m_update');
 Route::get('mission_orders/{missionOrder}/m_report', [MissionOrderController::class, 'm_report'])->middleware('auth')->name('mission_orders.m_report');
 Route::put('mission_orders/{missionOrder}/m_destroy', [MissionOrderController::class, 'm_destroy'])->middleware('auth')->name('mission_orders.m_destroy');
-Route::put('/mission_orders/{missionOrder}/changeDates', [MissionOrderController::class, 'changeDates'])->middleware(['auth', 'role:hr'])->name('mission_orders.changeDates');
+Route::put('/mission_orders/{missionOrder}/changeDates', [MissionOrderController::class, 'changeDates'])->middleware(['auth', 'role:sg'])->name('mission_orders.changeDates');
 Route::resource('mission_orders', MissionOrderController::class)->middleware('auth');
 
 // Tournee routes
@@ -60,7 +60,7 @@ Route::get('tournees/{tournee}/m_edit', [TourneeController::class, 'm_edit'])->m
 Route::put('tournees/{tournee}/m_update', [TourneeController::class, 'm_update'])->middleware('auth')->name('tournees.m_update');
 Route::get('tournees/{tournee}/m_report', [TourneeController::class, 'm_report'])->middleware('auth')->name('tournees.m_report');
 Route::put('tournees/{tournee}/m_destroy', [TourneeController::class, 'm_destroy'])->middleware('auth')->name('tournees.m_destroy');
-Route::put('/tournees/{tournee}/changeDates', [TourneeController::class, 'changeDates'])->middleware(['auth', 'role:hr'])->name('tournees.changeDates');
+Route::put('/tournees/{tournee}/changeDates', [TourneeController::class, 'changeDates'])->middleware(['auth', 'role:sg'])->name('tournees.changeDates');
 Route::resource('tournees', TourneeController::class)->middleware('auth');
 
 // Mission Approves routes
@@ -84,10 +84,10 @@ Route::put('employees/updatePassword/{employee}', [EmployeeController::class, 'u
 Route::resource('employees', EmployeeController::class)->middleware('auth');
 
 // Departments routes (could be accessible to all roles depending on the policy)
-Route::resource('departments', DepartmentController::class)->middleware(['auth','role:hr,sg']);
+Route::resource('departments', DepartmentController::class)->middleware(['auth','role:controller,director,sg']);
 
 // Baremes routes
-Route::resource('baremes', BaremeController::class)->middleware(['auth', 'role:hr,sg,supervisor']);
+Route::resource('baremes', BaremeController::class)->middleware(['auth', 'role:controller,director,sg,supervisor']);
 });
 
 Route::get('/calendar',CalendarController::class)->middleware('auth')->name('calendar');

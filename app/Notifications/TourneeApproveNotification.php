@@ -41,15 +41,15 @@ class TourneeApproveNotification extends BaseAnnouncement
                     . $this->tourneeApprove->comment;
                     $this->icon = 'reject';
                 break;
-            case 'hr_approve':
-                $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
-                    $this->icon = 'ok';
-                break;
+            // case 'hr_approve':
+            //     $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
+            //         . $this->tournee->purpose . ' Approuvé!';
+            //     $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
+            //         . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
+            //         . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
+            //         . $this->tourneeApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
+            //         $this->icon = 'ok';
+            //     break;
             case 'sg_approve':
                 $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
                     . $this->tournee->purpose . ' Approuvé!';

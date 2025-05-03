@@ -116,34 +116,8 @@
                                     @endif
                                 @break
 
-                                @case('sup_approve')
-                                    @if (
-                                        (auth()->user()->employee->hasRole('supervisor')) &&
-                                            in_array(
-                                                $tournee->employee->department_id,
-                                                Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <button
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                                                {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }}
-                                            </button>
-                                        </td>
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
-                                    @endif
-                                    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
-                                    @endif
-                                @break
-
-                                @case('hr_approve')
-                                    @if (auth()->user()->employee->hasRole('hr'))
+                                @case('controller_approve')
+                                    @if (auth()->user()->employee->hasRole('controller'))
                                         <td class="text-center px-0 py-1 border-b">
                                             <button
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
@@ -152,8 +126,7 @@
                                             </button>
                                         </td>
                                     @endif
-                                    @if (auth()->user()->employee->hasRole('hr') ||
-                                            auth()->user()->employee->hasRole('sg') ||
+                                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
                                             (auth()->user()->employee->hasRole('supervisor') &&
                                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
                                         <td class="text-center px-0 py-1 border-b">
@@ -173,7 +146,7 @@
                                             </button>
                                         </td>
                                     @endif
-                                    @if (auth()->user()->employee->hasRole('hr') ||
+                                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
                                             auth()->user()->employee->hasRole('sg') ||
                                             (auth()->user()->employee->hasRole('supervisor') &&
                                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -200,7 +173,7 @@
                                             <a href="{{ route('tournees.m_report', $tournee->id) }}"
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                         </td>
-                                    @elseif(auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                                         <td class="text-center px-0 py-1 border-b">
                                             <a href="{{ route('tournees.m_report', $tournee->id) }}"
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>

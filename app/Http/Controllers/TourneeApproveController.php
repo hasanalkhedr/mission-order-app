@@ -27,9 +27,7 @@ class TourneeApproveController extends Controller
             case 'approve':
                 switch ($tournee->status) {
                     case 'sup_approve':
-                        $newStatus = 'hr_approve';
-                        break;
-                    case 'hr_approve':
+                    case 'director_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -41,7 +39,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->roles) ,
+            'approval_role' => implode(',',auth()->user()->employee->getRoles()) ,
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -59,9 +57,9 @@ class TourneeApproveController extends Controller
             case 'sup_approve':
                 $tournee->employee->department->manager->user->notify($notification);
                 break;
-            case 'hr_approve':
+            case 'director_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
+                    $query->whereJsonContains('roles', 'director');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -91,10 +89,7 @@ class TourneeApproveController extends Controller
                 break;
             case 'approve':
                 switch ($tournee->memor_status) {
-                    case 'sup_approve':
-                        $newStatus = 'hr_approve';
-                        break;
-                    case 'hr_approve':
+                    case 'controller_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -106,7 +101,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->roles) ,
+            'approval_role' => implode(',',auth()->user()->employee->getRoles()) ,
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);
@@ -121,26 +116,14 @@ class TourneeApproveController extends Controller
         $tournee->employee->user->notify($notification);
 
         $notification = new MemoireTourneeLevelNotification($tournee);
-        switch ($tournee->memor_status) {
-            case 'sup_approve':
-                $tournee->employee->department->manager->user->notify($notification);
-                break;
-            case 'hr_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
-            case 'sg_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'sg');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
+        if ($tournee->memor_status == 'sg_approve') {
+            $notification = new MemoireTourneeLevelNotification($tournee);
+            $users = User::whereHas('employee', function ($query) {
+                $query->whereJsonContains('roles', 'sg');
+            })->get();
+            foreach ($users as $user) {
+                $user->notify($notification);
+            }
         }
         return redirect()->route('tournees.m_index');
     }

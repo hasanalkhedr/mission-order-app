@@ -75,5 +75,8 @@ class Employee extends Model
         $this->roles = array_unique($roles);
         return $this;
     }
+    public function getRoles() {
+        return collect($this->roles)->map(fn ($role) =>config('globals.roles.' . $role))->toArray();
+    }
 }
 

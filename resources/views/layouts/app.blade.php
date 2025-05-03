@@ -132,7 +132,7 @@
                         </li>
                         <hr />
                         <!-- Settings Menu -->
-                        @if (!auth()->user()->employee->hasRole('employee'))
+                        @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
                             <li>
                                 <button type="button"
                                     class="flex items-center mx-2 p-2 w-full text-base font-normal text-white rounded-lg transition duration-75 group hover:bg-blue-500"
@@ -270,7 +270,7 @@
                     </li>
                     <hr />
                     <!-- Settings Menu -->
-                    @if (!auth()->user()->employee->hasRole('employee'))
+                    @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
                         <li>
                             <button type="button"
                                 class="flex items-center mx-2 p-2 w-full text-base font-normal text-white rounded-lg transition duration-75 group hover:bg-blue-500"
@@ -316,7 +316,7 @@
                             {{ auth()->user()->employee->first_name }} {{ auth()->user()->employee->last_name }}
                         </div>
                         <div class="px-2  text-md italic text-black">
-                            ({{ implode(' | ', auth()->user()->employee->roles) }})
+                            ({{ implode(' | ', auth()->user()->employee->getRoles()) }})
                             {{-- {{ config('globals.roles.' . auth()->user()->employee->role) }} --}}
                         </div>
                     </div>

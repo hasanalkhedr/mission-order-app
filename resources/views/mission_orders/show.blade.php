@@ -87,7 +87,7 @@
 
             </div>
             <div class="w-1/4">
-                @if (auth()->user()->employee->hasRole('hr') && $missionOrder->status === 'hr_approve')
+                @if (auth()->user()->employee->hasRole('sg') && $missionOrder->status === 'sg_approve')
                     <x-primary-button
                         data-modal-toggle="editDatesModal-{{ $missionOrder->id }}">{{ __('Change Dates') }}</x-primary-button>
                     @include('partials.modals._change-dates')
@@ -167,8 +167,7 @@
                 @break
 
                 @case('sup_approve')
-                    @if (
-                        (auth()->user()->employee->hasRole('supervisor')) &&
+                    @if (auth()->user()->employee->hasRole('supervisor') &&
                             in_array(
                                 $missionOrder->employee->department_id,
                                 Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
@@ -182,7 +181,7 @@
                         hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
                         w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
-                    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700
                     hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
@@ -190,15 +189,15 @@
                     @endif
                 @break
 
-                @case('hr_approve')
-                    @if (auth()->user()->employee->hasRole('hr'))
+                @case('director_approve')
+                    @if (auth()->user()->employee->hasRole('director'))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('hr') ||
+                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $missionOrder->employee->department_id))
@@ -215,7 +214,7 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('hr') ||
+                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $missionOrder->employee->department_id))
@@ -234,7 +233,7 @@
                             auth()->user()->employee->department_id == $missionOrder->employee->department_id)
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
@@ -276,7 +275,7 @@
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
                                     {{-- {{ config('globals.roles.' . $approve->employee->role) }} --}}
-                                    {{implode('|', $approve->employee->roles)}}
+                                    {{ implode('|', $approve->employee->getRoles()) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

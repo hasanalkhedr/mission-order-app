@@ -6,7 +6,7 @@
             {{ __('Baremes') }}
         </div>
         <div>
-            @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+            @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                 <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg" data-modal-toggle="createModal">
                     {{ __('Create bareme') }}
                 </button>
@@ -34,7 +34,7 @@
                         <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                             {{ __('accomodation_cost') }}
                         </th>
-                        @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                        @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                             <th scope="col" class="py-3 px-6">
                                 <span class="sr-only">{{ __('Edit') }}</span>
                             </th>
@@ -73,7 +73,7 @@
                                     {{ $bareme->accomodation_cost }}
                                 </div>
                             </td>
-                            @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                            @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                                 <td class="py-4 px-6 text-right border-b">
                                     <button class="font-medium hover:underline blue-color" type="button"
                                         data-modal-toggle="editModal-{{ $bareme->id }}">

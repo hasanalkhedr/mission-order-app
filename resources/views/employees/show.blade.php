@@ -89,7 +89,7 @@
             <input type="text" name="role_id"
                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 disabled
-                value="{{ implode('|', $employee->roles)
+                value="{{ implode('|', $employee->getRoles())
                     /*config('globals.roles.'.$employee->role) */}}" />
             <label for="role_id"
                 class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">
@@ -166,7 +166,7 @@
         </div>
     </div>
     {{-- @hasanyrole('human_resource|sg|head') --}}
-    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
         <button
             class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg mr-3"
             data-modal-toggle="editProfileModal-{{$employee->id}}">
@@ -175,7 +175,7 @@
     @endif
     {{-- @endhasanyrole --}}
     @if (auth()->user()->employee->id == $employee->id ||
-            (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg')))
+            (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg')))
         {{-- auth()->user()->hasRole(['human_resource', 'sg', 'head'])) --}}
         <button
             class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg"

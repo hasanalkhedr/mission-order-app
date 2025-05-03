@@ -25,48 +25,48 @@ class MemoireTourneeApproveNotification extends BaseAnnouncement
         switch ($tourneeApprove->memor_status) {
             case 'draft':
                 $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                . $this->tournee->purpose . ' besoin de revoir!';
-            $this->body = 'Révisé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                . $this->tourneeApprove->employee->last_name . '\nRôle révisé: '
-                . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                . $this->tourneeApprove->comment;
-                    $this->icon = 'review';
+                    . $this->tournee->purpose . ' besoin de revoir!';
+                $this->body = 'Révisé par: ' . $this->tourneeApprove->employee->first_name . ' '
+                    . $this->tourneeApprove->employee->last_name . '\nRôle révisé: '
+                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
+                    . $this->tourneeApprove->comment;
+                $this->icon = 'review';
                 break;
             case 'rejected':
                 $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                . $this->tournee->purpose . ' Rejeté!';
-            $this->body = 'Rejeté par: ' . $this->tourneeApprove->employee->first_name . ' '
-                . $this->tourneeApprove->employee->last_name . '\nRôle rejeté: '
-                . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                . $this->tourneeApprove->comment;
-                    $this->icon = 'reject';
+                    . $this->tournee->purpose . ' Rejeté!';
+                $this->body = 'Rejeté par: ' . $this->tourneeApprove->employee->first_name . ' '
+                    . $this->tourneeApprove->employee->last_name . '\nRôle rejeté: '
+                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
+                    . $this->tourneeApprove->comment;
+                $this->icon = 'reject';
                 break;
-            case 'hr_approve':
-                $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                . $this->tournee->purpose . ' Approuvé!';
-            $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                . $this->tourneeApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
-                    $this->icon = 'ok';
-                break;
+            // case 'controller_approve':
+            //     $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
+            //         . $this->tournee->purpose . ' Approuvé!';
+            //     $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
+            //         . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
+            //         . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
+            //         . $this->tourneeApprove->comment . "\nEn attente d'un examen des Contrôleur maintenant";
+            //     $this->icon = 'ok';
+            //     break;
             case 'sg_approve':
                 $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                . $this->tournee->purpose . ' Approuvé!';
-            $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                . $this->tourneeApprove->comment. '\nEn attente SG (Secrétariat Général) Réviser maintenant';
-                    $this->icon = 'ok';
+                    . $this->tournee->purpose . ' Approuvé!';
+                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
+                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
+                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
+                    . $this->tourneeApprove->comment . '\nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->icon = 'ok';
                 break;
             case 'approved':
                 $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                . $this->tournee->purpose . ' Approuvé!';
-            $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                . $this->tourneeApprove->comment. "\nVotre Mémoire de frais d'Ordre de Tournee a été approuvée, vous pouvez demander à le payer maintenant";
-                    $this->icon = 'ok';
+                    . $this->tournee->purpose . ' Approuvé!';
+                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
+                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
+                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
+                    . $this->tourneeApprove->comment . "\nVotre Mémoire de frais d'Ordre de Tournee a été approuvée, vous pouvez demander à le payer maintenant";
+                $this->icon = 'ok';
                 break;
         }
         $this->link = route('tournees.m_show', $tournee->id);
@@ -91,7 +91,7 @@ class MemoireTourneeApproveNotification extends BaseAnnouncement
         return (new MailMessage)
             ->subject($this->title)
             ->greeting($this->title)
-            ->line('Bonjour '.$notifiable->employee->first_name.' '.$notifiable->employee->last_name)
+            ->line('Bonjour ' . $notifiable->employee->first_name . ' ' . $notifiable->employee->last_name)
             ->line($this->body)
             ->action($this->linkText, $this->link)
             ->salutation('Cordialement');

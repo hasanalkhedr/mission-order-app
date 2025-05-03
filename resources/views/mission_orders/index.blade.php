@@ -121,7 +121,7 @@ use App\Models\Department;
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
@@ -129,8 +129,8 @@ use App\Models\Department;
                                 @endif
                             @break
 
-                            @case('hr_approve')
-                                @if (auth()->user()->employee->hasRole('hr'))
+                            @case('director_approve')
+                                @if (auth()->user()->employee->hasRole('director'))
                                     <td class="text-center px-0 py-1 border-b">
                                         <button
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
@@ -139,7 +139,7 @@ use App\Models\Department;
                                         </button>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg') ||
+                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
                                         (auth()->user()->employee->hasRole('supervisor') &&
                                             auth()->user()->employee->department_id === $missionOrder->employee->department_id))
                                     <td class="text-center px-0 py-1 border-b">
@@ -159,7 +159,7 @@ use App\Models\Department;
                                         </button>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg') ||
+                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
                                         (auth()->user()->employee->hasRole('supervisor') &&
                                             auth()->user()->employee->department_id === $missionOrder->employee->department_id))
                                     <td class="text-center px-0 py-1 border-b">
@@ -185,7 +185,7 @@ use App\Models\Department;
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                     </td>
-                                @elseif(auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                                @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>

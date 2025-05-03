@@ -27,9 +27,7 @@ class MissionApproveController extends Controller
             case 'approve':
                 switch ($missionOrder->status) {
                     case 'sup_approve':
-                        $newStatus = 'hr_approve';
-                        break;
-                    case 'hr_approve':
+                    case 'director_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -41,7 +39,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->roles) ,
+            'approval_role' => implode(',', auth()->user()->employee->getRoles()),
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -58,9 +56,9 @@ class MissionApproveController extends Controller
             case 'sup_approve':
                 $missionOrder->employee->department->manager->user->notify($notification);
                 break;
-            case 'hr_approve':
+            case 'director_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
+                    $query->whereJsonContains('roles', 'director');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -90,10 +88,7 @@ class MissionApproveController extends Controller
                 break;
             case 'approve':
                 switch ($missionOrder->memor_status) {
-                    case 'sup_approve':
-                        $newStatus = 'hr_approve';
-                        break;
-                    case 'hr_approve':
+                    case 'controller_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -105,7 +100,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->roles),
+            'approval_role' => implode(',', auth()->user()->employee->getRoles()),
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);
@@ -118,30 +113,15 @@ class MissionApproveController extends Controller
             $missionApprove,
         );
         $missionOrder->employee->user->notify($notification);
-
-        $notification = new MemoireMissionOrderLevelNotification($missionOrder);
-        switch ($missionOrder->memor_status) {
-            case 'sup_approve':
-                $missionOrder->employee->department->manager->user->notify($notification);
-                break;
-            case 'hr_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
-            case 'sg_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'sg');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
+        if ($missionOrder->memor_status == 'sg_approve') {
+            $notification = new MemoireMissionOrderLevelNotification($missionOrder);
+            $users = User::whereHas('employee', function ($query) {
+                $query->whereJsonContains('roles', 'sg');
+            })->get();
+            foreach ($users as $user) {
+                $user->notify($notification);
+            }
         }
-
         return redirect()->route('mission_orders.m_index');
     }
 }

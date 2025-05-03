@@ -6,7 +6,7 @@
         {{ __('Users') }}
     </div>
     {{-- @hasanyrole('human_resource|sg|head') --}}
-    @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
         <div>
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg" data-modal-toggle="createModal">
                 {{ __('Create User') }}
@@ -40,7 +40,7 @@
                         {{ __('Service') }}
                     </th>
                     {{-- @if (auth()->user()->hasRole('human_resource')) --}}
-                    @if (auth()->user()->employee->hasRole('hr'))
+                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6 blue-color">
                             <span class="sr-only">{{ __('Edit') }}</span>
                         </th>
@@ -74,7 +74,7 @@
                             </td>
                         @endif
                         <td class="py-4 px-6 border-b">
-                            {{implode(' | ', $employee->roles) }}
+                            {{implode(' | ', $employee->getRoles()) }}
                             {{-- {{ config('globals.roles.'.$employee->role) }} --}}
                         </td>
                         @if ($employee->position == null)
@@ -117,7 +117,7 @@
                             </td>
                         @endif
                         {{-- @hasanyrole('human_resource|sg|head') --}}
-                        @if (auth()->user()->employee->hasRole('hr') || auth()->user()->employee->hasRole('sg'))
+                        @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">
                                 <button class="font-medium hover:underline blue-color" type="button"
                                     data-modal-toggle="editProfileModal-{{ $employee->id }}">

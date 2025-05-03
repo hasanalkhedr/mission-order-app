@@ -249,7 +249,7 @@
                             {{ auth()->user()->employee->full_name }} {{ auth()->user()->employee->full_name }}
                         </div>
                         <div class="px-2 text-md italic text-black">
-                            ({{implode(' | ', auth()->user()->employee->roles)}})
+                            ({{implode(' | ', auth()->user()->employee->getRoles())}})
                             {{-- {{auth()->user()->employee->role}} --}}
                         </div>
                     </div>

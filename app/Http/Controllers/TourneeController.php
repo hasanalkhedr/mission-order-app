@@ -17,7 +17,7 @@ class TourneeController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->paginate(10);
@@ -41,13 +41,16 @@ class TourneeController extends Controller
         $employee = auth()->user()->employee;
         $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
         if (
-            !$employee->hasRole('sg') && !$employee->hasRole('hr') &&
-            ($employee->hasRole('supervisor') && !in_array($tournee->employee->department_id, $dep_ids))
-            || ($employee->hasRole('employee') && $tournee->employee->id != $employee->id)
+            $employee->hasRole('sg') ||
+            $employee->hasRole('controller') ||
+            $employee->hasRole('director') ||
+            ($employee->hasRole('supervisor') && in_array($tournee->employee->department_id, $dep_ids)) ||
+            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id) ||
+            ($employee->hasRole('attached') && $tournee->employee->id == $employee->id)
         ) {
-            abort(404);
-        } else {
             return view('tournees.show', compact('tournee'));
+        } else {
+            abort(404);
         }
     }
     public function showReport($id)
@@ -89,26 +92,14 @@ class TourneeController extends Controller
             $status = 'draft';
         } else if ($action === 'submit') {
             $employee = auth()->user()->employee;
-            if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
                 $status = 'sg_approve';
-            } else if ($employee->hasRole('supervisor')) {
-                $employee_dep_id = $employee->department_id;
-                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                    ->get('id')->toArray(), 'id');
-                if (!in_array($employee_dep_id, $sg_dep_id))
-                    $status = 'hr_approve';
-                else {
-                    $status = 'sg_approve';
-                }
+            } else if ($employee->hasRole('attached') || $employee->hasRole('supervisor')) {
+                $status = 'director_approve';
+            } else if ($employee->hasRole('employee')) {
+                $status = 'sup_approve';
             } else {
-                $employee_dep_id = $employee->department_id;
-                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                    ->get('id')->toArray(), 'id');
-                if (in_array($employee_dep_id, $sg_dep_id))
-                    $status = 'hr_approve';
-                else {
-                    $status = 'sup_approve';
-                }
+                $status = 'draft';
             }
         }
         $tournee = Tournee::create(array_merge($request->all(), ['status' => $status]));
@@ -118,19 +109,19 @@ class TourneeController extends Controller
                 if ($tournee->employee->department->manager) {
                     $tournee->employee->department->manager->user->notify($notification);
                 } else {
-                    $tournee->status = 'hr_approve';
+                    $tournee->status = 'director_approve';
                     $tournee->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->whereJsonContains('roles', 'hr');
+                        $query->whereJsonContains('roles', 'director');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
                     }
                 }
                 break;
-            case 'hr_approve':
+            case 'director_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
+                    $query->whereJsonContains('roles', 'director');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -179,26 +170,14 @@ class TourneeController extends Controller
             $status = 'draft';
         } else if ($action === 'submit') {
             $employee = auth()->user()->employee;
-            if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+            if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
                 $status = 'sg_approve';
-            } else if ($employee->hasRole('supervisor')) {
-                $employee_dep_id = $employee->department_id;
-                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                    ->get('id')->toArray(), 'id');
-                if (!in_array($employee_dep_id, $sg_dep_id))
-                    $status = 'hr_approve';
-                else {
-                    $status = 'sg_approve';
-                }
+            } else if ($employee->hasRole('attached') || $employee->hasRole('supervisor')) {
+                $status = 'director_approve';
+            } else if ($employee->hasRole('employee')) {
+                $status = 'sup_approve';
             } else {
-                $employee_dep_id = $employee->department_id;
-                $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                    ->get('id')->toArray(), 'id');
-                if (in_array($employee_dep_id, $sg_dep_id))
-                    $status = 'hr_approve';
-                else {
-                    $status = 'sup_approve';
-                }
+                $status = 'draft';
             }
         }
         $tournee->update(array_merge($request->all(), ['status' => $status]));
@@ -208,19 +187,19 @@ class TourneeController extends Controller
                 if ($tournee->employee->department->manager) {
                     $tournee->employee->department->manager->user->notify($notification);
                 } else {
-                    $tournee->status = 'hr_approve';
+                    $tournee->status = 'director_approve';
                     $tournee->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->whereJsonContains('roles', 'hr');
+                        $query->whereJsonContains('roles', 'director');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
                     }
                 }
                 break;
-            case 'hr_approve':
+            case 'director_approve':
                 $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
+                    $query->whereJsonContains('roles', 'director');
                 })->get();
                 foreach ($users as $user) {
                     $user->notify($notification);
@@ -260,7 +239,7 @@ class TourneeController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')->paginate(10);
@@ -285,13 +264,16 @@ class TourneeController extends Controller
         $employee = auth()->user()->employee;
         $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
         if (
-            !$employee->hasRole('sg') && !$employee->hasRole('hr') &&
-            ($employee->role == 'supervisor' && !in_array($tournee->employee->department_id, $dep_ids))
-            || ($employee->role == 'employee' && $tournee->employee->id != $employee->id)
+            $employee->hasRole('sg') ||
+            $employee->hasRole('controller') ||
+            $employee->hasRole('director') ||
+            ($employee->hasRole('supervisor') && in_array($tournee->employee->department_id, $dep_ids)) ||
+            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id) ||
+            ($employee->hasRole('attached') && $tournee->employee->id == $employee->id)
         ) {
-            abort(404);
-        } else {
             return view('tournees.m_show', compact('tournee'));
+        } else {
+            abort(404);
         }
     }
     public function m_create(Request $request, Tournee $tournee)
@@ -312,67 +294,19 @@ class TourneeController extends Controller
         $memor_status = '';
         if ($action === 'partialSubmit') {
             $tournee->update($request->all());
-            return redirect()->route('mission_orders.m_create', $tournee);
-        } else
-            if ($action === 'draft') {
-                $memor_status = 'draft';
-            } else if ($action === 'submit') {
-                $employee = auth()->user()->employee;
-                if ($employee->hasRole('sg') || $employee->hasRole('hr')) {
-                    $memor_status = 'sg_approve';
-                } else if ($employee->hasRole('supervisor')) {
-                    $employee_dep_id = $employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (!in_array($employee_dep_id, $sg_dep_id))
-                        $memor_status = 'hr_approve';
-                    else {
-                        $memor_status = 'sg_approve';
-                    }
-                } else {
-                    $employee_dep_id = $employee->department_id;
-                    $sg_dep_id = array_column(Department::where('name', 'like', 'Secrétariat Général')
-                        ->get('id')->toArray(), 'id');
-                    if (in_array($employee_dep_id, $sg_dep_id))
-                        $memor_status = 'hr_approve';
-                    else {
-                        $memor_status = 'sup_approve';
-                    }
-                }
-            }
+            return redirect()->route('tournees.m_create', $tournee);
+        } else if ($action === 'draft') {
+            $memor_status = 'draft';
+        } else if ($action === 'submit') {
+            $memor_status = 'controller_approve';
+        }
         $tournee->update(array_merge($request->all(), ['memor_status' => $memor_status]));
         $notification = new MemoireTourneeLevelNotification($tournee);
-        switch ($tournee->memor_status) {
-            case 'sup_approve':
-                if ($tournee->employee->department->manager) {
-                    $tournee->employee->department->manager->user->notify($notification);
-                } else {
-                    $tournee->memor_status = 'hr_approve';
-                    $tournee->save();
-                    $users = User::whereHas('employee', function ($query) {
-                        $query->whereJsonContains('roles', 'hr');
-                    })->get();
-                    foreach ($users as $user) {
-                        $user->notify($notification);
-                    }
-                }
-                break;
-            case 'hr_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'hr');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
-            case 'sg_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'sg');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
+        $users = User::whereHas('employee', function ($query) {
+            $query->whereJsonContains('roles', 'controller');
+        })->get();
+        foreach ($users as $user) {
+            $user->notify($notification);
         }
         return redirect()->route('tournees.m_index');
     }
