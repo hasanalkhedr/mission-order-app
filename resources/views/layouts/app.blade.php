@@ -114,6 +114,12 @@
                                 <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('signatures.index') }}"
+                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                                <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
+                            </a>
+                        </li>
                         <hr />
                         <!-- Calender Item -->
                         <li>
@@ -250,6 +256,12 @@
                         <a href="{{ route('employees.show', auth()->user()->employee) }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                             <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('signatures.index') }}"
+                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                            <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
                         </a>
                     </li>
                     <hr />

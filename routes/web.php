@@ -4,6 +4,7 @@ use App\Http\Controllers\BaremeController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\TourneeApproveController;
 use App\Http\Controllers\TourneeController;
 use Illuminate\Support\Facades\Route;
@@ -93,6 +94,8 @@ Route::resource('baremes', BaremeController::class)->middleware(['auth', 'role:c
 Route::get('/calendar',CalendarController::class)->middleware('auth')->name('calendar');
 Route::get('/reports', [ReportsController::class, 'index'])->middleware('auth')->name('reports.index');
 Route::post('/reports', [ReportsController::class, 'generateReport'])->middleware('auth')->name('reports.generateReport');
+
+Route::resource('signatures', SignatureController::class)->middleware('auth');
 // Authentication routes (Laravel Breeze)
 require __DIR__ . '/auth.php';
 

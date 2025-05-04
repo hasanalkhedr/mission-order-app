@@ -78,5 +78,9 @@ class Employee extends Model
     public function getRoles() {
         return collect($this->roles)->map(fn ($role) =>config('globals.roles.' . $role))->toArray();
     }
+
+    public function signature() {
+        return $this->hasOne(Signature::class);
+    }
 }
 

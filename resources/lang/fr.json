@@ -338,5 +338,16 @@
     "Overtime Minutes": "Minutes supplémentaires",
     "The minimum length is 6 characters.": "La longueur minimale est de 6 caractères.",
     "The password confirmation does not match.": "La confirmation du mot de passe ne correspond pas.",
-    "Weekdays off": "Jours fériés"
+    "Weekdays off": "Jours fériés",
+
+    "Signatures": "Signatures",
+    "Add Signature": "Ajouter une signature",
+    "Signature": "Signature",
+    "Edit Signature": "Modifier une signature",
+    "Delete Signature": "Supprimer une signature",
+    "Show Signature": "Afficher une signature",
+    "Approve Signature": "Approuver une signature",
+    "Search for signatures": "Rechercher des signatures",
+    "Are you sure you want to delete this signature": "Êtes-vous sûr de vouloir supprimer cette signature?"
+
 }
