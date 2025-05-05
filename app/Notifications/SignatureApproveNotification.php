@@ -23,7 +23,7 @@ class SignatureApproveNotification extends BaseAnnouncement
         if($this->signature->status=='draft') {
             $this->title = "Votre signature a été rejetée.";
             $this->body = "Votre signature a été rejetée, veuillez vérifier votre signature.";
-            $this->link = route('signatures.edit', $signature->id);
+            $this->link = route('signatures.show', $signature->id);
             $this->linkText = 'Cliquez ici pour voir la signature';
             $this->icon = 'reject';
         } else if($this->signature->status=='approved') {
