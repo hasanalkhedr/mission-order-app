@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Signature;
+use App\Models\User;
+use App\Notifications\SignatureApproveNotification;
+use App\Notifications\SignatureNotification;
 use Illuminate\Http\Request;
 use Storage;
 
@@ -73,6 +76,13 @@ class SignatureController extends Controller
             $signature->signature_path = $path;
         }
         $signature->save();
+        $notification = new SignatureNotification($signature);
+        $users = User::whereHas('employee', function ($query) {
+            $query->whereJsonContains('roles', 'controller');
+        })->get();
+        foreach ($users as $user) {
+            $user->notify($notification);
+        }
         return redirect()->route('signatures.index');
     }
     public function update(Request $request, Signature $signature)
@@ -93,6 +103,13 @@ class SignatureController extends Controller
             $signature->signature_path = $path;
         }
         $signature->save();
+        $notification = new SignatureNotification($signature);
+        $users = User::whereHas('employee', function ($query) {
+            $query->whereJsonContains('roles', 'controller');
+        })->get();
+        foreach ($users as $user) {
+            $user->notify($notification);
+        }
         return redirect()->route('signatures.index');
     }
     public function destroy(Signature $signature)
@@ -117,5 +134,26 @@ class SignatureController extends Controller
 
             return back()->with('error', 'Failed to delete signature. Please try again.');
         }
+    }
+    public function approveSignature(Request $request, Signature $signature) {
+
+        $action = $request->input('action');
+        $status = '';
+        switch ($action) {
+            case 'review':
+                $status = 'draft';
+                break;
+            case 'approve':
+                $status = 'approved';
+                break;
+        }
+
+        $signature->status = $status;
+        $signature->save();
+        $notification = new SignatureApproveNotification(
+            $signature);
+        $signature->employee->user->notify($notification);
+        return redirect()->route('signatures.index');
+
     }
 }

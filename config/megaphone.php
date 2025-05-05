@@ -5,6 +5,8 @@ use App\Notifications\MemoireTourneeApproveNotification;
 use App\Notifications\MemoireTourneeLevelNotification;
 use App\Notifications\MissionOrderApproveNotification;
 use App\Notifications\MissionOrderLevelNotification;
+use App\Notifications\SignatureApproveNotification;
+use App\Notifications\SignatureNotification;
 use App\Notifications\TourneeApproveNotification;
 use App\Notifications\TourneeLevelNotification;
 
@@ -40,6 +42,9 @@ return [
         TourneeLevelNotification::class => 'vendor.megaphone.types.tournee-level-notification',
         MemoireTourneeApproveNotification::class => 'vendor.megaphone.types.memoire-tournee-approve-notification',
         MemoireTourneeLevelNotification::class => 'vendor.megaphone.types.memoire-tournee-level-notification',
+
+        SignatureNotification::class => 'vendor.megaphone.types.signature-notification',
+        SignatureApproveNotification::class => 'vendor.megaphone.types.signature-approve-notification',
     ],
 
     /*

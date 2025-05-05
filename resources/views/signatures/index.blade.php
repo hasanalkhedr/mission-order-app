@@ -6,9 +6,11 @@
         {{ __('Signatures') }}
     </div>
     <div>
+        @if(auth()->user()->employee->hasRole('controller') || !auth()->user()->employee->signature)
         <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg" data-modal-toggle="createSignatureModal">
             {{ __('Add Signature') }}
         </button>
+        @endif
     </div>
 </nav>
 @include('partials.searches._search-signatures')
@@ -77,7 +79,7 @@
                         {{-- @hasanyrole('human_resource|sg|head') --}}
                         @if ($signature->status == 'draft' && auth()->user()->employee->hasRole('controller'))
                             <td class="py-4 px-6 text-right border-b">
-                                <button class="font-medium hover:underline blue-color" type="button">
+                                <button class="font-medium hover:underline blue-color" type="button" data-modal-toggle="approveSignatureModal-{{ $signature->id }}">
                                     {{ __('Approve') }}
                                 </button>
                             </td>
@@ -97,6 +99,7 @@
                         {{-- @endhasanyrole --}}
                         @include('partials.modals._delete-signature')
                         @include('partials.modals._edit-signature')
+                        @include('partials.modals._approve-signature')
                     </tr>
                 @endforeach
             @else

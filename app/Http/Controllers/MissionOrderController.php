@@ -41,12 +41,13 @@ class MissionOrderController extends Controller
     {
         $employee = auth()->user()->employee;
         $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
-        if ( $employee->hasRole('sg') ||
-             $employee->hasRole('controller') ||
-             $employee->hasRole('director') ||
-             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
-             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
-             ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
+        if (
+            $employee->hasRole('sg') ||
+            $employee->hasRole('controller') ||
+            $employee->hasRole('director') ||
+            ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
+            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
+            ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
         ) {
             return view('mission_orders.show', compact('missionOrder'));
         } else {
@@ -55,7 +56,8 @@ class MissionOrderController extends Controller
     }
     public function showReport(Request $request, MissionOrder $missionOrder)
     {
-        return view('mission_orders.mission_order_report', compact('missionOrder'));
+        $director = Employee::whereJsonContains('roles', 'director')->first();
+        return view('mission_orders.mission_order_report', compact('missionOrder', 'director'));
     }
     public function create()
     {
@@ -289,11 +291,11 @@ class MissionOrderController extends Controller
 
         if (
             $employee->hasRole('sg') ||
-             $employee->hasRole('controller') ||
-             $employee->hasRole('director') ||
-             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
-             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
-             ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
+            $employee->hasRole('controller') ||
+            $employee->hasRole('director') ||
+            ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
+            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
+            ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
         ) {
             return view('mission_orders.m_show', compact('missionOrder'));
         } else {
@@ -336,7 +338,8 @@ class MissionOrderController extends Controller
     }
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
-        return view('mission_orders.memoire_report', compact('missionOrder'));
+        $director = Employee::whereJsonContains('roles', 'director')->first();
+        return view('mission_orders.memoire_report', compact('missionOrder', 'director'));
     }
     public function m_destroy(Request $request, MissionOrder $missionOrder)
     {

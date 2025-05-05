@@ -69,7 +69,7 @@
                                         id="{{ 'profile_image' . $employee->id }}" class="hidden"
                                         onchange="{{ 'epreviewImage' . $employee->id }}(event)">
                                     <button type="button"
-                                        onclick="document.getElementById('{{ 'eprofile_image' . $employee->id }}').click()"
+                                        onclick="document.getElementById('{{ 'profile_image' . $employee->id }}').click()"
                                         class="text-white bg-blue-600 hover:bg-blue-700 rounded-xl w-1/2">
                                         <img src="{{ Vite::asset('resources/images/browse-image.png') }}"
                                             alt="Browse Image">

@@ -305,7 +305,33 @@
                             </span>
                         </td>
                         <td class="w-7/12 text-center">
-                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFL</span>
+                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/12">
+                            <div class="flex">
+                                <div class="w-1/3"></div>
+                                <div class="w-2/3">
+                                    <span class="font-light text-md text-right">
+                                        @if ($tournee->employee->signature && $tournee->employee->signature->status == 'approved')
+                                            <img src="{{asset('storage/' . $tournee->employee->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-7/12 text-center">
+                            <div class="flex">
+                                <div class="w-1/3"></div>
+                                <div class="w-2/3">
+                                    <span class="font-light text-md text-right">
+                                        @if ($director && $director->signature && $director->signature->status == 'approved')
+                                            <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

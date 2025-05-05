@@ -96,6 +96,7 @@ Route::get('/reports', [ReportsController::class, 'index'])->middleware('auth')-
 Route::post('/reports', [ReportsController::class, 'generateReport'])->middleware('auth')->name('reports.generateReport');
 
 Route::resource('signatures', SignatureController::class)->middleware('auth');
+Route::put('/signatures/{signature}/approve',[SignatureController::class, 'approveSignature'])->middleware(['auth','role:controller'])->name('signatures.approve_signature');
 // Authentication routes (Laravel Breeze)
 require __DIR__ . '/auth.php';
 

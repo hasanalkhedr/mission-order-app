@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Bareme;
+use App\Models\Employee;
 use App\Models\Tournee;
 use App\Models\User;
 use App\Notifications\MemoireTourneeLevelNotification;
@@ -56,7 +57,8 @@ class TourneeController extends Controller
     public function showReport($id)
     {
         $tournee = Tournee::findOrFail($id);
-        return view('tournees.tournee_report', compact('tournee'));
+        $director = Employee::whereJsonContains('roles', 'director')->first();
+        return view('tournees.tournee_report', compact('tournee', 'director'));
     }
     public function create()
     {
@@ -312,7 +314,8 @@ class TourneeController extends Controller
     }
     public function m_report(Request $request, Tournee $tournee)
     {
-        return view('tournees.memoire_report', compact('tournee'));
+        $director = Employee::whereJsonContains('roles', 'director')->first();
+        return view('tournees.memoire_report', compact('tournee', 'director'));
     }
     public function m_destroy(Request $request, Tournee $tournee)
     {

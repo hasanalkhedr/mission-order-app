@@ -6,7 +6,8 @@
 @section('content')
 
     <div class="bg-white max-w-4xl mx-auto py-4 sm:px-2 lg:px-4 printable">
-        <div id="report-content" style="#report-content {
+        <div id="report-content"
+            style="#report-content {
     width: 8.27in; /* A4 width */
     height: 11.69in; /* A4 height */
     overflow: hidden; /* Prevent content overflow */
@@ -149,8 +150,23 @@
                             </td>
                         </tr>
                         <tr>
+                            <td colspan="2" class="w-full px-24 pt-0 pb-2 text-right">
+                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
-                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFL</span>
+                                <div class="flex">
+                                    <div class="w-2/3"></div>
+                                    <div class="w-1/3">
+                                        <span class="font-light text-md text-right">
+                                            @if ($director && $director->signature && $director->signature->status == 'approved')
+                                                <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                     </tbody>
@@ -158,14 +174,14 @@
             </div>
         </div>
         <!-- Add a print button -->
-    <div class="mt-6 no-print text-center">
-        <button onclick="window.print()" class="bg-blue-500 px-4 py-3 hover:bg-blue-700 text-white font-bold rounded">
-            {{ __('Print Report') }}
-        </button>
-        <button id="download-pdf" class="bg-blue-500 px-4 py-3  hover:bg-blue-700 text-white font-bold rounded">
-            {{ __('Save as PDF file') }}
-        </button>
-    </div>
+        <div class="mt-6 no-print text-center">
+            <button onclick="window.print()" class="bg-blue-500 px-4 py-3 hover:bg-blue-700 text-white font-bold rounded">
+                {{ __('Print Report') }}
+            </button>
+            <button id="download-pdf" class="bg-blue-500 px-4 py-3  hover:bg-blue-700 text-white font-bold rounded">
+                {{ __('Save as PDF file') }}
+            </button>
+        </div>
     </div>
 
     <script>
@@ -174,12 +190,7 @@
 
             var opt = {
                 margin: [0.1, 0.3, 0.5, 0.3],
-                filename: "{{ $missionOrder->order_number .
-                    '-' .
-                    $missionOrder->employee->first_name .
-                    ' ' .
-                    $missionOrder->employee->last_name .
-                    '.pdf' }}",
+                filename: "{{ $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' . $missionOrder->employee->last_name . '.pdf' }}",
                 image: {
                     type: 'png',
                     quality: 0.98

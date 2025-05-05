@@ -6,7 +6,7 @@
         <div class="bg-white w-4/5 mx-auto py-1 sm:px-1 lg:px-2 printable">
             <div class="bg-white p-1">
                 <div class="flex flex-wrap mb-1">
-                    <x-application-logo class="w-2/5"></x-application-logo>
+                    <x-application-logo class="w-2/5" />
                     <div class="w-3/5 px-10 mt-10 mb-6 md:mb-0 text-end">
                         <p>Beyrouth, {{ $missionOrder->memor_date->format('d/m/Y') }}</p>
                     </div>
@@ -98,71 +98,71 @@
                                 <div class="-m-1.5 overflow-x-auto">
                                     <div class="p-[2px] min-w-full inline-block align-middle">
                                         <div class="overflow-hidden">
-<table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-    <thead>
-        <tr>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Nature de
-                la dépense</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Date
-                dépense</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Montant</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Devise</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse ($missionOrder->expenses as $expense)
-            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
-                    {{ $expense->description }}</td>
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->amount }}</td>
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->currency }}</td>
-            </tr>
-        @empty
-            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                <td colspan="4"
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
-                    {{ __('No Expenses Found') }}</td>
-            </tr>
-        @endforelse
-    </tbody>
-    <tfoot>
-        @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
-            <tr>
-                <th scope="col"></th>
-                <th scope="col"
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    SOMME
-                </th>
-                <th scope="col"
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ $currencyAmount }}
-                </th>
-                <th scope="col"
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ $currency }}
-                </th>
-                <th scope="col"></th>
-            </tr>
-        @empty
-        @endforelse
-    </tfoot>
-</table>
+                                            <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Nature de
+                                                            la dépense</th>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Date
+                                                            dépense</th>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Montant</th>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Devise</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse ($missionOrder->expenses as $expense)
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ $expense->description }}</td>
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
+                                                                {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
+                                                                {{ $expense->amount }}</td>
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
+                                                                {{ $expense->currency }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td colspan="4"
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
+                                                                {{ __('No Expenses Found') }}</td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                                <tfoot>
+                                                    @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
+                                                        <tr>
+                                                            <th scope="col"></th>
+                                                            <th scope="col"
+                                                                class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                                                SOMME
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                                                {{ $currencyAmount }}
+                                                            </th>
+                                                            <th scope="col"
+                                                                class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                                                {{ $currency }}
+                                                            </th>
+                                                            <th scope="col"></th>
+                                                        </tr>
+                                                    @empty
+                                                    @endforelse
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -246,26 +246,6 @@
                     @endforeach
                 @endif
             </table>
-            {{-- <div class="w-10/12 justify-between">
-                <div class="w-1/3 font-semibold inline">ARRETE ET LIQUIDE LA SOMME DE :</div>
-                <div class="w-full pl-40">
-                    <table>
-                        @forelse ($missionOrder->getMemoireTotals() as $currency=>$currencyAmount)
-                            <tr>
-                                <td class="w-3/12 text-center font-bold">{{ $currencyAmount }} {{ $currency }}</td>
-                                <td class="w-3/12 text-center font-bold"><span class="font-normal px-5"> arrondi à </span>
-                                </td>
-                                <td class="w-3/12 text-center font-bold">{{ round($currencyAmount) }} {{ $currency }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3">0.00</td>
-                            </tr>
-                        @endforelse
-                    </table>
-                </div>
-            </div> --}}
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -306,14 +286,39 @@
                             </span>
                         </td>
                         <td class="w-7/12 text-center">
-                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFL</span>
+                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/12">
+                            <div class="flex">
+                                <div class="w-1/3"></div>
+                                <div class="w-2/3">
+                                    <span class="font-light text-md text-right">
+                                        @if ($missionOrder->employee->signature && $missionOrder->employee->signature->status == 'approved')
+                                            <img src="{{asset('storage/' . $missionOrder->employee->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-7/12 text-center">
+                            <div class="flex">
+                                <div class="w-1/3"></div>
+                                <div class="w-2/3">
+                                    <span class="font-light text-md text-right">
+                                        @if ($director && $director->signature && $director->signature->status == 'approved')
+                                            <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <!-- Add a print button -->
     <div class="mt-6 no-print text-center">
         <button onclick="window.print()"
             class="bg-blue-500 px-4 py-3 mb-10 hover:bg-blue-700 text-white font-bold rounded">
@@ -325,18 +330,10 @@
     </div>
     <script>
         document.getElementById("download-pdf").addEventListener("click", function() {
-            var element = document.getElementById('report-content'); // The element you want to print
-
+            var element = document.getElementById('report-content');
             var opt = {
                 margin: 0,
-                filename: `Mémoire-{{$missionOrder->order_number}}-{{$missionOrder->employee->first_name}}_{{$missionOrder->employee->last_name}}.pdf`,
-                // filename: "{{ 'Memoire-' .
-                //     $missionOrder->order_number .
-                //     '-' .
-                //     $missionOrder->employee->first_name .
-                //     ' ' .
-                //     $missionOrder->employee->last_name .
-                //     '.pdf' }}",
+                filename: `Mémoire-{{ $missionOrder->order_number }}-{{ $missionOrder->employee->first_name }}_{{ $missionOrder->employee->last_name }}.pdf`,
                 image: {
                     type: 'png',
                     quality: 0.98
@@ -344,15 +341,13 @@
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                }, // For better quality
+                },
                 jsPDF: {
                     unit: 'in',
                     format: 'a4',
                     orientation: 'portrait'
                 }
             };
-
-            // Generate and download the PDF
             html2pdf().from(element).set(opt).save();
         });
     </script>

@@ -54,7 +54,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Missions') }}</span>
                             </button>
-                            <ul id="dropdown-missions-" class="py-2 space-y-2 mx-2">
+                            <ul id="dropdown-missions" class="py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('mission_orders.create') }}">
@@ -85,7 +85,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Tournées') }}</span>
                             </button>
-                            <ul id="dropdown-tournees-" class=" py-2 space-y-2 mx-2">
+                            <ul id="dropdown-tournees" class=" py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('tournees.create') }}">
@@ -147,7 +147,7 @@
                                     <span class="flex-1 mx-2 text-left font-medium text-white"
                                         sidebar-toggle-item>{{ __('Settings') }}</span>
                                 </button>
-                                <ul id="dropdown-settings-" class="py-2 space-y-2 mx-2">
+                                <ul id="dropdown-settings" class="py-2 space-y-2 mx-2">
                                     <li>
                                         <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                             href="{{ route('baremes.index') }}">
@@ -198,7 +198,7 @@
                             <span class="flex-1 mx-2 text-left font-medium text-white"
                                 sidebar-toggle-item>{{ __('Missions') }}</span>
                         </button>
-                        <ul id="dropdown-missions-" class="py-2 space-y-2 mx-2">
+                        <ul id="dropdown-missions" class="py-2 space-y-2 mx-2">
                             <li>
                                 <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                     href="{{ route('mission_orders.create') }}">
@@ -229,7 +229,7 @@
                             <span class="flex-1 mx-2 text-left font-medium text-white"
                                 sidebar-toggle-item>{{ __('Tournées') }}</span>
                         </button>
-                        <ul id="dropdown-tournees-" class=" py-2 space-y-2 mx-2">
+                        <ul id="dropdown-tournees" class=" py-2 space-y-2 mx-2">
                             <li>
                                 <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                     href="{{ route('tournees.create') }}">
@@ -291,7 +291,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Settings') }}</span>
                             </button>
-                            <ul id="dropdown-settings-" class="py-2 space-y-2 mx-2">
+                            <ul id="dropdown-settings" class="py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('baremes.index') }}">

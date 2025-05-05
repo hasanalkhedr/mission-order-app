@@ -133,7 +133,22 @@
                         </tr>
                         <tr>
                             <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
-                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFL</span>
+                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
+                                <div class="flex">
+                                    <div class="w-2/3"></div>
+                                    <div class="w-1/3">
+                                        <span class="font-light text-md text-right">
+                                            @if ($director && $director->signature && $director->signature->status == 'approved')
+                                                <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                     </tbody>

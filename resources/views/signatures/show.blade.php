@@ -92,7 +92,7 @@
     </div>
     @if ($signature->status == 'draft' && auth()->user()->employee->hasRole('controller') )
     <button
-            class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg mr-3">
+            class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg mr-3" data-modal-toggle="approveSignatureModal-{{ $signature->id }}">
             {{ __('Approve Signature') }}
         </button>
 
@@ -111,5 +111,7 @@
 @include('partials.modals._edit-signature')
 
 @include('partials.modals._delete-signature')
+
+@include('partials.modals._approve-signature')
 
 @endsection
