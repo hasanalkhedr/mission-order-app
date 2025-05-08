@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Notifications\ChancelleryRateMissingNotification;
 use Closure;
 use App\Models\ChancelleryRate;
 
@@ -23,6 +25,13 @@ class CheckChancelleryRate
         foreach ($missionRoutes as $route) {
             if ($request->is($route)) {
                 if (!ChancelleryRate::hasCurrentRate()) {
+                    $notification = new ChancelleryRateMissingNotification();
+                    $users = User::whereHas('employee', function ($query) {
+                        $query->whereJsonContains('roles', 'controller');
+                    })->get();
+                    foreach ($users as $user) {
+                        $user->notify($notification);
+                    }
                     // return redirect()->route('/')
                     //     ->with('error', 'New missions cannot be created until admin updates the currency rate for this month.');
                     abort(505);

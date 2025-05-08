@@ -1,5 +1,6 @@
 <?php
 use App\Notifications\ChancelleryRateApproveNotification;
+use App\Notifications\ChancelleryRateMissingNotification;
 use App\Notifications\ChancelleryRateNotification;
 use App\Notifications\MemoireMissionOrderApproveNotification;
 use App\Notifications\MemoireMissionOrderLevelNotification;
@@ -49,6 +50,7 @@ return [
         SignatureApproveNotification::class => 'vendor.megaphone.types.signature-approve-notification',
         ChancelleryRateNotification::class => 'vendor.megaphone.types.chancelleryRate-notification',
         ChancelleryRateApproveNotification::class => 'vendor.megaphone.types.chancelleryRate-approve-notification',
+        ChancelleryRateMissingNotification::class => 'vendor.megaphone.types.chancelleryRate-missing-notification',
     ],
 
     /*
