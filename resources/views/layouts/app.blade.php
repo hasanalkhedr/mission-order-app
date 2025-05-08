@@ -45,6 +45,13 @@
                 <nav class="flex flex-col gap-4 p-4 h-full min-h-screen">
                     <x-application-logo />
                     <ul class="content-between space-y-2">
+                        <li>
+                            <a href="{{ route('chancelleryRates.index') }}"
+                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                                <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
+                            </a>
+                        </li>
+                        <hr />
                         <!-- Mission Menu -->
                         <li>
                             <button type="button"
@@ -189,6 +196,13 @@
             <nav id="mobileMenu" class="hidden flex flex-col gap-4 mt-4">
                 <x-application-logo />
                 <ul class="content-between space-y-2">
+                    <li>
+                        <a href="{{ route('chancelleryRates.index') }}"
+                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                            <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
+                        </a>
+                    </li>
+                    <hr />
                     <!-- Mission Menu -->
                     <li>
                         <button type="button"
