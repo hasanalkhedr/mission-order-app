@@ -22,6 +22,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <form></form>
                         @foreach ($tournee->expenses as $expense)
                             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                 <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
@@ -36,17 +37,17 @@
                                     <button type="button"
                                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                                         data-modal-toggle="viewExpenseModal-{{ $expense->id }}">{{ __('View') }}</button>
-                                    {{-- <button type="button"
+                                    <button type="button"
                                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                                        data-modal-toggle="editExpenseModal-{{ $expense->id }}">{{ __('Edit') }}</button> --}}
+                                        data-modal-toggle="editExpenseModal-{{ $expense->id }}">{{ __('Edit') }}</button>
                                     <button type="button"
                                         class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                                         data-modal-toggle="deleteExpenseModal-{{ $expense->id }}">{{ __('Delete') }}</button>
                                 </td>
-                                @include('partials.modals._tournee-view-expense')
-                                {{-- @include('partials.modals._tournee-edit-expense') --}}
-                                @include('partials.modals._tournee-delete-expense')
                             </tr>
+                                @include('partials.modals._tournee-view-expense')
+                                @include('partials.modals._tournee-edit-expense')
+                                @include('partials.modals._tournee-delete-expense')
                         @endforeach
                     </tbody>
                     <tfoot>

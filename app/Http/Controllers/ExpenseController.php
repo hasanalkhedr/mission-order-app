@@ -42,7 +42,6 @@ class ExpenseController extends Controller
     }
     public function update(Request $request, Expense $expense)
     {
-        dd($request, $expense);
         $request->validate([
             'amount' => 'required|numeric',
             'currency' => 'required',
@@ -56,7 +55,7 @@ class ExpenseController extends Controller
         if ($request->hasFile('expense_document')) {
             // Store the image in 'storage/app/public/profile_pictures'
             $file = $request->file('expense_document');
-            $filename = $request->input('mission_order_id') . '-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
+            $filename = $expense->mission_order_id . '-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
 
             $path = $file->storeAs('expense_documents', $filename, 'public');
 
@@ -64,7 +63,7 @@ class ExpenseController extends Controller
             $expense->expense_document = $path;
             $expense->save();
         }
-        return redirect()->route('mission_orders.m_create',$request->input('mission_order_id'));
+        return redirect()->route('mission_orders.m_create',$expense->mission_order_id);
     }
     public function destroy(Expense $expense)
     {

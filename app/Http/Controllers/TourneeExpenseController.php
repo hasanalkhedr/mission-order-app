@@ -53,7 +53,7 @@ class TourneeExpenseController extends Controller
         if ($request->hasFile('expense_document')) {
             // Store the image in 'storage/app/public/profile_pictures'
             $file = $request->file('expense_document');
-            $filename = $request->input('tournee_id') . '-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
+            $filename = $expense->tournee_id . '-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
 
             $path = $file->storeAs('expense_documents', $filename, 'public');
 
@@ -61,7 +61,7 @@ class TourneeExpenseController extends Controller
             $expense->expense_document = $path;
             $expense->save();
         }
-        return redirect()->route('tournees.m_create',$request->input('tournee_id'));
+        return redirect()->route('tournees.m_create',$expense->tournee_id);
     }
     public function destroy(TourneeExpense $tournee_expense)
     {

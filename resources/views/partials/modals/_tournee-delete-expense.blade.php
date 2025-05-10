@@ -44,7 +44,7 @@
                     </button>
                 </div>
                 <div>
-                    <form method="POST"
+                    <form method="POST" id="deleteExpenseForm-{{ $expense->id }}" key="deleteExpenseForm-{{ $expense->id }}"
                         action="{{ route('tournee_expenses.destroy', $expense->id) }}">
                         @csrf
                         @method('DELETE')
