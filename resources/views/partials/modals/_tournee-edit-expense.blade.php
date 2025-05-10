@@ -26,7 +26,7 @@
             </div>
             <!-- Modal body -->
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
-                <form method="POST"
+                <form id="editExpenseForm-{{ $expense->id }}" method="POST"
                     action="{{ route('tournee_expenses.update', $expense->id) }}"
                     enctype="multipart/form-data">
                     @csrf
@@ -65,38 +65,45 @@
                         </div>
                         <!-- Expense Document -->
                         <div class="w-1/3 h-1/2 px-3">
-                            <!-- Image upload input and preview with button on top of the image -->
                             <div class="relative w-full h-full mx-auto">
-                                <!-- Image preview -->
+                                <!-- PDF Preview -->
+                                <div id="pdfPreview-edit-{{ $expense->id }}"
+                                     class="{{ pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf' ? '' : 'hidden' }} w-full h-full">
+                                    @if(pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
+                                    <embed src="{{ asset('storage/' . $expense->expense_document) }}"
+                                           type="application/pdf"
+                                           width="100%"
+                                           height="100%">
+                                    <div class="text-center mt-2 text-sm text-gray-600">
+                                        Current PDF: {{ basename($expense->expense_document) }}
+                                    </div>
+                                    @endif
+                                </div>
+
+                                <!-- Image Preview -->
                                 <img id="expenseDocumentPreview-edit-{{ $expense->id }}"
-                                    src="{{ asset('storage/app/public/' . $expense->expense_document) }}"
+                                    src="{{ pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf' ? Vite::asset('resources/images/blank-expense.jpg') : asset('storage/' . $expense->expense_document) }}"
                                     alt="Document de dépenses"
-                                    class="object-cover w-full h-full">
-                                <!-- Browse Files Button positioned on top of the image -->
-                                <div
-                                    class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
+                                    class="{{ pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf' ? 'hidden' : '' }} object-cover w-full h-full">
+
+                                <!-- File Upload Controls -->
+                                <div class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
                                     <input type="file" name="expense_document"
                                         id="expense_document-edit-{{ $expense->id }}"
                                         class="hidden"
-                                        onchange="previewImage_edit_{{ $expense->id }}(event)">
+                                        accept=".pdf,.jpg,.jpeg,.png,.gif">
                                     <button type="button"
                                         onclick="document.getElementById('expense_document-edit-{{ $expense->id }}').click()"
                                         class="text-white bg-blue-600 hover:bg-blue-700 rounded-xl w-1/2">
                                         <img src="{{ Vite::asset('resources/images/browse-image.png') }}"
-                                            alt="Browse Image">
+                                            alt="Browse Files">
                                     </button>
                                 </div>
-                                <!-- Image Preview Script -->
-                                <script>
-                                    function previewImage_edit_{{ $expense->id }}(event) {
-                                        const reader = new FileReader();
-                                        reader.onload = function() {
-                                            const output = document.getElementById('expenseDocumentPreview-edit-{{ $expense->id }}');
-                                            output.src = reader.result;
-                                        };
-                                        reader.readAsDataURL(event.target.files[0]);
-                                    }
-                                </script>
+
+                                <!-- File Info Display -->
+                                <div id="fileInfo-edit-{{ $expense->id }}" class="mt-2 text-sm text-gray-600 hidden">
+                                    New file: <span id="fileName-edit-{{ $expense->id }}"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -111,10 +118,9 @@
                             </button>
                         </div>
                         <div>
-                            <button
-                                data-modal-toggle="editExpenseModal-{{ $expense->id }}"
+                            <button type="submit" id="submitBtn-edit-{{ $expense->id }}"
                                 class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg">
-                                {{ __('Create') }}
+                                {{ __('Update') }}
                             </button>
                         </div>
                     </div>
@@ -123,3 +129,50 @@
         </div>
     </div>
 </div>
+<script>
+// Define functions for this modal instance
+function handleFileSelectEdit_{{ $expense->id }}(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Update file info display
+    document.getElementById('fileName-edit-{{ $expense->id }}').textContent = file.name;
+    document.getElementById('fileInfo-edit-{{ $expense->id }}').classList.remove('hidden');
+
+    // Handle preview based on file type
+    if (file.type === 'application/pdf') {
+        // Show PDF preview
+        document.getElementById('expenseDocumentPreview-edit-{{ $expense->id }}').classList.add('hidden');
+        document.getElementById('pdfPreview-edit-{{ $expense->id }}').classList.remove('hidden');
+
+        // Create or update PDF embed
+        let pdfEmbed = document.querySelector('#pdfPreview-edit-{{ $expense->id }} embed');
+        if (!pdfEmbed) {
+            const container = document.getElementById('pdfPreview-edit-{{ $expense->id }}');
+            container.innerHTML = `<embed src="${URL.createObjectURL(file)}" type="application/pdf" width="100%" height="100%">
+                                  <div class="text-center mt-2 text-sm text-gray-600">PDF Preview</div>`;
+        } else {
+            pdfEmbed.src = URL.createObjectURL(file);
+        }
+    } else if (file.type.startsWith('image/')) {
+        // Show image preview
+        document.getElementById('pdfPreview-edit-{{ $expense->id }}').classList.add('hidden');
+        document.getElementById('expenseDocumentPreview-edit-{{ $expense->id }}').classList.remove('hidden');
+
+        // Update image preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('expenseDocumentPreview-edit-{{ $expense->id }}').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Set up event listeners when DOM is ready
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('expense_document-edit-{{ $expense->id }}');
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelectEdit_{{ $expense->id }});
+    }
+});
+</script>

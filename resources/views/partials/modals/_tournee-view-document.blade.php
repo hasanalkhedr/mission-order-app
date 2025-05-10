@@ -23,35 +23,105 @@
                 </div>
             </div>
             <!-- Modal body -->
-            <div class="p-4 overflow-y-auto h-screen">
-                <div class="flex flex-wrap -mx-3 mb-6 h-auto">
-                        <div class="relativ mx-auto">
-                            <img id="imageModal-{{ $expense->id }}"
-                                src="{{ asset('storage/app/public/'.$expense->expense_document)}}"
-                                alt="Expense Document" class="object-cover w-full h-full max-w-full max-h-full">
-                        <script>
-                            const imageModal_{{ $expense->id }} = document.getElementById('imageModal-{{ $expense->id }}');
-                            let scale = 1;
+            <div class="p-4 overflow-y-auto" style="max-height: 80vh">
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="relative mx-auto w-full">
+                        @if(pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
+                            <!-- PDF Viewer -->
+                            <div class="pdf-viewer-container h-screen">
+                                <embed id="pdfViewer-{{ $expense->id }}"
+                                    src="{{ asset('storage/'.$expense->expense_document) }}"
+                                    type="application/pdf"
+                                    class="w-full h-full min-h-[70vh] border border-gray-200 rounded-lg">
+                                <div class="flex justify-between items-center mt-2">
+                                    <div class="text-sm text-gray-600">
+                                        {{ basename($expense->expense_document) }}
+                                    </div>
+                                    <a href="{{ asset('storage/'.$expense->expense_document) }}"
+                                       target="_blank"
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        {{ __('Ouvrir dans un nouvel onglet') }}
+                                    </a>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Image Viewer with Zoom -->
+                            <div class="image-viewer-container overflow-hidden">
+                                <img id="imageModal-{{ $expense->id }}"
+                                    src="{{ asset('storage/'.$expense->expense_document) }}"
+                                    alt="Expense Document"
+                                    class="mx-auto max-w-full max-h-[70vh] object-contain cursor-zoom-in transition-transform duration-300 origin-center">
+                                <div class="flex justify-between items-center mt-2">
+                                    <div class="text-sm text-gray-600">
+                                        {{ basename($expense->expense_document) }}
+                                    </div>
+                                    <a href="{{ asset('storage/'.$expense->expense_document) }}"
+                                       target="_blank"
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        {{ __('Voir en plein écran') }}
+                                    </a>
+                                </div>
+                            </div>
 
-                            imageModal_{{ $expense->id }}.addEventListener('wheel', (e) => {
-                                e.preventDefault();
-                                if (e.deltaY < 0) {
-                                    scale += 0.1; // Zoom in
-                                } else {
-                                    scale -= 0.1; // Zoom out
-                                }
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const imageModal = document.getElementById('imageModal-{{ $expense->id }}');
+                                    let scale = 1;
+                                    let isDragging = false;
+                                    let startX, startY, translateX = 0, translateY = 0;
 
-                                scale = Math.min(Math.max(0.5, scale), 3); // Limit zoom levels
-                                imageModal_{{ $expense->id }}.style.transform = `scale(${scale})`;
-                            });
-                        </script>
+                                    // Zoom functionality
+                                    imageModal.addEventListener('wheel', (e) => {
+                                        e.preventDefault();
+                                        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                                        scale = Math.min(Math.max(0.5, scale + delta), 3);
+                                        updateTransform();
+                                    });
+
+                                    // Double click to reset zoom
+                                    imageModal.addEventListener('dblclick', () => {
+                                        scale = 1;
+                                        translateX = 0;
+                                        translateY = 0;
+                                        updateTransform();
+                                    });
+
+                                    // Drag functionality
+                                    imageModal.addEventListener('mousedown', (e) => {
+                                        if (scale > 1) {
+                                            isDragging = true;
+                                            startX = e.clientX - translateX;
+                                            startY = e.clientY - translateY;
+                                            imageModal.style.cursor = 'grabbing';
+                                        }
+                                    });
+
+                                    document.addEventListener('mousemove', (e) => {
+                                        if (!isDragging) return;
+                                        translateX = e.clientX - startX;
+                                        translateY = e.clientY - startY;
+                                        updateTransform();
+                                    });
+
+                                    document.addEventListener('mouseup', () => {
+                                        isDragging = false;
+                                        imageModal.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                                    });
+
+                                    function updateTransform() {
+                                        imageModal.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                                        imageModal.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                                    }
+                                });
+                            </script>
+                        @endif
                     </div>
                 </div>
                 <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                     <div>
                         <button data-modal-toggle="viewDocumentModal-{{ $expense->id }}" type="button"
                             class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                            {{ __('Cancel') }}
+                            {{ __('Fermer') }}
                         </button>
                     </div>
                 </div>

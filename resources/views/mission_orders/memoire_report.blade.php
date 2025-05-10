@@ -320,7 +320,7 @@
         </div>
     </div>
     <div class="mt-6 no-print text-center">
-        <button onclick="window.print()"
+        <button onclick="console.log('Clicked'); window.print(); console.log('After print')"
             class="bg-blue-500 px-4 py-3 mb-10 hover:bg-blue-700 text-white font-bold rounded">
             {{ __('Print Report') }}
         </button>

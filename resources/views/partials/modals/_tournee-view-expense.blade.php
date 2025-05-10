@@ -57,23 +57,44 @@
                     </div>
                     <!-- Expense Document -->
                     <div class="w-1/3 h-1/2 px-3">
-                        <!-- Image upload input and preview with button on top of the image -->
                         <div class="relative w-full h-full mx-auto">
-                            <!-- Image preview -->
-                            <img src="{{ asset('storage/app/public/' . $expense->expense_document) }}"
-                                alt="Document de dépenses"
-                                class="object-cover w-full h-full">
+                            @if(pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
+                                <!-- PDF Viewer -->
+                                <embed src="{{ asset('storage/' . $expense->expense_document) }}"
+                                       type="application/pdf"
+                                       width="100%"
+                                       height="100%"
+                                       class="border border-gray-300 rounded-lg">
+                                <div class="text-center mt-2">
+                                    <a href="{{ asset('storage/' . $expense->expense_document) }}"
+                                       target="_blank"
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        Open PDF in new tab
+                                    </a>
+                                </div>
+                            @else
+                                <!-- Image Viewer -->
+                                <img src="{{ asset('storage/' . $expense->expense_document) }}"
+                                    alt="Expense Document"
+                                    class="object-cover w-full h-full border border-gray-300 rounded-lg">
+                                <div class="text-center mt-2">
+                                    <a href="{{ asset('storage/' . $expense->expense_document) }}"
+                                       target="_blank"
+                                       class="text-blue-600 hover:text-blue-800 text-sm">
+                                        View Full Image
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
                 <div
                     class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                     <div>
-                        <button
-                            data-modal-toggle="viewExpenseModal-{{ $expense->id }}"
+                        <button data-modal-toggle="viewExpenseModal-{{ $expense->id }}"
                             type="button"
                             class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                            {{ __('Cancel') }}
+                            {{ __('Close') }}
                         </button>
                     </div>
                 </div>

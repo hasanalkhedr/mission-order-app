@@ -24,7 +24,7 @@ class CheckChancelleryRate
 
         foreach ($missionRoutes as $route) {
             if ($request->is($route)) {
-                if (!ChancelleryRate::hasCurrentRate()) {
+                if (!ChancelleryRate::hasCurrentRate() || ChancelleryRate::currentRate()->status != 'approved') {
                     $notification = new ChancelleryRateMissingNotification();
                     $users = User::whereHas('employee', function ($query) {
                         $query->whereJsonContains('roles', 'controller');

@@ -54,8 +54,12 @@
                         </div>
                         <!-- Expense Document -->
                         <div class="w-1/3 h-1/2 px-3">
-                            <!-- Image upload input and preview with button on top of the image -->
                             <div class="relative w-full h-full mx-auto">
+                                <!-- PDF Preview Container -->
+                                <div id="pdfPreview" class="hidden w-full h-full">
+                                    <embed id="pdfEmbed" src="" type="application/pdf" width="100%" height="100%">
+                                    <div class="text-center mt-2 text-sm text-gray-600">PDF Preview</div>
+                                </div>
                                 <!-- Image preview -->
                                 <img id="expenseDocumentPreview"
                                     src="{{ Vite::asset('resources/images/blank-expense.jpg') }}"
@@ -63,25 +67,18 @@
                                 <!-- Browse Files Button positioned on top of the image -->
                                 <div
                                     class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
-                                    <input type="file" name="expense_document" required id="expense_document" class="hidden"
-                                        onchange="previewImage(event)">
-                                    <button type="button" onclick="document.getElementById('expense_document').click()"
+                                    <input type="file" name="expense_document" id="expense_document" class="hidden"
+                                        accept=".pdf,.jpg,.jpeg,.png,.gif" required>
+                                    <button type="button" id="browseButton"
                                         class="text-white bg-blue-600 hover:bg-blue-700 rounded-xl w-1/2">
                                         <img src="{{ Vite::asset('resources/images/browse-image.png') }}"
-                                            alt="Browse Image">
+                                            alt="Browse Files">
                                     </button>
                                 </div>
-                                <!-- Image Preview Script -->
-                                <script>
-                                    function previewImage(event) {
-                                        const reader = new FileReader();
-                                        reader.onload = function() {
-                                            const output = document.getElementById('expenseDocumentPreview');
-                                            output.src = reader.result;
-                                        };
-                                        reader.readAsDataURL(event.target.files[0]);
-                                    }
-                                </script>
+                                <!-- File Info Display -->
+                                <div id="fileInfo" class="mt-2 text-sm text-gray-600 hidden">
+                                    Selected file: <span id="fileName"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -93,8 +90,9 @@
                             </button>
                         </div>
                         <div>
-                            <button data-modal-toggle="createExpenseModal" id="submit"
-                                class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg">
+                            <button type="submit" id="submitBtn"
+                                class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-gray-300"
+                                disabled>
                                 {{ __('Create') }}
                             </button>
                         </div>
@@ -104,41 +102,91 @@
         </div>
     </div>
 </div>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById('myForm');
-        const submitBtn = document.getElementById('submit');
+// Define all functions first
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-        // Function to check if all required inputs are filled
-        function checkRequiredFields() {
-            // Get all required inputs inside the form
-            const requiredFields = form.querySelectorAll('[required]');
+    // Update file info display
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileInfo').classList.remove('hidden');
 
-            // Check if all required fields have a value
-            let allFilled = true;
-            requiredFields.forEach((field) => {
-                if (!field.value.trim()) {
-                    allFilled = false;
-                }
-            });
+    // Handle preview based on file type
+    if (file.type === 'application/pdf') {
+        // Show PDF preview
+        document.getElementById('expenseDocumentPreview').classList.add('hidden');
+        document.getElementById('pdfPreview').classList.remove('hidden');
 
-            // Enable or disable submit button based on whether all fields are filled
-            submitBtn.disabled = !allFilled;
-            if(!allFilled) {
-                submitBtn.classList.remove('blue-bg');
-                submitBtn.classList.add('bg-gray-300');
-            } else {
-                submitBtn.classList.remove('bg-gray-300');
-                submitBtn.classList.add('blue-bg');
+        // Update PDF embed source
+        const pdfEmbed = document.getElementById('pdfEmbed');
+        pdfEmbed.src = URL.createObjectURL(file);
+    } else if (file.type.startsWith('image/')) {
+        // Show image preview
+        document.getElementById('pdfPreview').classList.add('hidden');
+        document.getElementById('expenseDocumentPreview').classList.remove('hidden');
+
+        // Update image preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('expenseDocumentPreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Enable submit button if all required fields are filled
+    checkRequiredFields();
+}
+
+function checkRequiredFields() {
+    const form = document.getElementById('myForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const requiredFields = form.querySelectorAll('[required]');
+    let allFilled = true;
+
+    requiredFields.forEach((field) => {
+        if (field.type === 'file') {
+            if (!field.files || field.files.length === 0) {
+                allFilled = false;
             }
+        } else if (!field.value.trim()) {
+            allFilled = false;
         }
-
-        // Add event listeners to all required fields
-        form.querySelectorAll('[required]').forEach((field) => {
-            field.addEventListener('input', checkRequiredFields);
-        });
-
-        // Run the validation on page load (in case there are pre-filled values)
-        checkRequiredFields();
     });
+
+    // Update submit button state
+    submitBtn.disabled = !allFilled;
+    if (allFilled) {
+        submitBtn.classList.remove('bg-gray-300');
+        submitBtn.classList.add('blue-bg');
+    } else {
+        submitBtn.classList.remove('blue-bg');
+        submitBtn.classList.add('bg-gray-300');
+    }
+}
+
+// Set up event listeners when DOM is ready
+document.addEventListener("DOMContentLoaded", function() {
+    // File input handling
+    const fileInput = document.getElementById('expense_document');
+    const browseButton = document.getElementById('browseButton');
+
+    fileInput.addEventListener('change', handleFileSelect);
+    browseButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // Form field validation
+    const form = document.getElementById('myForm');
+    form.querySelectorAll('[required]').forEach((field) => {
+        field.addEventListener('input', checkRequiredFields);
+        if (field.type === 'file') {
+            field.addEventListener('change', checkRequiredFields);
+        }
+    });
+
+    // Initial check
+    checkRequiredFields();
+});
 </script>

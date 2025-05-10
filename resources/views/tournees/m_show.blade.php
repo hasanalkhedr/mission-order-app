@@ -149,7 +149,7 @@
                                             {{ $expense->description }}</td>
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->expense_dateformat('d/m/Y H:i') }}</td>
+                                            {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             {{ $expense->amount }}</td>
@@ -165,7 +165,7 @@
                                                 type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
                                                 {{ __('Voir le document') }}
                                             </button>
-                                            <a href="{{ route('expenses.download_document', $expense) }}"><button
+                                            <a href="{{ route('tournee_expenses.download_document', $expense) }}"><button
                                                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                                                     type="button">
                                                     {{ __('Télécharger le document') }}

@@ -124,7 +124,7 @@
                     {{ $expense->description }}</td>
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->expense_dateformat('d/m/Y H:i') }}</td>
+                    {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
                     {{ $expense->amount }}</td>

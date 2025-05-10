@@ -12,14 +12,15 @@ class TourneeExpenseController extends Controller
 {
     public function store(Request $request)
     {
-        $tournee = Tournee::find($request->input('mission_order_id'));
+        $tournee = Tournee::find($request->input('tournee_id'));
         $request->validate([
             'tournee_id' => 'required',
             'amount' => 'required|numeric',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:'.$tournee->start_date.'|before_or_equal:'.$tournee->end_date,
             'description' => 'required',
-            'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+           // 'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+           'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
         ]);
 
         $expense = TourneeExpense::create($request->all());
@@ -44,7 +45,8 @@ class TourneeExpenseController extends Controller
             'expense_date' => 'required|date|after_or_equal:'.$expense->tournee->start_date.'|before_or_equal:'.$expense->tournee->end_date,
 
             'description' => 'required',
-            'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            //'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
         ]);
 
         $expense->update($request->all());
@@ -61,10 +63,10 @@ class TourneeExpenseController extends Controller
         }
         return redirect()->route('tournees.m_create',$request->input('tournee_id'));
     }
-    public function destroy(TourneeExpense $expense)
+    public function destroy(TourneeExpense $tournee_expense)
     {
-        $tournee_id = $expense->tournee_id;
-        $expense->delete();
+        $tournee_id = $tournee_expense->tournee_id;
+        $tournee_expense->delete();
         return redirect()->route('tournees.m_create',$tournee_id);
     }
 

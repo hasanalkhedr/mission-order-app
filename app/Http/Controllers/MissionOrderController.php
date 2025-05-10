@@ -316,7 +316,7 @@ class MissionOrderController extends Controller
             'memor_date' => 'required|date|after_or_equal:end_date',
         ]);
         $action = $request->input('action');
-        $memor_status = '';
+        $memor_status = null;
         if ($action === 'partialSubmit') {
             $missionOrder->update($request->all());
             return redirect()->route('mission_orders.m_create', $missionOrder);
