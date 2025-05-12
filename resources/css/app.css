@@ -4,6 +4,66 @@
 
 
 
+.pdf-viewer-container {
+  max-width: 100%;
+  overflow: auto;
+  background: #f5f5f5;
+}
+
+#pdf-canvas {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.pdf-toolbar {
+  background: #eaeaea;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+/* Fixed-size container */
+.document-viewer {
+  width: 500px;
+  height: 600px; /* Adjust height as needed */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: auto; /* Enables scrolling for tall content */
+  margin-bottom: 20px;
+}
+
+/* PDF container fills the space */
+.pdf-container {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+}
+
+/* Image container centers content */
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+}
+
+/* Image styling */
+.document-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* PDF.js canvas styling */
+.pdf-page {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
 .select2-container .select2-dropdown {
     top: 100% !important; /* Forces the dropdown to open below the select element */
 }
