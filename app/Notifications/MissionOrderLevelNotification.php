@@ -17,7 +17,7 @@ class MissionOrderLevelNotification extends BaseAnnouncement
     /**
      * Create a new notification instance.
      */
-    public function __construct($missionOrder)
+    public function __construct($missionOrder )
     {
         $this->missionOrder = $missionOrder;
         $this->title = 'La Mission ' . $this->missionOrder->order_number . '|'
@@ -36,13 +36,13 @@ class MissionOrderLevelNotification extends BaseAnnouncement
      */
     public function via($notifiable): array
     {
-        return ['database', 'mail'];
+        return ['database'/*, 'mail'*/];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+   /* public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject($this->title)
@@ -51,7 +51,7 @@ class MissionOrderLevelNotification extends BaseAnnouncement
             ->line($this->body)
             ->action($this->linkText, $this->link)
             ->salutation('Cordialement');
-    }
+    }*/
 
     /**
      * Get the array representation of the notification.
@@ -60,6 +60,7 @@ class MissionOrderLevelNotification extends BaseAnnouncement
      */
     public function toDatabase($notifiable): array
     {
+        $notifiable->createPendingNotificationForMission($this->title, $this->body, $this->link, $this->linkText);
         return [
             'order_id' => $this->missionOrder->id,
             'order_number' => $this->missionOrder->order_number,

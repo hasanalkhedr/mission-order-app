@@ -51,4 +51,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+    public function pendingNotifications()
+    {
+        return $this->hasMany(PendingNotification::class);
+    }
+
+    public function createPendingNotificationForMission($title, $body, $link, $linkText)
+    {
+        $this->pendingNotifications()->create([
+            'data' => [
+                'title' => $title,
+                'body' => $body,
+                'link' => $link,
+                'linkText' => $linkText
+            ]
+        ]);
+    }
 }

@@ -36,13 +36,13 @@ class MemoireMissionOrderLevelNotification extends BaseAnnouncement
      */
     public function via($notifiable): array
     {
-        return ['database', 'mail'];
+        return ['database'/*, 'mail'*/];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    /*public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject($this->title)
@@ -60,6 +60,7 @@ class MemoireMissionOrderLevelNotification extends BaseAnnouncement
      */
     public function toDatabase($notifiable): array
     {
+        $notifiable->createPendingNotificationForMission($this->title, $this->body, $this->link, $this->linkText);
         return [
             'order_id' => $this->missionOrder->id,
             'order_number' => $this->missionOrder->order_number,
