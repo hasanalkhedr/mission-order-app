@@ -123,6 +123,166 @@
                     </x-select-input>
             </div>
         </div>
+        <!-- Add the new advance payment section here -->
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-full px-3 py-1">
+                <x-label class="w-1/3 inline-flex">
+                    Demande d'avance<span class="text-red-500">*</span>
+                </x-label>
+                <input required @checked(old('advance') > 0) type="radio" value="1" name="needs_advance"
+                    id="needs_advance_yes"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
+                <label for="needs_advance_yes"
+                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
+                <input required @checked(old('advance') == 0) type="radio" value="0" name="needs_advance"
+                    id="needs_advance_no"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
+                <label for="needs_advance_no"
+                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
+            </div>
+        </div>
+
+        <!-- Add this after your existing advance amount field -->
+        <div class="flex flex-wrap -mx-3 mb-2" id="advance_amount_container" style="display: none;">
+            <div class="w-1/2 px-3">
+                <x-label>
+                    Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
+                </x-label>
+                <x-text-input name="advance" value="{{ old('advance') }}" id="advance_amount_input" />
+                <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
+                    hébergement)</small>
+                <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
+            </div>
+        </div>
+
+        <!-- Add this JavaScript to calculate and validate the advance amount -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const advanceRadios = document.querySelectorAll('.advance-radio');
+                const advanceAmountContainer = document.getElementById('advance_amount_container');
+                const advanceAmountInput = document.getElementById('advance_amount_input');
+                const maxAdvanceSpan = document.getElementById('max_advance');
+                const advanceError = document.getElementById('advance_error');
+                const baremeSelect = document.querySelector('select[name="bareme_id"]');
+                const startDateInput = document.querySelector('input[name="start_date"]');
+                const endDateInput = document.querySelector('input[name="end_date"]');
+                const startTimeInput = document.querySelector('input[name="start_time"]');
+                const endTimeInput = document.querySelector('input[name="end_time"]');
+
+                // Store bareme data for calculation
+                const baremes = {!! json_encode(
+                    $bareme->keyBy('id')->map(function ($item) {
+                        return [
+                            'accomodation_cost' => $item->accomodation_cost,
+                            'currency' => $item->currency,
+                        ];
+                    }),
+                ) !!};
+
+                // Function to calculate days difference with 5 AM rule
+                function calculateDays() {
+                    if (!startDateInput.value || !endDateInput.value) return 0;
+
+                    const startDate = new Date(`${startDateInput.value}T${startTimeInput.value || '00:00'}`);
+                    const endDate = new Date(`${endDateInput.value}T${endTimeInput.value || '00:00'}`);
+
+                    // Calculate full calendar days difference
+                    const timezoneOffset = startDate.getTimezoneOffset() * 60000;
+                    const normalizedStart = new Date(startDate - timezoneOffset);
+                    const normalizedEnd = new Date(endDate - timezoneOffset);
+
+                    // Get date parts only (ignoring time)
+                    const startDateOnly = new Date(normalizedStart.toISOString().split('T')[0]);
+                    const endDateOnly = new Date(normalizedEnd.toISOString().split('T')[0]);
+
+                    // Difference in full calendar days
+                    const diffDays = Math.round((endDateOnly - startDateOnly) / (1000 * 60 * 60 * 24));
+
+
+                    let totalDays = diffDays;
+
+                    // Add extra day if start time is before 5 AM
+                    if (startDate.getHours() < 5) {
+                        totalDays += 1;
+                    }
+
+                    return totalDays;
+                }
+
+                // Function to calculate max advance amount
+                function calculateMaxAdvance() {
+                    const selectedBareme = baremeSelect.value;
+                    if (!selectedBareme) return 0;
+
+                    const days = calculateDays();
+                    const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
+                    const totalCost = days * dailyCost;
+                    const maxAdvance = totalCost * 0.75; // 75% of total
+const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
+                    return maxAdvanceInLocal.toFixed(2);
+                }
+
+                // Function to update max advance display
+                function updateMaxAdvance() {
+                    const maxAdvance = calculateMaxAdvance();
+                    maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
+                }
+
+                // Function to validate advance amount
+                function validateAdvanceAmount() {
+                    const maxAdvance = parseFloat(calculateMaxAdvance());
+                    const requestedAdvance = parseFloat(advanceAmountInput.value) || 0;
+
+                    if (requestedAdvance > maxAdvance) {
+                        advanceError.classList.remove('hidden');
+                        return false;
+                    } else {
+                        advanceError.classList.add('hidden');
+                        return true;
+                    }
+                }
+
+                // Toggle advance amount visibility
+                function toggleAdvanceAmount() {
+                    const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
+                    if (needsAdvance === '1') {
+                        advanceAmountContainer.style.display = 'flex';
+                        advanceAmountInput.required = true;
+                        updateMaxAdvance();
+                    } else {
+                        advanceAmountContainer.style.display = 'none';
+                        advanceAmountInput.required = false;
+                    }
+                }
+
+                // Set initial state
+                toggleAdvanceAmount();
+
+                // Add event listeners
+                advanceRadios.forEach(radio => {
+                    radio.addEventListener('change', toggleAdvanceAmount);
+                });
+
+                baremeSelect.addEventListener('change', updateMaxAdvance);
+                startDateInput.addEventListener('change', updateMaxAdvance);
+                endDateInput.addEventListener('change', updateMaxAdvance);
+                startTimeInput.addEventListener('change', updateMaxAdvance);
+                endTimeInput.addEventListener('change', updateMaxAdvance);
+                advanceAmountInput.addEventListener('input', validateAdvanceAmount);
+
+                // Also validate before form submission
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
+
+                    if (needsAdvance === '1' && !validateAdvanceAmount()) {
+                        e.preventDefault();
+                        alert(
+                            'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
+                            );
+                    }
+                });
+            });
+        </script>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChancelleryRate;
 use App\Models\Department;
 use App\Models\Bareme;
 use App\Models\Employee;
@@ -9,9 +10,9 @@ use App\Models\Tournee;
 use App\Models\User;
 use App\Notifications\MemoireTourneeLevelNotification;
 use App\Notifications\TourneeLevelNotification;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 class TourneeController extends Controller
 {
     public function index(Request $request)
@@ -65,7 +66,8 @@ class TourneeController extends Controller
         if (auth()->user()->employee->allow_order) {
             $bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
             $tour_number = Tournee::generateOrderNumber();
-            return view('tournees.create', compact('bareme', 'tour_number'));
+            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            return view('tournees.create', compact('bareme', 'tour_number', 'chancellery_rate'));
         } else {
             return abort(403, 'You are not authorized to do this');
         }
@@ -86,6 +88,31 @@ class TourneeController extends Controller
             'end_time' => 'required|date_format:H:i',
             'charge' => 'required',
             'ijm' => 'required',
+            'advance' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $bareme = Bareme::find($request->bareme_id);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    // Calculate full calendar days difference
+                    $diffDays = abs($end->diffInDays($start));
+
+                    $totalDays = $diffDays;
+
+                    // Add extra day if start time is before 5 AM
+                    if ($start->hour < 5) {
+                        $totalDays += 1;
+                    }
+
+                    $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    if ($value > $maxAdvanceInLocal) {
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                    }
+                }
+            ],
 
         ]);
         $action = $request->input('action');
@@ -144,7 +171,8 @@ class TourneeController extends Controller
     {
         if ($tournee->employee_id == auth()->user()->employee->id) {
             $bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
-            return view('tournees.edit', compact('tournee', 'bareme'));
+            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            return view('tournees.edit', compact('tournee', 'bareme', 'chancellery_rate'));
         } else {
             return abort(403, 'Unauthorized Action, you are not allowed to modify other employees tournees');
         }
@@ -165,6 +193,31 @@ class TourneeController extends Controller
             'end_time' => 'required',
             'charge' => 'required',
             'ijm' => 'required',
+            'advance' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $bareme = Bareme::find($request->bareme_id);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    // Calculate full calendar days difference
+                    $diffDays = abs($end->diffInDays($start));
+
+                    $totalDays = $diffDays;
+
+                    // Add extra day if start time is before 5 AM
+                    if ($start->hour < 5) {
+                        $totalDays += 1;
+                    }
+
+                    $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    if ($value > $maxAdvanceInLocal) {
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                    }
+                }
+            ],
         ]);
         $action = $request->input('action');
         $status = '';
@@ -287,7 +340,7 @@ class TourneeController extends Controller
         $request->validate([
             'no_ded_accomodation' => 'required|numeric',
             'no_ded_meals' => 'required|numeric',
-            'advance' => 'required|numeric',
+            //'advance' => 'required|numeric',
             'total_amount' => 'required|numeric',
             'memor_date' => 'required|date|after_or_equal:end_date',
 
@@ -323,7 +376,7 @@ class TourneeController extends Controller
         $tournee->update([
             'no_ded_accomodation' => 0,
             'no_ded_meals' => 0,
-            'advance' => 0,
+           // 'advance' => 0,
             'total_amount' => 0,
             'memor_status' => null,
         ]);

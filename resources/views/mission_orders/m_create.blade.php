@@ -147,7 +147,7 @@
                 <x-label>
                     Avance sur IJM (EURO ou USD)<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input type="number" name="advance" step="any" value="{{old('advance',  $missionOrder->advance )}}" />
+                <x-readonly-text-input value="{{ $missionOrder->advance }}" />
             </div>
             <div class="w-1/2 px-3">
                 <x-label>{{__('Submit Values before add expenses')}}</x-label>

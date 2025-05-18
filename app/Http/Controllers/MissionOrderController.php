@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChancelleryRate;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\MissionOrder;
@@ -9,6 +10,7 @@ use App\Models\Bareme;
 use App\Notifications\MemoireMissionOrderLevelNotification;
 use App\Notifications\MissionOrderLevelNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 class MissionOrderController extends Controller
@@ -64,7 +66,8 @@ class MissionOrderController extends Controller
         if (auth()->user()->employee->allow_order) {
             $baremes = Bareme::all();
             $mission_number = MissionOrder::generateOrderNumber();
-            return view('mission_orders.create', compact('baremes', 'mission_number'));
+            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            return view('mission_orders.create', compact('baremes', 'mission_number', 'chancellery_rate'));
         } else {
             return abort(403, 'You are not authorized to do this');
         }
@@ -88,7 +91,31 @@ class MissionOrderController extends Controller
             'charge' => 'required',
             'ijm' => 'required',
             'assurance' => 'required',
+            'advance' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $bareme = Bareme::find($request->bareme_id);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    // Calculate full calendar days difference
+                    $diffDays = abs($end->diffInDays($start));
 
+                    $totalDays = $diffDays;
+
+                    // Add extra day if start time is before 5 AM
+                    if ($start->hour < 5) {
+                        $totalDays += 1;
+                    }
+
+                    $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    if ($value > $maxAdvanceInLocal) {
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                    }
+                }
+            ],
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -156,7 +183,8 @@ class MissionOrderController extends Controller
     {
         if ($missionOrder->employee_id == auth()->user()->employee->id) {
             $baremes = Bareme::all();
-            return view('mission_orders.edit', compact('missionOrder', 'baremes'));
+            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            return view('mission_orders.edit', compact('missionOrder', 'baremes', 'chancellery_rate'));
         } else {
             return abort(403, 'Unauthorized Action, you are not allowed to modify other employees missions');
         }
@@ -179,6 +207,31 @@ class MissionOrderController extends Controller
             'charge' => 'required',
             'ijm' => 'required',
             'assurance' => 'required',
+            'advance' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    $bareme = Bareme::find($request->bareme_id);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    // Calculate full calendar days difference
+                    $diffDays = abs($end->diffInDays($start));
+
+                    $totalDays = $diffDays;
+
+                    // Add extra day if start time is before 5 AM
+                    if ($start->hour < 5) {
+                        $totalDays += 1;
+                    }
+
+                    $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    if ($value > $maxAdvanceInLocal) {
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                    }
+                }
+            ],
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -311,7 +364,7 @@ class MissionOrderController extends Controller
         $request->validate([
             'no_ded_accomodation' => 'required|numeric',
             'no_ded_meals' => 'required|numeric',
-            'advance' => 'required|numeric',
+            //'advance' => 'required|numeric',
             'total_amount' => 'required|numeric',
             'memor_date' => 'required|date|after_or_equal:end_date',
         ]);
@@ -347,7 +400,7 @@ class MissionOrderController extends Controller
         $missionOrder->update([
             'no_ded_accomodation' => 0,
             'no_ded_meals' => 0,
-            'advance' => 0,
+            //'advance' => 0,
             'total_amount' => 0,
             'memor_status' => null,
         ]);
