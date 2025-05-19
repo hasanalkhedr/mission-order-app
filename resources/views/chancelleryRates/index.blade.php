@@ -10,6 +10,7 @@
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg"
                 data-modal-toggle="createRateModal">
                 {{ __('Add Chancellery Rate') }}
+                1 EORO = ?
             </button>
         @endif
     </div>
