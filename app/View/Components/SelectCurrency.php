@@ -16,7 +16,7 @@ class SelectCurrency extends Component
     public $selectedCurrency;
     public function __construct($selectedCurrency = null)
     {
-        $this->currencies = Bareme::select('currency')->distinct()->pluck('currency');
+        $this->currencies = collect(['EURO', 'Roupie indienne']); //Bareme::select('currency')->distinct()->pluck('currency');
         $this->selectedCurrency = $selectedCurrency;
     }
 

@@ -13,6 +13,8 @@
 
             <!-- Title -->
             <h1 class="text-2xl font-bold text-center mb-2">MÉMOIRE DE FRAIS</h1>
+
+            <!-- Mission Info -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -58,17 +60,21 @@
                     <tr>
                         <td class="w-1/4">Nuitées à déduire des IJM :</td>
                         <td class="w-1/4">{{ $tournee->no_ded_accomodation }}</td>
+                        <input type="hidden" id="no_ded_accomodation" value="{{ $tournee->no_ded_accomodation }}">
                         <td class="w-1/4">Repas à déduire :</td>
                         <td class="w-1/4">{{ $tournee->no_ded_meals }}</td>
+                        <input type="hidden" id="no_ded_meals" value="{{ $tournee->no_ded_meals }}">
                     </tr>
                     <tr>
-                        <td class="w-1/4">Avance sur IJM (USD ou EURO) :</td>
+                        <td class="w-1/4">Avance (Roupie indienne) :</td>
                         <td class="w-1/4">{{ $tournee->advance }}</td>
                         <td class="w-1/4">Restau adm. :</td>
                         <td class="w-1/4">0</td>
                     </tr>
                 </tbody>
             </table>
+
+            <!-- IJM Table -->
             <table class="table-auto w-full text-left px-2">
                 <thead>
                     <tr class="bg-blue-200">
@@ -83,6 +89,8 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Expense Table -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -99,10 +107,14 @@
 <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
     <thead>
         <tr>
+            <th scope="col" class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">Type</th>
             <th scope="col"
                 class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                 Nature de
                 la dépense</th>
+                <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Détails</th>
             <th scope="col"
                 class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                 Date
@@ -118,44 +130,80 @@
     <tbody>
         @forelse ($tournee->expenses as $expense)
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                <!-- Type -->
                 <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
-                    {{ $expense->description }}</td>
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    <span class="text-blue-600 font-medium">Transport</span>
+                                                                @else
+                                                                    <span class="text-green-600 font-medium">Repas</span>
+                                                                @endif
+                                                            </td>
+                <!-- Description -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ Str::limit($expense->description, 20) }}
+                                                            </td>
+
+                                                            <!-- Details -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                    @if ($expense->transport_details)
+                                                                        <span
+                                                                            class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
+                                                                    @endif
+                                                                @else
+                                                                    {{ Str::limit($expense->meal_location, 15) }}
+                                                                    <span
+                                                                        class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
+                                                                        pers.</span>
+                                                                @endif
+                                                            </td>
+                <!-- Date -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ $expense->expense_date->format('d/m/Y') }}
+                                                            </td>
+
+                                                            <!-- Amount -->
                 <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->amount }}</td>
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm text-gray-800">
-                    {{ $expense->currency }}</td>
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ number_format($expense->amount, 2) }}
+                                                            </td>
+
+                                                            <!-- Currency -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ $expense->currency }}
+                                                            </td>
             </tr>
         @empty
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                <td colspan="4"
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-sm font-medium text-gray-800">
-                    {{ __('No Expenses Found') }}</td>
-            </tr>
+                                                            <td colspan="6"
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
+                                                                {{ __('No Expenses Found') }}
+                                                            </td>
+                                                        </tr>
         @endforelse
     </tbody>
     <tfoot>
         @forelse ($tournee->getExpensesByCurrency() as $currency=>$currencyAmount)
             <tr>
-                <th scope="col"></th>
+                <th scope="col" colspan="3"></th>
                 <th scope="col"
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                     SOMME
                 </th>
                 <th scope="col"
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ $currencyAmount }}
+                    {{ number_format($currencyAmount, 2) }}
                 </th>
                 <th scope="col"
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                     {{ $currency }}
                 </th>
-                <th scope="col"></th>
             </tr>
         @empty
         @endforelse
@@ -169,6 +217,8 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Totals Table -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -180,15 +230,15 @@
                         <td class="w-full py-1" colspan="2">
                             <table class="border border-gray-500 table-auto text-center">
     <tr>
-        <td rowspan="2" class="w-1/3 border border-gray-500">Totaux</td>
-        <td class="border border-gray-500 w-2/12">IJM</td>
-        <td class="border border-gray-500 w-2/12">Frais divers</td>
-        <td class="border border-gray-500 w-2/12">Avance</td>
-        <td class="border border-gray-500 w-2/12">Net à payer</td>
-    </tr>
+                                    <td rowspan="2" class="w-1/12 border border-gray-500 font-bold">Totaux</td>
+                                    <td class="border border-gray-500 w-3/12">IJM</td>
+                                    <td class="border border-gray-500 w-3/12">Frais divers</td>
+                                    <td class="border border-gray-500 w-2/12">Avance</td>
+                                    <td class="border border-gray-500 w-3/12">Net à payer</td>
+                                </tr>
     <tr>
-        <td class="border border-gray-500 w-2/12">{{ $tournee->total_amount }}</td>
-        <td class="border border-gray-500 w-2/12">
+        <td class="border border-gray-500 w-3/12">{{ $tournee->total_amount }}</td>
+        <td class="border border-gray-500 w-3/12">
             <ul>
                 @forelse ($tournee->getExpensesByCurrency() as $currency=>$currencyAmount)
                     <li>{{ $currencyAmount }} {{ $currency }}</li>
@@ -198,7 +248,7 @@
             </ul>
         </td>
         <td class="border border-gray-500 w-2/12">{{ $tournee->advance }}</td>
-        <td class="border border-gray-500 w-2/12">
+        <td class="border border-gray-500 w-3/12">
             <ul>
                 @forelse ($tournee->getMemoireTotals() as $currency=>$currencyAmount)
                     <li>{{ $currencyAmount }} {{ $currency }}</li>
@@ -212,13 +262,15 @@
                         </td>
                 </tbody>
             </table>
+
+            <!-- Net Total Table -->
             <table class="table-auto w-full text-left">
                 @if (count($tournee->getMemoireTotals()) === 1)
                     <tr>
                         <td class="w-1/3 py-[1px]">ARRETE ET LIQUIDE LA SOMME DE :</td>
                         @foreach ($tournee->getMemoireTotals() as $currency => $currencyAmount)
-                            <td class="w-2/3 py-[1px]">{{ $currencyAmount }} {{ $currency }} <span
-                                    class="font-normal px-5"> arrondi à </span>{{ round($currencyAmount) }}
+                            <td class="w-2/3 py-[1px] font-bold text-red-600">{{ $currencyAmount }} {{ $currency }}
+                                <span class="font-normal px-5"> arrondi à </span>{{ round($currencyAmount) }}
                                 {{ $currency }}</td>
                         @endforeach
                     </tr>
@@ -226,24 +278,28 @@
                     @foreach ($tournee->getMemoireTotals() as $currency => $currencyAmount)
                         @if ($loop->first)
                             <tr>
-                                <td class="w-1/3 py-[1px]" rowspan="{{ count($tournee->getMemoireTotals()) }}">
-                                    ARRETE ET LIQUIDE LA SOMME DE :</td>
-                                <td class="w-2/3 py-[1px]">{{ $currencyAmount }} {{ $currency }} <span
-                                        class="font-normal px-5">
-                                        arrondi à </span>{{ round($currencyAmount) }}
+                                <td class="w-1/4 py-[1px]" rowspan="{{ count($tournee->getMemoireTotals()) }}">
+                                    ARRETE ET LIQUIDE LA SOMME DE:</td>
+                                <td class="w-1/4 py-[1px]">{{ $currencyAmount }} {{ $currency }}</td>
+                                <td class="w-1/4 py-[1px]"> <span class="font-normal px-5">
+                                        arrondi à </span></td>
+                                <td class="w-1/4 py-[1px]  font-bold text-red-600">{{ round($currencyAmount) }}
                                     {{ $currency }}</td>
                             </tr>
                         @else
                             <tr>
-                                <td class="w-2/3 py-[1px]">{{ $currencyAmount }} {{ $currency }} <span
-                                        class="font-normal px-5">
-                                        arrondi à </span>{{ round($currencyAmount) }}
+                                <td class="w-1/4 py-[1px]">{{ $currencyAmount }} {{ $currency }}</td>
+                                <td class="w-1/4 py-[1px]"> <span class="font-normal px-5">
+                                        arrondi à </span></td>
+                                <td class="w-1/4 py-[1px] font-bold text-red-600">{{ round($currencyAmount) }}
                                     {{ $currency }}</td>
                             </tr>
                         @endif
                     @endforeach
                 @endif
             </table>
+
+            <!-- Signatures -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">

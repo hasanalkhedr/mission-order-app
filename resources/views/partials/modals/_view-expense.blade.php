@@ -26,70 +26,103 @@
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-2/3 px-3">
+                        <!-- Expense Type -->
                         <div class="flex flex-wrap -mx-3 mb-0">
-                            <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
-                            <textarea name="description" rows="4" disabled
+                            <x-label>Type de dépense</x-label>
+                            <x-readonly-text-input value=" {{ __('expense.types.' . $expense->type) }}" />
+                        </div>
+
+                        <!-- Transport Details (shown only for transport type) -->
+                        @if ($expense->type === 'transport')
+                            <div class="transport-details">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Type de transport</x-label>
+                                    <x-readonly-text-input
+                                        value="{{ __('expense.transport_types.' . $expense->transport_type) }}" />
+                                </div>
+                                @if ($expense->transport_details)
+                                    <div class="flex flex-wrap -mx-3 mb-0">
+                                        <x-label>Détails du transport</x-label>
+                                        <textarea rows="2" disabled
+                                            class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->transport_details }}</textarea>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
+                        <!-- Meal Details (shown only for extra_meal type) -->
+                        @if ($expense->type === 'extra_meal')
+                            <div class="meal-details">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_location }}" />
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_participants }}" />
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Common Fields -->
+                        <div class="flex flex-wrap -mx-3 mb-0">
+                            <x-label>Nature de dépense</x-label>
+                            <textarea rows="4" disabled
                                 class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->description }}</textarea>
                         </div>
                         <div class="-mx-3 w-full mb-0">
-                            <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
-                            <x-date-time-input class="w-full" name="expense_date"
-                                value="{{ $expense->expense_date->format('Y-m-d') }}"
+                            <x-label>Date de dépense</x-label>
+                            <x-date-time-input class="w-full" value="{{ $expense->expense_date->format('Y-m-d') }}"
                                 type="date" disabled>
                             </x-date-time-input>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-0">
-                            <x-label>Montant<span class="text-red-500">*</span></x-label>
-                            <x-readonly-text-input type="number" name="amount"
-                                value="{{ $expense->amount }}" />
-                        </div>
-                        <div class="flex flex-wrap -mx-3 mb-0">
-                            <x-label>Devise<span class="text-red-500">*</span></x-label>
-                            <x-readonly-text-input name="currency"
-                                value="{{ $expense->currency }}" />
+                            <x-label>Montant</x-label>
+                            <x-readonly-text-input
+                                value="{{ number_format($expense->amount, 2) }} {{ $expense->currency }}" />
                         </div>
                     </div>
+
                     <!-- Expense Document -->
                     <div class="w-1/3 h-1/2 px-3">
                         <div class="relative w-full h-full mx-auto">
-                            @if(pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
-                                <!-- PDF Viewer -->
-                                <embed src="{{ asset('storage/' . $expense->expense_document) }}"
-                                       type="application/pdf"
-                                       width="100%"
-                                       height="100%"
-                                       class="border border-gray-300 rounded-lg">
-                                <div class="text-center mt-2">
-                                    <a href="{{ asset('storage/' . $expense->expense_document) }}"
-                                       target="_blank"
-                                       class="text-blue-600 hover:text-blue-800 text-sm">
-                                        Open PDF in new tab
-                                    </a>
-                                </div>
+                            @if ($expense->expense_document)
+                                @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
+                                    <!-- PDF Viewer -->
+                                    <embed src="{{ asset('storage/' . $expense->expense_document) }}"
+                                        type="application/pdf" width="100%" height="100%"
+                                        class="border border-gray-300 rounded-lg">
+                                    <div class="text-center mt-2">
+                                        <a href="{{ asset('storage/' . $expense->expense_document) }}" target="_blank"
+                                            class="text-blue-600 hover:text-blue-800 text-sm">
+                                            {{ __('Open PDF in new tab') }}
+                                        </a>
+                                    </div>
+                                @else
+                                    <!-- Image Viewer -->
+                                    <img src="{{ asset('storage/' . $expense->expense_document) }}"
+                                        alt="Expense Document"
+                                        class="object-cover w-full h-full border border-gray-300 rounded-lg">
+                                    <div class="text-center mt-2">
+                                        <a href="{{ asset('storage/' . $expense->expense_document) }}" target="_blank"
+                                            class="text-blue-600 hover:text-blue-800 text-sm">
+                                            {{ __('View Full Image') }}
+                                        </a>
+                                    </div>
+                                @endif
                             @else
-                                <!-- Image Viewer -->
-                                <img src="{{ asset('storage/' . $expense->expense_document) }}"
-                                    alt="Expense Document"
-                                    class="object-cover w-full h-full border border-gray-300 rounded-lg">
-                                <div class="text-center mt-2">
-                                    <a href="{{ asset('storage/' . $expense->expense_document) }}"
-                                       target="_blank"
-                                       class="text-blue-600 hover:text-blue-800 text-sm">
-                                        View Full Image
-                                    </a>
+                                <div class="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                                    <span class="text-gray-500">No document attached</span>
                                 </div>
                             @endif
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
-                    <div>
-                        <button data-modal-toggle="viewExpenseModal-{{ $expense->id }}"
-                            type="button"
-                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                            {{ __('Close') }}
-                        </button>
-                    </div>
+                    <button data-modal-toggle="viewExpenseModal-{{ $expense->id }}" type="button"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                        {{ __('Close') }}
+                    </button>
                 </div>
             </div>
         </div>

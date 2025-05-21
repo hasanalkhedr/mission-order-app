@@ -28,17 +28,55 @@
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-2/3 px-3">
+                        <!-- Expense Type -->
+                        <div class="flex flex-wrap -mx-3 mb-0">
+                            <x-label>Type de dépense</x-label>
+                            <x-readonly-text-input value=" {{ __('expense.types.' . $expense->type) }}" />
+                        </div>
+
+                        <!-- Transport Details (shown only for transport type) -->
+                        @if ($expense->type === 'transport')
+                            <div class="transport-details">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Type de transport</x-label>
+                                    <x-readonly-text-input
+                                        value="{{ __('expense.transport_types.' . $expense->transport_type) }}" />
+                                </div>
+                                @if ($expense->transport_details)
+                                    <div class="flex flex-wrap -mx-3 mb-0">
+                                        <x-label>Détails du transport</x-label>
+                                        <textarea rows="2" disabled
+                                            class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->transport_details }}</textarea>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
+                        <!-- Meal Details (shown only for extra_meal type) -->
+                        @if ($expense->type === 'extra_meal')
+                            <div class="meal-details">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_location }}" />
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_participants }}" />
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Common Fields -->
                         <div class="flex flex-wrap -mx-3 mb-0">
                             <x-label>Nature de dépense<span
                                     class="text-red-500">*</span></x-label>
-                            <textarea name="description" rows="4" disabled
+                            <textarea rows="4" disabled
                                 class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->description }}</textarea>
                         </div>
                         <div class="-mx-3 w-full mb-0">
                             <x-label>Date de dépense<span
                                     class="text-red-500">*</span></x-label>
-                            <x-date-time-input class="w-full" name="expense_date"
-                                value="{{ $expense->expense_date->format('Y-m-d') }}"
+                            <x-date-time-input class="w-full" value="{{ $expense->expense_date->format('Y-m-d') }}"
                                 type="date" disabled>
                             </x-date-time-input>
                         </div>

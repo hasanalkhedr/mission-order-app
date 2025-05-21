@@ -32,20 +32,63 @@
                     <div class="flex flex-wrap -mx-3 mb-6">
                         <div class="w-2/3 px-3">
                             <div class="flex flex-wrap -mx-3 mb-0">
-                                <x-label>Nature de dépenses<span class="text-red-500">*</span></x-label>
-                                <textarea name="description" rows="4" required
+                                <x-label>Type de dépense<span class="text-red-500">*</span></x-label>
+                                <x-select-input id="type-edit-{{ $expense->id }}" name="type" onchange="updateExpenseFieldsEdit('{{ $expense->id }}')">
+                                    <option value="">--sélectionner le type--</option>
+                                    <option value="transport" @selected(old('type', $expense->type) == 'transport')>transport</option>
+                                    <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>repas supplémentaire</option>
+                                </x-select-input>
+                            </div>
+
+                            <!-- Transport Type Fields -->
+                            <div id="transportFields-edit-{{ $expense->id }}" class="{{ $expense->type == 'transport' ? '' : 'hidden' }}">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Type de transport<span class="text-red-500">*</span></x-label>
+                                    <x-select-input id="transport_type-edit-{{ $expense->id }}" name="transport_type">
+                                        <option value="">--sélectionner le type de transport--</option>
+                                        <option value="plane" @selected(old('transport_type', $expense->transport_type) == 'plane')>Avion</option>
+                                        <option value="train" @selected(old('transport_type', $expense->transport_type) == 'train')>Train</option>
+                                        <option value="taxi_uber" @selected(old('transport_type', $expense->transport_type) == 'taxi_uber')>Taxi/Uber</option>
+                                        <option value="public_transport" @selected(old('transport_type', $expense->transport_type) == 'public_transport')>Transport public</option>
+                                        <option value="car_rental_with_driver" @selected(old('transport_type', $expense->transport_type) == 'car_rental_with_driver')>Location de voiture avec chauffeur</option>
+                                    </x-select-input>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Détails du transport</x-label>
+                                    <textarea id="transport_details-edit-{{ $expense->id }}" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
+                                        class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details', $expense->transport_details) }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Meal Type Fields -->
+                            <div id="mealFields-edit-{{ $expense->id }}" class="{{ $expense->type == 'extra_meal' ? '' : 'hidden' }}">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
+                                    <x-text-input id="meal_location-edit-{{ $expense->id }}" name="meal_location"
+                                        value="{{ old('meal_location', $expense->meal_location) }}"
+                                        placeholder="Nom du restaurant ou adresse"/>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
+                                    <x-text-input type="number" id="meal_participants-edit-{{ $expense->id }}" name="meal_participants"
+                                        value="{{ old('meal_participants', $expense->meal_participants) }}" min="1"/>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap -mx-3 mb-0">
+                                <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
+                                <textarea id="description-edit-{{ $expense->id }}" name="description" rows="4" required
                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description', $expense->description) }}</textarea>
                             </div>
                             <div class="-mx-3 w-full mb-0">
-                                <x-label>Date de dépenses<span class="text-red-500">*</span></x-label>
-                                <x-date-time-input class="w-full" name="expense_date"
-                                    value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}"
-                                    type="date" required>
+                                <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
+                                <x-date-time-input class="w-full" id="expense_date-edit-{{ $expense->id }}" name="expense_date"
+                                    value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" type="date" required>
                                 </x-date-time-input>
                             </div>
                             <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Montant<span class="text-red-500">*</span></x-label>
-                                <x-text-input type="number" step="any" required name="amount"
+                                <x-text-input type="number" step="any" required id="amount-edit-{{ $expense->id }}" name="amount"
                                     value="{{ old('amount', $expense->amount) }}" />
                             </div>
                             <div class="flex flex-wrap -mx-3 mb-0">
@@ -95,16 +138,14 @@
                         </div>
                     </div>
                     <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
-                        <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
-                            <button type="button" data-modal-toggle="editExpenseModal-{{ $expense->id }}"
-                                class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5">
-                                {{ __('Cancel') }}
-                            </button>
-                            <button type="submit"
-                                class="text-white blue-bg hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
-                                {{ __('Update') }}
-                            </button>
-                        </div>
+                        <button type="button" data-modal-toggle="editExpenseModal-{{ $expense->id }}"
+                            class="text-gray-500 bg-white hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5">
+                            {{ __('Cancel') }}
+                        </button>
+                        <button type="submit"
+                            class="text-white blue-bg hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            {{ __('Update') }}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -151,12 +192,44 @@
         }
     }
 
+    function updateExpenseFieldsEdit(expenseId) {
+        const expenseType = document.getElementById('type-edit-' + expenseId).value;
+        const transportFields = document.getElementById('transportFields-edit-' + expenseId);
+        const mealFields = document.getElementById('mealFields-edit-' + expenseId);
+
+        // Hide all fields first
+        transportFields.classList.add('hidden');
+        mealFields.classList.add('hidden');
+
+        // Show relevant fields based on selected type
+        if (expenseType === 'transport') {
+            transportFields.classList.remove('hidden');
+            // Set required attributes for transport fields
+            document.getElementById('transport_type-edit-' + expenseId).required = true;
+            document.getElementById('meal_location-edit-' + expenseId).required = false;
+            document.getElementById('meal_participants-edit-' + expenseId).required = false;
+        } else if (expenseType === 'extra_meal') {
+            mealFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type-edit-' + expenseId).required = false;
+            document.getElementById('meal_location-edit-' + expenseId).required = true;
+            document.getElementById('meal_participants-edit-' + expenseId).required = true;
+        } else {
+            // No type selected
+            document.getElementById('transport_type-edit-' + expenseId).required = false;
+            document.getElementById('meal_location-edit-' + expenseId).required = false;
+            document.getElementById('meal_participants-edit-' + expenseId).required = false;
+        }
+    }
+
     // Set up event listeners when DOM is ready
     document.addEventListener("DOMContentLoaded", function() {
         const fileInput = document.getElementById('expense_document-edit-{{ $expense->id }}');
         if (fileInput) {
             fileInput.addEventListener('change', handleFileSelectEdit_{{ $expense->id }});
         }
-    });
 
+        // Initialize fields based on current expense type
+        updateExpenseFieldsEdit('{{ $expense->id }}');
+    });
 </script>

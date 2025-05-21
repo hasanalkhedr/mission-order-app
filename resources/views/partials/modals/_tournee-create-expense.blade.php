@@ -24,32 +24,73 @@
             </div>
             <!-- Modal body -->
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
-                <form id="myForm" method="POST" action="{{ route('tournee_expenses.store') }}"
+                <form id="expenseForm" method="POST" action="{{ route('tournee_expenses.store') }}"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="flex flex-wrap -mx-3 mb-6">
                         <input type="hidden" name="tournee_id" value="{{ $tournee->id }}">
                         <div class="w-2/3 px-3">
                             <div class="flex flex-wrap -mx-3 mb-0">
+                                <x-label>type de dépense<span class="text-red-500">*</span></x-label>
+                                <x-select-input id="type" name="type" onchange="updateExpenseFields()">
+                                    <option value="">--sélectionner le type--</option>
+                                    <option value="transport">transport</option>
+                                    <option value="extra_meal">repas supplémentaire</option>
+                                </x-select-input>
+                            </div>
+
+                            <!-- Transport Type Fields (hidden by default) -->
+                            <div id="transportFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Type de transport<span class="text-red-500">*</span></x-label>
+                                    <x-select-input id="transport_type" name="transport_type">
+                                        <option value="">--sélectionner le type de transport--</option>
+                                        <option value="plane">Avion</option>
+                                        <option value="train">Train</option>
+                                        <option value="taxi_uber">Taxi/Uber</option>
+                                        <option value="public_transport">Transport public</option>
+                                        <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                    </x-select-input>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Détails du transport</x-label>
+                                    <textarea id="transport_details" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
+                                        class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details') }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Meal Type Fields (hidden by default) -->
+                            <div id="mealFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
+                                    <x-text-input id="meal_location" name="meal_location" value="{{ old('meal_location') }}"
+                                        placeholder="Nom du restaurant ou adresse"/>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
+                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
+                                        value="{{ old('meal_participants', 1) }}" min="1"/>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
-                                <textarea name="description" rows="4" required
+                                <textarea id="description" name="description" rows="4" required placeholder=""
                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
                             </div>
                             <div class="-mx-3 w-full mb-0">
                                 <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
-                                <x-date-time-input class="w-full" name="expense_date" value="{{ old('expense_date') }}"
-                                    type="date" required>
+                                <x-date-time-input required class="w-full" id="expense_date" name="expense_date"
+                                    value="{{ old('expense_date') }}" type="date">
                                 </x-date-time-input>
                             </div>
                             <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Montant<span class="text-red-500">*</span></x-label>
-                                <x-text-input type="number" step="any" required name="amount" value="{{ old('amount') }}" />
+                                <x-text-input type="number" step="0.01" required id="amount" name="amount"
+                                    value="{{ old('amount') }}" />
                             </div>
                             <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-select-currency :selectedCurrency="old('currency')" />
-
-                                {{-- <x-label>Devise<span class="text-red-500">*</span></x-label>
-                                    <x-text-input required name="currency" value="{{ old('currency') }}" /> --}}
                             </div>
                         </div>
                         <!-- Expense Document -->
@@ -60,13 +101,14 @@
                                     <embed id="pdfEmbed" src="" type="application/pdf" width="100%" height="100%">
                                     <div class="text-center mt-2 text-sm text-gray-600">PDF Preview</div>
                                 </div>
-                                <!-- Image preview -->
+
+                                <!-- Image Preview -->
                                 <img id="expenseDocumentPreview"
                                     src="{{ Vite::asset('resources/images/blank-expense.jpg') }}"
                                     alt="Document de dépenses" class="object-cover w-full h-full">
-                                <!-- Browse Files Button positioned on top of the image -->
-                                <div
-                                    class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
+
+                                <!-- File Upload Button -->
+                                <div class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
                                     <input type="file" name="expense_document" id="expense_document" class="hidden"
                                         accept=".pdf,.jpg,.jpeg,.png,.gif" required>
                                     <button type="button" id="browseButton"
@@ -75,6 +117,7 @@
                                             alt="Browse Files">
                                     </button>
                                 </div>
+
                                 <!-- File Info Display -->
                                 <div id="fileInfo" class="mt-2 text-sm text-gray-600 hidden">
                                     Selected file: <span id="fileName"></span>
@@ -140,7 +183,7 @@ function handleFileSelect(event) {
 }
 
 function checkRequiredFields() {
-    const form = document.getElementById('myForm');
+    const form = document.getElementById('expenseForm');
     const submitBtn = document.getElementById('submitBtn');
     const requiredFields = form.querySelectorAll('[required]');
     let allFilled = true;
@@ -155,6 +198,19 @@ function checkRequiredFields() {
         }
     });
 
+    // Check additional required fields based on expense type
+    const expenseType = document.getElementById('type').value;
+    if (expenseType === 'transport') {
+        if (!document.getElementById('transport_type').value.trim()) {
+            allFilled = false;
+        }
+    } else if (expenseType === 'extra_meal') {
+        if (!document.getElementById('meal_location').value.trim() ||
+            !document.getElementById('meal_participants').value.trim()) {
+            allFilled = false;
+        }
+    }
+
     // Update submit button state
     submitBtn.disabled = !allFilled;
     if (allFilled) {
@@ -164,6 +220,39 @@ function checkRequiredFields() {
         submitBtn.classList.remove('blue-bg');
         submitBtn.classList.add('bg-gray-300');
     }
+}
+
+function updateExpenseFields() {
+    const expenseType = document.getElementById('type').value;
+    const transportFields = document.getElementById('transportFields');
+    const mealFields = document.getElementById('mealFields');
+
+    // Hide all fields first
+    transportFields.classList.add('hidden');
+    mealFields.classList.add('hidden');
+
+    // Show relevant fields based on selected type
+    if (expenseType === 'transport') {
+        transportFields.classList.remove('hidden');
+        // Set required attributes for transport fields
+        document.getElementById('transport_type').required = true;
+        document.getElementById('meal_location').required = false;
+        document.getElementById('meal_participants').required = false;
+    } else if (expenseType === 'extra_meal') {
+        mealFields.classList.remove('hidden');
+        // Set required attributes for meal fields
+        document.getElementById('transport_type').required = false;
+        document.getElementById('meal_location').required = true;
+        document.getElementById('meal_participants').required = true;
+    } else {
+        // No type selected
+        document.getElementById('transport_type').required = false;
+        document.getElementById('meal_location').required = false;
+        document.getElementById('meal_participants').required = false;
+    }
+
+    // Recheck required fields
+    checkRequiredFields();
 }
 
 // Set up event listeners when DOM is ready
@@ -178,15 +267,33 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Form field validation
-    const form = document.getElementById('myForm');
-    form.querySelectorAll('[required]').forEach((field) => {
+    const form = document.getElementById('expenseForm');
+    form.querySelectorAll('input, select, textarea').forEach((field) => {
         field.addEventListener('input', checkRequiredFields);
         if (field.type === 'file') {
             field.addEventListener('change', checkRequiredFields);
         }
     });
 
+    // Expense type change handler
+    document.getElementById('type').addEventListener('change', updateExpenseFields);
+
     // Initial check
     checkRequiredFields();
+
+    // If there's old input (form validation failed), show the appropriate fields
+    @if(old('type'))
+        document.getElementById('type').value = '{{ old("type") }}';
+        updateExpenseFields();
+        @if(old('transport_type'))
+            document.getElementById('transport_type').value = '{{ old("transport_type") }}';
+        @endif
+        @if(old('meal_location'))
+            document.getElementById('meal_location').value = '{{ old("meal_location") }}';
+        @endif
+        @if(old('meal_participants'))
+            document.getElementById('meal_participants').value = '{{ old("meal_participants") }}';
+        @endif
+    @endif
 });
 </script>

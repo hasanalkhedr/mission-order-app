@@ -103,8 +103,10 @@ class Tournee extends Model
     {
 
         $expensesTotals = $this->getExpensesByCurrency();
-        $ex = $expensesTotals[$this->bareme->currency] ?? 0;
-        $expensesTotals[$this->bareme->currency] = $ex + $this->total_amount-$this->advance;
+        //$ex = $expensesTotals[$this->bareme->currency] ?? 0;
+         $ex = $expensesTotals['Roupie indienne'] ?? 0;
+        //$expensesTotals[$this->bareme->currency] = $ex + $this->total_amount-$this->advance;
+        $expensesTotals['Roupie indienne'] = $ex + $this->total_amount-$this->advance;
         return $expensesTotals;
         //return array_merge($expensesTotals, [$this->bareme->currency => $this->total_amount-$this->advance]);
     }

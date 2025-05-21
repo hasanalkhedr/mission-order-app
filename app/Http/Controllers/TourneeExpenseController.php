@@ -3,82 +3,234 @@
 namespace App\Http\Controllers;
 
 use App\Models\TourneeExpense;
-use App\Models\TourneeExpenseExpense;
 use App\Models\Tournee;
 use Illuminate\Http\Request;
 use Storage;
 
 class TourneeExpenseController extends Controller
 {
+    // public function store(Request $request)
+    // {
+    //     $tournee = Tournee::find($request->input('tournee_id'));
+    //     $request->validate([
+    //         'tournee_id' => 'required',
+    //         'amount' => 'required|numeric',
+    //         'currency' => 'required',
+    //         'expense_date' => 'required|date|after_or_equal:' . $tournee->start_date . '|before_or_equal:' . $tournee->end_date,
+    //         'description' => 'required',
+    //         // 'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
+    //     ]);
+
+    //     $expense = TourneeExpense::create($request->all());
+    //     if ($request->hasFile('expense_document')) {
+    //         // Store the image in 'storage/app/public/profile_pictures'
+    //         $file = $request->file('expense_document');
+    //         $filename = $request->input('tournee_id') . '-t-' . $expense->id . '.' . $file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
+
+    //         $path = $file->storeAs('expense_documents', $filename, 'public');
+
+    //         // Save the image path to the user's profile
+    //         $expense->expense_document = $path;
+    //         $expense->save();
+    //     }
+    //     return redirect()->route('tournees.m_create', $request->input('tournee_id'));
+    // }
+
     public function store(Request $request)
     {
-        $tournee = Tournee::find($request->input('tournee_id'));
-        $request->validate([
+        $tournee = Tournee::findOrFail($request->input('tournee_id'));
+        $rules = [
             'tournee_id' => 'required',
-            'amount' => 'required|numeric',
+            'type' => 'required|in:transport,extra_meal',
+            'amount' => 'required|decimal:0,3',
             'currency' => 'required',
-            'expense_date' => 'required|date|after_or_equal:'.$tournee->start_date.'|before_or_equal:'.$tournee->end_date,
+            'expense_date' => 'required|date|after_or_equal:' . $tournee->start_date . '|before_or_equal:' . $tournee->end_date,
             'description' => 'required',
-           // 'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-           'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
-        ]);
-
-        $expense = TourneeExpense::create($request->all());
-        if ($request->hasFile('expense_document')) {
-            // Store the image in 'storage/app/public/profile_pictures'
-            $file = $request->file('expense_document');
-            $filename = $request->input('tournee_id') . '-t-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
-
-            $path = $file->storeAs('expense_documents', $filename, 'public');
-
-            // Save the image path to the user's profile
-            $expense->expense_document = $path;
-            $expense->save();
-        }
-        return redirect()->route('tournees.m_create',$request->input('tournee_id'));
-    }
-    public function update(Request $request, TourneeExpense $expense)
-    {
-        $request->validate([
-            'amount' => 'required|numeric',
-            'currency' => 'required',
-            'expense_date' => 'required|date|after_or_equal:'.$expense->tournee->start_date.'|before_or_equal:'.$expense->tournee->end_date,
-
-            'description' => 'required',
-            //'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
-        ]);
+        ];
 
-        $expense->update($request->all());
+        // Conditional validation based on expense type
+        if ($request->type === 'transport') {
+            $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver';
+            $rules['transport_details'] = 'nullable|string|max:255';
+        } elseif ($request->type === 'extra_meal') {
+            $rules['meal_location'] = 'required|string|max:255';
+            $rules['meal_participants'] = 'required|integer|min:1';
+        }
+
+        // Custom error messages
+        $messages = [
+            'expense_date.after_or_equal' => 'Le champ date de dépense doit être une date postérieure ou égale à :date.',
+            'expense_date.before_or_equal' => 'Le champ date de dépense doit être une date antérieure ou égale à :date.',
+            'type.required' => 'Le type de dépense est requis',
+            'type.in' => 'Le type de dépense doit être soit "transport" ou "repas supplémentaire"',
+            'transport_type.required' => 'Le type de transport est requis',
+            'transport_type.in' => 'Le type de transport sélectionné est invalide',
+            'meal_location.required' => 'Le lieu du repas est requis',
+            'meal_participants.required' => 'Le nombre de participants est requis',
+            'meal_participants.integer' => 'Le nombre de participants doit être un nombre entier',
+            'meal_participants.min' => 'Le nombre de participants doit être au moins 1',
+        ];
+
+        $validatedData = $request->validate($rules, $messages);
+
+        // Create the expense with basic fields
+        $expenseData = [
+            'tournee_id' => $validatedData['tournee_id'],
+            'type' => $validatedData['type'],
+            'amount' => $validatedData['amount'],
+            'currency' => $validatedData['currency'],
+            'expense_date' => $validatedData['expense_date'],
+            'description' => $validatedData['description'],
+            'expense_document' => $validatedData['expense_document'],
+        ];
+
+        // Add type-specific fields
+        if ($validatedData['type'] === 'transport') {
+            $expenseData['transport_type'] = $validatedData['transport_type'];
+            $expenseData['transport_details'] = $validatedData['transport_details'] ?? null;
+        } elseif ($validatedData['type'] === 'extra_meal') {
+            $expenseData['meal_location'] = $validatedData['meal_location'];
+            $expenseData['meal_participants'] = $validatedData['meal_participants'];
+        }
+
+        $expense = TourneeExpense::create($expenseData);
+
+        // Handle file upload
         if ($request->hasFile('expense_document')) {
-            // Store the image in 'storage/app/public/profile_pictures'
             $file = $request->file('expense_document');
-            $filename = $expense->tournee_id . '-'. $expense->id . '.'.$file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
-
+            $filename = $request->input('tournee_id') . '-t-' . $expense->id . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('expense_documents', $filename, 'public');
-
-            // Save the image path to the user's profile
             $expense->expense_document = $path;
             $expense->save();
         }
-        return redirect()->route('tournees.m_create',$expense->tournee_id);
+
+        return redirect()->route('tournees.m_create', $request->input('tournee_id'))
+            ->with('success', 'Dépense créée avec succès');
     }
+
+    // public function update(Request $request, TourneeExpense $expense)
+    // {
+    //     $request->validate([
+    //         'amount' => 'required|numeric',
+    //         'currency' => 'required',
+    //         'expense_date' => 'required|date|after_or_equal:' . $expense->tournee->start_date . '|before_or_equal:' . $expense->tournee->end_date,
+
+    //         'description' => 'required',
+    //         //'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
+    //     ]);
+
+    //     $expense->update($request->all());
+    //     if ($request->hasFile('expense_document')) {
+    //         // Store the image in 'storage/app/public/profile_pictures'
+    //         $file = $request->file('expense_document');
+    //         $filename = $expense->tournee_id . '-' . $expense->id . '.' . $file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
+
+    //         $path = $file->storeAs('expense_documents', $filename, 'public');
+
+    //         // Save the image path to the user's profile
+    //         $expense->expense_document = $path;
+    //         $expense->save();
+    //     }
+    //     return redirect()->route('tournees.m_create', $expense->tournee_id);
+    // }
+
+    public function update(Request $request, TourneeExpense $tourneeExpense)
+    {
+        // Base validation rules
+        $rules = [
+            'type' => 'required|in:transport,extra_meal',
+            'amount' => 'required|numeric',
+            'currency' => 'required',
+            'expense_date' => 'required|date|after_or_equal:' . $tourneeExpense->tournee->start_date . '|before_or_equal:' . $tourneeExpense->tournee->end_date,
+            'description' => 'required',
+            'expense_document' => 'sometimes|file|mimes:jpg,jpeg,png,gif,pdf|max:4096', // Changed to 'sometimes'
+        ];
+
+        // Conditional validation based on expense type
+        if ($request->type === 'transport') {
+            $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver';
+            $rules['transport_details'] = 'nullable|string|max:255';
+        } elseif ($request->type === 'extra_meal') {
+            $rules['meal_location'] = 'required|string|max:255';
+            $rules['meal_participants'] = 'required|integer|min:1';
+        }
+
+        // Custom error messages
+        $messages = [
+            'expense_date.after_or_equal' => 'Le champ date de dépense doit être une date postérieure ou égale à :date.',
+            'expense_date.before_or_equal' => 'Le champ date de dépense doit être une date antérieure ou égale à :date.',
+            'type.required' => 'Le type de dépense est requis',
+            'type.in' => 'Le type de dépense doit être soit "transport" ou "repas supplémentaire"',
+            'transport_type.required' => 'Le type de transport est requis',
+            'transport_type.in' => 'Le type de transport sélectionné est invalide',
+            'meal_location.required' => 'Le lieu du repas est requis',
+            'meal_participants.required' => 'Le nombre de participants est requis',
+            'meal_participants.integer' => 'Le nombre de participants doit être un nombre entier',
+            'meal_participants.min' => 'Le nombre de participants doit être au moins 1',
+            'expense_document.mimes' => 'Le fichier doit être de type: pdf, jpg, jpeg, png ou gif',
+            'expense_document.max' => 'Le fichier ne doit pas dépasser 4MB',
+        ];
+
+        $validatedData = $request->validate($rules, $messages);
+
+        // Prepare the data for update
+        $updateData = [
+            'type' => $validatedData['type'],
+            'amount' => $validatedData['amount'],
+            'currency' => $validatedData['currency'],
+            'expense_date' => $validatedData['expense_date'],
+            'description' => $validatedData['description'],
+        ];
+
+        // Add type-specific fields
+        if ($validatedData['type'] === 'transport') {
+            $updateData['transport_type'] = $validatedData['transport_type'];
+            $updateData['transport_details'] = $validatedData['transport_details'] ?? null;
+            // Clear meal fields if they exist
+            $updateData['meal_location'] = null;
+            $updateData['meal_participants'] = null;
+        } elseif ($validatedData['type'] === 'extra_meal') {
+            $updateData['meal_location'] = $validatedData['meal_location'];
+            $updateData['meal_participants'] = $validatedData['meal_participants'];
+            // Clear transport fields if they exist
+            $updateData['transport_type'] = null;
+            $updateData['transport_details'] = null;
+        }
+
+        // Handle file upload if a new file was provided
+        if ($request->hasFile('expense_document')) {
+            $file = $request->file('expense_document');
+            $filename = $tourneeExpense->tournee_id . '-t-' . $tourneeExpense->id . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('expense_documents', $filename, 'public');
+            $updateData['expense_document'] = $path;
+        }
+
+        $tourneeExpense->update($updateData);
+
+        return redirect()->route('tournees.m_create', $tourneeExpense->tournee_id)
+            ->with('success', 'Dépense mise à jour avec succès');
+    }
+
     public function destroy(TourneeExpense $tournee_expense)
     {
         $tournee_id = $tournee_expense->tournee_id;
         $tournee_expense->delete();
-        return redirect()->route('tournees.m_create',$tournee_id);
+        return redirect()->route('tournees.m_create', $tournee_id);
     }
 
-    public function download_document(TourneeExpense $expense) {
+    public function download_document(TourneeExpense $expense)
+    {
         $filePath = $expense->expense_document;
 
-    // Ensure the file exists
-    if (!Storage::disk('public')->exists($filePath)) {
-        abort(404, 'File not found.');
-    }
+        // Ensure the file exists
+        if (!Storage::disk('public')->exists($filePath)) {
+            abort(404, 'File not found.');
+        }
 
-    // Download the file from the 'public' disk
-    return Storage::disk('public')->download($filePath);
+        // Download the file from the 'public' disk
+        return Storage::disk('public')->download($filePath);
     }
 }

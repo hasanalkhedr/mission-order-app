@@ -22,7 +22,7 @@ class MissionOrderController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
@@ -30,11 +30,11 @@ class MissionOrderController extends Controller
             })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else {
             $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         }
 
         return view('mission_orders.index', compact('missionOrders', 'search'));
@@ -64,7 +64,7 @@ class MissionOrderController extends Controller
     public function create()
     {
         if (auth()->user()->employee->allow_order) {
-            $baremes = Bareme::all();
+            $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $mission_number = MissionOrder::generateOrderNumber();
             $chancellery_rate = ChancelleryRate::currentRate()->rate;
             return view('mission_orders.create', compact('baremes', 'mission_number', 'chancellery_rate'));
@@ -143,7 +143,8 @@ class MissionOrderController extends Controller
                 $status = 'draft';
             }
         }
-        $missionOrder = MissionOrder::create(array_merge($request->all(), ['budget_text' => $budget_text, 'status' => $status]));
+        $advance = $request->advance ? $request->advance : 0;
+        $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance]));
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':
@@ -259,7 +260,8 @@ class MissionOrderController extends Controller
                 $status = 'draft';
             }
         }
-        $missionOrder->update(array_merge($request->all(), ['budget_text' => $budget_text, 'status' => $status]));
+        $advance = $request->advance ? $request->advance : 0;
+        $missionOrder->update(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance]));
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':
@@ -320,19 +322,19 @@ class MissionOrderController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')->paginate(10);
+            })->where('status', 'like', 'approved')->orderBy('id','desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
             })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else {
             $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)
                 ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
+                })->orderBy('id','desc')->paginate(10);
         }
 
         return view('mission_orders.m_index', compact('missionOrders', 'search'));
@@ -350,14 +352,16 @@ class MissionOrderController extends Controller
             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
             ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
         ) {
-            return view('mission_orders.m_show', compact('missionOrder'));
+            $current_rate = ChancelleryRate::currentRate()->rate;
+            return view('mission_orders.m_show', compact('missionOrder', 'current_rate'));
         } else {
             abort(404);
         }
     }
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
-        return view('mission_orders.m_create', compact('missionOrder'));
+        $current_rate = ChancelleryRate::currentRate()->rate;
+        return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
     }
     public function m_update(Request $request, MissionOrder $missionOrder)
     {
@@ -392,7 +396,8 @@ class MissionOrderController extends Controller
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
         $director = Employee::whereJsonContains('roles', 'director')->first();
-        return view('mission_orders.memoire_report', compact('missionOrder', 'director'));
+        $current_rate = ChancelleryRate::currentRate()->rate;
+        return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
     }
     public function m_destroy(Request $request, MissionOrder $missionOrder)
     {

@@ -22,7 +22,7 @@ class TourneeController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
@@ -30,11 +30,11 @@ class TourneeController extends Controller
             })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else {
             $tournees = Tournee::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         }
         return view('tournees.index', compact('tournees', 'search'));
     }
@@ -64,10 +64,11 @@ class TourneeController extends Controller
     public function create()
     {
         if (auth()->user()->employee->allow_order) {
-            $bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
+            //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
+            $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $tour_number = Tournee::generateOrderNumber();
             $chancellery_rate = ChancelleryRate::currentRate()->rate;
-            return view('tournees.create', compact('bareme', 'tour_number', 'chancellery_rate'));
+            return view('tournees.create', compact('baremes', 'tour_number', 'chancellery_rate'));
         } else {
             return abort(403, 'You are not authorized to do this');
         }
@@ -131,7 +132,8 @@ class TourneeController extends Controller
                 $status = 'draft';
             }
         }
-        $tournee = Tournee::create(array_merge($request->all(), ['status' => $status]));
+        $advance = $request->advance ? $request->advance : 0;
+        $tournee = Tournee::create(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance]));
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':
@@ -170,9 +172,10 @@ class TourneeController extends Controller
     public function edit(Tournee $tournee)
     {
         if ($tournee->employee_id == auth()->user()->employee->id) {
-            $bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
+            //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
+            $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $chancellery_rate = ChancelleryRate::currentRate()->rate;
-            return view('tournees.edit', compact('tournee', 'bareme', 'chancellery_rate'));
+            return view('tournees.edit', compact('tournee', 'baremes', 'chancellery_rate'));
         } else {
             return abort(403, 'Unauthorized Action, you are not allowed to modify other employees tournees');
         }
@@ -235,7 +238,8 @@ class TourneeController extends Controller
                 $status = 'draft';
             }
         }
-        $tournee->update(array_merge($request->all(), ['status' => $status]));
+        $advance = $request->advance ? $request->advance : 0;
+        $tournee->update(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance]));
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':
@@ -297,7 +301,7 @@ class TourneeController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')->paginate(10);
+            })->where('status', 'like', 'approved')->orderBy('id','desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
 
@@ -305,12 +309,12 @@ class TourneeController extends Controller
                 $query->whereIn('department_id', $dep_ids);
             })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->paginate(10);
+            })->orderBy('id','desc')->paginate(10);
         } else {
             $tournees = Tournee::where('employee_id', '=', auth()->user()->employee->id)
                 ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->paginate(10);
+                })->orderBy('id','desc')->paginate(10);
         }
         return view('tournees.m_index', compact('tournees', 'search'));
     }
@@ -326,14 +330,16 @@ class TourneeController extends Controller
             ($employee->hasRole('employee') && $tournee->employee->id == $employee->id) ||
             ($employee->hasRole('attached') && $tournee->employee->id == $employee->id)
         ) {
-            return view('tournees.m_show', compact('tournee'));
+            $current_rate = ChancelleryRate::currentRate()->rate;
+            return view('tournees.m_show', compact('tournee', 'current_rate'));
         } else {
             abort(404);
         }
     }
     public function m_create(Request $request, Tournee $tournee)
     {
-        return view('tournees.m_create', compact('tournee'));
+        $current_rate = ChancelleryRate::currentRate()->rate;
+        return view('tournees.m_create', compact('tournee', 'current_rate'));
     }
     public function m_update(Request $request, Tournee $tournee)
     {
@@ -368,7 +374,8 @@ class TourneeController extends Controller
     public function m_report(Request $request, Tournee $tournee)
     {
         $director = Employee::whereJsonContains('roles', 'director')->first();
-        return view('tournees.memoire_report', compact('tournee', 'director'));
+        $current_rate = ChancelleryRate::currentRate()->rate;
+        return view('tournees.memoire_report', compact('tournee', 'director', 'current_rate'));
     }
     public function m_destroy(Request $request, Tournee $tournee)
     {

@@ -113,7 +113,7 @@
                     Pays de Mission<span class="text-red-500">*</span>
                 </x-label>
                     <x-select-input required name="bareme_id" required>
-                        @foreach ($bareme as $b)
+                        @foreach ($baremes as $b)
                         <option selected value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
@@ -171,7 +171,7 @@
 
                 // Store bareme data for calculation
                 const baremes = {!! json_encode(
-                    $bareme->keyBy('id')->map(function ($item) {
+                    $baremes->keyBy('id')->map(function ($item) {
                         return [
                             'accomodation_cost' => $item->accomodation_cost,
                             'currency' => $item->currency,

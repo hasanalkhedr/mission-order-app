@@ -121,7 +121,7 @@
                     Pays de Tournee<span class="text-red-500">*</span>
                 </x-label>
                     <x-select-input name="bareme_id" required >
-                        @foreach ($bareme as $b)
+                        @foreach ($baremes as $b)
                         <option selected value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
@@ -137,12 +137,12 @@
                 <x-label class="w-1/3 inline-flex">
                     Demande d'avance<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('advance', $missionOrder->advance) > 0) type="radio" value="1" name="needs_advance"
+                <input required @checked(old('advance', $tournee->advance) > 0) type="radio" value="1" name="needs_advance"
                     id="needs_advance_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_yes"
                     class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('advance', $missionOrder->advance) == 0) type="radio" value="0" name="needs_advance"
+                <input required @checked(old('advance', $tournee->advance) == 0) type="radio" value="0" name="needs_advance"
                     id="needs_advance_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_no"
@@ -156,7 +156,7 @@
                 <x-label>
                     Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input name="advance" value="{{ old('advance', $missionOrder->advance) }}" id="advance_amount_input" />
+                <x-text-input name="advance" value="{{ old('advance', $tournee->advance) }}" id="advance_amount_input" />
                 <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
                     hébergement)</small>
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
@@ -179,7 +179,7 @@
 
                 // Store bareme data for calculation
                 const baremes = {!! json_encode(
-                    $bareme->keyBy('id')->map(function ($item) {
+                    $baremes->keyBy('id')->map(function ($item) {
                         return [
                             'accomodation_cost' => $item->accomodation_cost,
                             'currency' => $item->currency,

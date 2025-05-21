@@ -85,8 +85,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2"></td>
-                            <th scope="col" colspan="2"
+                            <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$tournee->memor_date->format('F Y')}}</td>
+                            <th scope="col" colspan="3"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                                 Total
                             </th>
@@ -95,63 +95,61 @@
                                 <span id="total">
                                     {{ ($tournee->no_accomodation - $tournee->no_ded_accomodation) * $tournee->bareme->accomodation_cost +
                                         ($tournee->no_meals - $tournee->no_ded_meals) * $tournee->bareme->meal_cost }}</span>
-                                <input type="hidden" name="total_amount" id="total_hidden"
+                                {{-- <input type="hidden" name="total_amount" id="total_hidden"
                                     value="{{ ($tournee->no_accomodation - $tournee->no_ded_accomodation) * $tournee->bareme->accomodation_cost +
-                                        ($tournee->no_meals - $tournee->no_ded_meals) * $tournee->bareme->meal_cost }}">
+                                        ($tournee->no_meals - $tournee->no_ded_meals) * $tournee->bareme->meal_cost }}"> --}}
                             </th>
                             <th scope="col"
                                 class="px-6 py-1 text-start text-xs font-bold text-blue-600 uppercase border border-gray-500">
                                 {{ $tournee->bareme->currency }}
                             </th>
                         </tr>
+                        <tr>
+                            <td class="px-6 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">
+                                1 EORO = {{$current_rate}}
+                            </td>
+                            <th scope="col" colspan="3"
+                                class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                Total (Roupie indienne)
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-1 text-start text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                <span id="totalLocal"></span>
+                                <input type="hidden" name="total_amount" id="total_hidden">
+                            </th>
+                            <th scope="col"
+                                class="px-4 py-1 text-start text-xs font-bold text-blue-600 uppercase border border-gray-500">
+                                Roupie indienne
+                            </th>
+                        </tr>
                     </tfoot>
                 </table>
                 <script>
-                    document.getElementById('no_remaining_accomodation').textContent = {{ $tournee->no_accomodation }} - document
-                        .getElementById('no_ded_accomodation').value;
-                    document.getElementById('value_remaining_accomodation').textContent = ({{ $tournee->no_accomodation }} -
-                        document.getElementById('no_ded_accomodation').value) * {{ $tournee->bareme->accomodation_cost }};
-                    document.getElementById('no_remaining_meals').textContent = {{ $tournee->no_meals }} - document
-                        .getElementById('no_ded_meals').value;
-                    document.getElementById('value_remaining_meals').textContent = ({{ $tournee->no_meals }} - document
-                        .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                    document.getElementById('total').textContent = ({{ $tournee->no_accomodation }} - document.getElementById(
-                            'no_ded_accomodation').value) * {{ $tournee->bareme->accomodation_cost }} + (
-                            {{ $tournee->no_meals }} - document.getElementById('no_ded_meals').value) *
-                        {{ $tournee->bareme->meal_cost }};
-                    document.getElementById('total_hidden').value = ({{ $tournee->no_accomodation }} - document.getElementById(
-                            'no_ded_accomodation').value) * {{ $tournee->bareme->accomodation_cost }} + (
-                            {{ $tournee->no_meals }} - document.getElementById('no_ded_meals').value) *
-                        {{ $tournee->bareme->meal_cost }};
-
-                    document.getElementById('no_ded_accomodation').addEventListener('input', function() {
-                        document.getElementById('no_remaining_accomodation').textContent =
-                            {{ $tournee->no_accomodation }} - this.value;
-                        document.getElementById('value_remaining_accomodation').textContent = (
+                    function calculateTotal() {
+                        document.getElementById('no_remaining_accomodation').textContent = {{ $tournee->no_accomodation }} -
+                            document.getElementById('no_ded_accomodation').value;
+                        document.getElementById('value_remaining_accomodation').textContent = ({{ $tournee->no_accomodation }} -
+                            document.getElementById('no_ded_accomodation').value) * {{ $tournee->bareme->accomodation_cost }};
+                        document.getElementById('no_remaining_meals').textContent = {{ $tournee->no_meals }} - document
+                            .getElementById('no_ded_meals').value;
+                        document.getElementById('value_remaining_meals').textContent = ({{ $tournee->no_meals }} - document
+                            .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
+                        document.getElementById('total').textContent = ({{ $tournee->no_accomodation }} - document.getElementById(
+                                'no_ded_accomodation').value) * {{ $tournee->bareme->accomodation_cost }} + (
+                                {{ $tournee->no_meals }} - document.getElementById('no_ded_meals').value) *
+                            {{ $tournee->bareme->meal_cost }};
+                        document.getElementById('total_hidden').value = {{ $current_rate }} * ((
                                 {{ $tournee->no_accomodation }} - document.getElementById('no_ded_accomodation').value) *
-                            {{ $tournee->bareme->accomodation_cost }};
-                        document.getElementById('total').textContent = ({{ $tournee->no_accomodation }} - document
-                                .getElementById('no_ded_accomodation').value) *
                             {{ $tournee->bareme->accomodation_cost }} + ({{ $tournee->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                        document.getElementById('total_hidden').value = ({{ $tournee->no_accomodation }} - document
-                                .getElementById('no_ded_accomodation').value) *
+                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }});
+                        document.getElementById('totalLocal').textContent = {{ $current_rate }} * ((
+                                {{ $tournee->no_accomodation }} - document.getElementById('no_ded_accomodation').value) *
                             {{ $tournee->bareme->accomodation_cost }} + ({{ $tournee->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                    });
-                    document.getElementById('no_ded_meals').addEventListener('input', function() {
-                        document.getElementById('no_remaining_meals').textContent = {{ $tournee->no_meals }} - this.value;
-                        document.getElementById('value_remaining_meals').textContent = ({{ $tournee->no_meals }} -
-                            document.getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                        document.getElementById('total').textContent = ({{ $tournee->no_accomodation }} - document
-                                .getElementById('no_ded_accomodation').value) *
-                            {{ $tournee->bareme->accomodation_cost }} + ({{ $tournee->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                        document.getElementById('total_hidden').value = ({{ $tournee->no_accomodation }} - document
-                                .getElementById('no_ded_accomodation').value) *
-                            {{ $tournee->bareme->accomodation_cost }} + ({{ $tournee->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }};
-                    });
+                                .getElementById('no_ded_meals').value) * {{ $tournee->bareme->meal_cost }});
+                    }
+calculateTotal();
+                    document.getElementById('no_ded_accomodation').addEventListener('input', calculateTotal);
+                    document.getElementById('no_ded_meals').addEventListener('input', calculateTotal);
                 </script>
             </div>
         </div>
