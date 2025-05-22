@@ -52,7 +52,7 @@
 
                         <td class="py-4 px-6 border-b">
                             <div class="font-bold text-red-400">
-                                1 EURO = {{$chancelleryRate->rate}} Indian rupee
+                                1 EURO = {{$chancelleryRate->rate}} {{__('Indian rupee')}}
                             </div>
                         </td>
                         @if ($chancelleryRate->status == 'draft' && auth()->user()->employee->hasRole('controller'))

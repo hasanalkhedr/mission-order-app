@@ -348,6 +348,19 @@
     "Show Signature": "Afficher une signature",
     "Approve Signature": "Approuver une signature",
     "Search for signatures": "Rechercher des signatures",
-    "Are you sure you want to delete this signature": "Êtes-vous sûr de vouloir supprimer cette signature?"
+    "Are you sure you want to delete this signature": "Êtes-vous sûr de vouloir supprimer cette signature?",
 
+    "Add Chancellery Rate": "Ajouter le tarif de la chancellerie",
+    "Month": "Mois",
+    "Rate: Euro to Indian rupee": "Taux : Euro en roupie indienne",
+    "Indian rupee": "roupie indienne",
+    "No Chancellery Rates Found": "Aucun tarif de chancellerie trouvé",
+    "Delete Chancellery Rate": "Supprimer le tarif de la chancellerie",
+    "Are you sure you want to delete this chancellery rate": "Êtes-vous sûr de vouloir supprimer ce tarif de chancellerie",
+    "Edit Chancellery Rate": "Modifier le tarif de la chancellerie",
+    "Set Currency Rate for ": "Définir le taux de change pour ",
+    "Enter how much 1 EURO equals in your local currency": "Entrez combien équivaut à 1 EURO dans votre monnaie locale",
+    "Approve Chancellery Rate": "Approuver le taux de la chancellerie",
+    "Conversion Rate (1 EURO to Local)": "Taux de conversion (1 EURO en local)",
+    "New missions cannot be created until admin updates the chancellery rate for this month.": "De nouvelles missions ne peuvent pas être créées tant que l'administrateur n'a pas mis à jour le taux de chancellerie pour ce mois."
 }

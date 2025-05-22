@@ -33,7 +33,7 @@
             <!-- Modal body -->
             <div class="p-6 space-y-6">
                 <div class="text-base leading-relaxed text-gray-500">
-                    {{ __('Are you sure you want to delete this chancelleryRate') }}?
+                    {{ __('Are you sure you want to delete this chancellery rate') }}?
                     {{ __("This action cannot be undone") }}.
                 </div>
             </div>

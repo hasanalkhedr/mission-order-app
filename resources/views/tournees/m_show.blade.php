@@ -124,18 +124,24 @@
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
-                                        la dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date
-                                        dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
-                                    </th>
+                                    <th scope="col" class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Nature de
+                la dépense</th>
+                <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Détails</th>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Date
+                dépense</th>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Montant</th>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Devise</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
                                     </th>
@@ -144,20 +150,54 @@
                             <tbody>
                                 @forelse ($tournee->expenses as $expense)
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            {{ $expense->description }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->expense_date->format('d/m/Y H:i') }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->amount }}</td>
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                            {{ $expense->currency }}</td>
-                                        {{-- </tr> --}}
+                                        <!-- Type -->
+                <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    <span class="text-blue-600 font-medium">Transport</span>
+                                                                @else
+                                                                    <span class="text-green-600 font-medium">Repas</span>
+                                                                @endif
+                                                            </td>
+                <!-- Description -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ Str::limit($expense->description, 20) }}
+                                                            </td>
 
+                                                            <!-- Details -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                    @if ($expense->transport_details)
+                                                                        <span
+                                                                            class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
+                                                                    @endif
+                                                                @else
+                                                                    {{ Str::limit($expense->meal_location, 15) }}
+                                                                    <span
+                                                                        class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
+                                                                        pers.</span>
+                                                                @endif
+                                                            </td>
+                <!-- Date -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ $expense->expense_date->format('d/m/Y') }}
+                                                            </td>
+
+                                                            <!-- Amount -->
+                <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ number_format($expense->amount, 2) }}
+                                                            </td>
+
+                                                            <!-- Currency -->
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ $expense->currency }}
+                                                            </td>
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <button

@@ -20,12 +20,26 @@
         integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
         integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"
+        integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+        integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+        <!-- PDF.js Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+<script>
+  // Set worker path (required for PDF.js)
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('head')
@@ -39,6 +53,13 @@
                 <nav class="flex flex-col gap-4 p-4 h-full min-h-screen">
                     <x-application-logo />
                     <ul class="content-between space-y-2">
+                        <li>
+                            <a href="{{ route('chancelleryRates.index') }}"
+                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                                <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
+                            </a>
+                        </li>
+                        <hr />
                         <!-- Mission Menu -->
                         <li>
                             <button type="button"
@@ -48,7 +69,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Missions') }}</span>
                             </button>
-                            <ul id="dropdown-missions-" class="py-2 space-y-2 mx-2">
+                            <ul id="dropdown-missions" class="py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('mission_orders.create') }}">
@@ -79,7 +100,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Tournées') }}</span>
                             </button>
-                            <ul id="dropdown-tournees-" class=" py-2 space-y-2 mx-2">
+                            <ul id="dropdown-tournees" class=" py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('tournees.create') }}">
@@ -108,10 +129,16 @@
                                 <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('signatures.index') }}"
+                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                                <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
+                            </a>
+                        </li>
                         <hr />
                         <!-- Calender Item -->
                         <li>
-                            <a href="#"
+                            <a href="{{ route('calendar') }}"
                                 class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                                 <span class="mx-2 font-medium">{{ __('Calendrier') }}</span>
                             </a>
@@ -119,7 +146,7 @@
                         <hr />
                         <!-- Reports Item -->
                         <li>
-                            <a href="#"
+                            <a href="{{ route('reports.index') }}"
                                 class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                                 <span class="mx-2 font-medium">{{ __('Rapports') }}</span>
                             </a>
@@ -135,7 +162,7 @@
                                     <span class="flex-1 mx-2 text-left font-medium text-white"
                                         sidebar-toggle-item>{{ __('Settings') }}</span>
                                 </button>
-                                <ul id="dropdown-settings-" class="py-2 space-y-2 mx-2">
+                                <ul id="dropdown-settings" class="py-2 space-y-2 mx-2">
                                     <li>
                                         <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                             href="{{ route('baremes.index') }}">
@@ -147,6 +174,7 @@
                                             href="{{ route('departments.index') }}">
                                             <span class="mx-2 font-medium">{{ __('Departments') }}</span>
                                         </a>
+
                                     </li>
                                     <li>
                                         <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
@@ -176,6 +204,13 @@
             <nav id="mobileMenu" class="hidden flex flex-col gap-4 mt-4">
                 <x-application-logo />
                 <ul class="content-between space-y-2">
+                    <li>
+                        <a href="{{ route('chancelleryRates.index') }}"
+                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                            <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
+                        </a>
+                    </li>
+                    <hr />
                     <!-- Mission Menu -->
                     <li>
                         <button type="button"
@@ -185,7 +220,7 @@
                             <span class="flex-1 mx-2 text-left font-medium text-white"
                                 sidebar-toggle-item>{{ __('Missions') }}</span>
                         </button>
-                        <ul id="dropdown-missions-" class="py-2 space-y-2 mx-2">
+                        <ul id="dropdown-missions" class="py-2 space-y-2 mx-2">
                             <li>
                                 <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                     href="{{ route('mission_orders.create') }}">
@@ -216,7 +251,7 @@
                             <span class="flex-1 mx-2 text-left font-medium text-white"
                                 sidebar-toggle-item>{{ __('Tournées') }}</span>
                         </button>
-                        <ul id="dropdown-tournees-" class=" py-2 space-y-2 mx-2">
+                        <ul id="dropdown-tournees" class=" py-2 space-y-2 mx-2">
                             <li>
                                 <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                     href="{{ route('tournees.create') }}">
@@ -245,10 +280,16 @@
                             <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('signatures.index') }}"
+                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                            <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
+                        </a>
+                    </li>
                     <hr />
                     <!-- Calender Item -->
                     <li>
-                        <a href="#"
+                        <a href="{{ route('calendar') }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                             <span class="mx-2 font-medium">{{ __('Calendrier') }}</span>
                         </a>
@@ -256,7 +297,7 @@
                     <hr />
                     <!-- Reports Item -->
                     <li>
-                        <a href="#"
+                        <a href="{{ route('reports.index') }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                             <span class="mx-2 font-medium">{{ __('Rapports') }}</span>
                         </a>
@@ -272,7 +313,7 @@
                                 <span class="flex-1 mx-2 text-left font-medium text-white"
                                     sidebar-toggle-item>{{ __('Settings') }}</span>
                             </button>
-                            <ul id="dropdown-settings-" class="py-2 space-y-2 mx-2">
+                            <ul id="dropdown-settings" class="py-2 space-y-2 mx-2">
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('baremes.index') }}">
@@ -284,6 +325,7 @@
                                         href="{{ route('departments.index') }}">
                                         <span class="mx-2 font-medium">{{ __('Departments') }}</span>
                                     </a>
+
                                 </li>
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"

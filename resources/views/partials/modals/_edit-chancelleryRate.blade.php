@@ -30,13 +30,13 @@
                     @method('PUT')
                     <div class="flex flex-wrap -mx-3 mb-6">
                         <div class="w-1/2 px-3">
-                            <h2>Set Currency Rate for {{ $chancelleryRate->month_year->format('F Y') }}</h2>
+                            <h2>{{__('Set Currency Rate for ')}} {{ $chancelleryRate->month_year->format('F Y') }}</h2>
                         </div>
                         <div class="form-group">
-                            <label for="rate">Conversion Rate (1 EURO to Local)</label>
+                            <label for="rate">{{__('Conversion Rate (1 EURO to Local)')}}</label>
                             <input type="number" step="0.0001" class="form-control" id="rate" name="rate" value="{{$chancelleryRate->rate}}" required>
                             <small class="form-text text-muted">
-                                Enter how much 1 EURO equals in your local currency
+                                {{__('Enter how much 1 EURO equals in your local currency')}}
                             </small>
                         </div>
                     </div>
