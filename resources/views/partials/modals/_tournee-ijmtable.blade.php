@@ -106,7 +106,7 @@
                         </tr>
                         <tr>
                             <td class="px-6 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">
-                                1 EORO = {{$current_rate}}
+                                1 EURO = {{$current_rate}}
                             </td>
                             <th scope="col" colspan="3"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
