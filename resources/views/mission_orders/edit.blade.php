@@ -72,25 +72,41 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de départ<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input required name="departure_location"
+                <x-text-input required name="departure_location" id="departure_location"  onblur="returnLocationValue('{{old('departure_location', $missionOrder->departure_location)}}');"
                     value="{{ old('departure_location', $missionOrder->departure_location) }}" />
             </div>
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
                     Lieu d'arrivée<span class="text-red-500">*</span>
                 </x-label>
                 <x-text-input required name="arrive_location"
                     value="{{ old('arrive_location', $missionOrder->arrive_location) }}" />
             </div>
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de retour<span class="text-red-500">*</span>
+                </x-label>
+                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location', $missionOrder->return_location) }}" />
+            </div>
+
+                <script>
+                    function returnLocationValue(oldValue) {
+                        returnLocation = document.getElementById('return_location').value;
+                        departLocation = document.getElementById('departure_location').value;
+                        if(returnLocation === oldValue) {
+                            document.getElementById('return_location').value = document.getElementById('departure_location').value;
+                        }
+                    }
+                </script>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input name="start_date" value="{{ old('start_date', $missionOrder->start_date->format('Y-m-d')) }}"
                     type="date" required>
@@ -103,7 +119,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input name="end_date" value="{{ old('end_date', $missionOrder->end_date->format('Y-m-d')) }}" type="date"
                     required>
@@ -122,20 +138,19 @@
                 <div class="select-container">
                     <x-select-input name="bareme_id" required class="select2">
                         @foreach ($baremes as $bareme)
-                        @if(str_contains($bareme->pays, 'France'))
-                        <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
-                            value="{{ $bareme->id }}">
-                            {{ $bareme->pays }} ({{ $bareme->currency }})
-                        </option>
+                            @if (str_contains($bareme->pays, 'France'))
+                                <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
+                                    value="{{ $bareme->id }}">
+                                    {{ $bareme->pays }} ({{ $bareme->currency }})
+                                </option>
                             @else
-                            <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
-                                value="{{ $bareme->id }}">
-                                {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
-                                Repas:{{ $bareme->meal_cost }} /
-                                Hebergement:{{ $bareme->accomodation_cost }})
-                            </option>
+                                <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
+                                    value="{{ $bareme->id }}">
+                                    {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
+                                    Repas:{{ $bareme->meal_cost }} /
+                                    Hebergement:{{ $bareme->accomodation_cost }})
+                                </option>
                             @endif
-
                         @endforeach
                     </x-select-input>
                     <script>
@@ -150,7 +165,7 @@
             </div>
         </div>
 
-<!-- Add the new advance payment section here -->
+        <!-- Add the new advance payment section here -->
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
@@ -175,7 +190,8 @@
                 <x-label>
                     Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input name="advance" value="{{ old('advance', $missionOrder->advance) }}" id="advance_amount_input" />
+                <x-text-input name="advance" value="{{ old('advance', $missionOrder->advance) }}"
+                    id="advance_amount_input" />
                 <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
                     hébergement)</small>
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
@@ -245,7 +261,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 
@@ -305,7 +321,7 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                         e.preventDefault();
                         alert(
                             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                            );
+                        );
                     }
                 });
             });
@@ -387,8 +403,10 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                             <div class="p-6">
                                 <div class="text-base leading-relaxed text-gray-500">
                                     <ul>
-                                        <li>{{ __('When save the mission as draft, you can edit or delete it later.')}}</li>
-                                        <li>{{ __('When submit the mission, you can not edit or delete it, and the mission will go to the approve process.')}}</li>
+                                        <li>{{ __('When save the mission as draft, you can edit or delete it later.') }}
+                                        </li>
+                                        <li>{{ __('When submit the mission, you can not edit or delete it, and the mission will go to the approve process.') }}
+                                        </li>
                                     </ul>
                                 </div>
                                 <div

@@ -49,22 +49,35 @@
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-1/3 px-3">
                 <x-label>
-                    Lieu de la mission<span class="text-red-500">*</span>
+                    Lieu de départ<span class="text-red-500">*</span>
                 </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->arrive_location }}</label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->departure_location }}</label>
             </div>
             <div class="w-1/3 px-3">
                 <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
+                    Lieu de la mission<span class="text-red-500">*</span>
+                </x-label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->arrive_location }}</label>
+            </div>
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de retour<span class="text-red-500">*</span>
+                </x-label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->return_location }}</label>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-1 mb-2">
+            <div class="w-1/2 px-3">
+                <x-label>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->start_date->format('d/m/Y') }}
                     at {{ $missionOrder->start_time }}</label>
             </div>
-            <div class="w-1/3 px-3">
+            <div class="w-1/2 px-3">
                 <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->end_date->format('d/m/Y') }}
@@ -128,129 +141,129 @@
                 <div class="p-1.5 min-w-full inline-block align-middle">
                     <div class="overflow-hidden">
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-<thead>
-    <tr>
-        <th scope="col"
-            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-            Type</th>
-        <th scope="col"
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
-            la dépense</th>
-        <th scope="col"
-            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-            Détails</th>
-        <th scope="col"
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date
-            dépense</th>
-        <th scope="col"
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant
-        </th>
-        <th scope="col"
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
-        </th>
-        <th scope="col"
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
-        </th>
-    </tr>
-</thead>
-<tbody>
-    @forelse ($missionOrder->expenses as $expense)
-        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-            <!-- Type -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                @if ($expense->type === 'transport')
-                    <span class="text-blue-600 font-medium">Transport</span>
-                @else
-                    <span class="text-green-600 font-medium">Repas</span>
-                @endif
-            </td>
+                            <thead>
+                                <tr>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Type</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
+                                        la dépense</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Détails</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date
+                                        dépense</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devise
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($missionOrder->expenses as $expense)
+                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                        <!-- Type -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            @if ($expense->type === 'transport')
+                                                <span class="text-blue-600 font-medium">Transport</span>
+                                            @else
+                                                <span class="text-green-600 font-medium">Repas</span>
+                                            @endif
+                                        </td>
 
-            <!-- Description -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ Str::limit($expense->description, 20) }}
-            </td>
+                                        <!-- Description -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ Str::limit($expense->description, 20) }}
+                                        </td>
 
-            <!-- Details -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                @if ($expense->type === 'transport')
-                    {{ __('expense.transport_types.' . $expense->transport_type) }}
-                    @if ($expense->transport_details)
-                        <span
-                            class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
-                    @endif
-                @else
-                    {{ Str::limit($expense->meal_location, 15) }}
-                    <span
-                        class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
-                        pers.</span>
-                @endif
-            </td>
+                                        <!-- Details -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            @if ($expense->type === 'transport')
+                                                {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                @if ($expense->transport_details)
+                                                    <span
+                                                        class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
+                                                @endif
+                                            @else
+                                                {{ Str::limit($expense->meal_location, 15) }}
+                                                <span
+                                                    class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
+                                                    pers.</span>
+                                            @endif
+                                        </td>
 
-            <!-- Date -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $expense->expense_date->format('d/m/Y') }}
-            </td>
+                                        <!-- Date -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ $expense->expense_date->format('d/m/Y') }}
+                                        </td>
 
-            <!-- Amount -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ number_format($expense->amount, 2) }}
-            </td>
+                                        <!-- Amount -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ number_format($expense->amount, 2) }}
+                                        </td>
 
-            <!-- Currency -->
-            <td
-                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $expense->currency }}
-            </td>
-            <td
-                class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                <button
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                    type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
-                    {{ __('Voir le document') }}
-                </button>
-                <a href="{{ route('expenses.download_document', $expense) }}"><button
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                        type="button">
-                        {{ __('Télécharger le document') }}
-                    </button>
-                </a>
-                @include('partials.modals._view-document')
-            </td>
-        </tr>
-    @empty
-        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-            <td colspan="4"
-                class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                {{ __('No Expenses Found') }}</td>
-        </tr>
-    @endforelse
-</tbody>
-<tfoot>
-    @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
-        <tr>
-            <th scope="col"></th>
-            <th scope="col"
-                class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                SOMME
-            </th>
-            <th scope="col"
-                class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                {{ $currencyAmount }}
-            </th>
-            <th scope="col"
-                class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                {{ $currency }}
-            </th>
-            <th scope="col"></th>
-        </tr>
-    @empty
-    @endforelse
-</tfoot>
+                                        <!-- Currency -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ $expense->currency }}
+                                        </td>
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                            <button
+                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                                                type="button" data-modal-toggle="viewDocumentModal-{{ $expense->id }}">
+                                                {{ __('Voir le document') }}
+                                            </button>
+                                            <a href="{{ route('expenses.download_document', $expense) }}"><button
+                                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                                                    type="button">
+                                                    {{ __('Télécharger le document') }}
+                                                </button>
+                                            </a>
+                                            @include('partials.modals._view-document')
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                        <td colspan="4"
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                            {{ __('No Expenses Found') }}</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                            <tfoot>
+                                @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col"
+                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                                            SOMME
+                                        </th>
+                                        <th scope="col"
+                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                                            {{ $currencyAmount }}
+                                        </th>
+                                        <th scope="col"
+                                            class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
+                                            {{ $currency }}
+                                        </th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                @empty
+                                @endforelse
+                            </tfoot>
                         </table>
                     </div>
                 </div>

@@ -71,17 +71,29 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de départ
+                </x-label>
+                <x-readonly-text-input value="{{ $missionOrder->departure_location }}" />
+            </div>
+            <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de la Mission
                 </x-label>
                 <x-readonly-text-input value="{{ $missionOrder->arrive_location }}" />
             </div>
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de retour
+                </x-label>
+                <x-readonly-text-input value="{{ $missionOrder->return_location }}" />
+            </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    Date d’arrivé : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input disabled name="start_date" value="{{ $missionOrder->start_date->format('Y-m-d') }}"
                     type="date">
@@ -93,7 +105,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    Date de départ : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input readonly name="end_date" value="{{ $missionOrder->end_date->format('Y-m-d') }}"
                     type="date">

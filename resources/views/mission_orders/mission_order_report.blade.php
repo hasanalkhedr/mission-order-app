@@ -1,8 +1,7 @@
 <!-- resources/views/reports/mission_order_report.blade.php -->
 
 @extends('layouts.app')
-@section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .
-    $missionOrder->employee->last_name)
+@section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .$missionOrder->employee->last_name)
 @section('content')
 
     <div class="bg-white max-w-4xl mx-auto py-4 sm:px-2 lg:px-4 printable">
@@ -59,6 +58,10 @@
                         <tr>
                             <td class="w-1/3">Lieu de départ :</td>
                             <td class="w-2/3">{{ $missionOrder->departure_location }}</td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/3">Lieu de retour :</td>
+                            <td class="w-2/3">{{ $missionOrder->return_location }}</td>
                         </tr>
                         <tr>
                             <td class="w-1/3">Lieu d'arrivée :</td>

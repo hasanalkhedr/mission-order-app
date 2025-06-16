@@ -2,8 +2,7 @@
     use App\Models\Department;
 @endphp
 @extends('layouts.app')
-@section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .
-    $missionOrder->employee->last_name)
+@section('title', $missionOrder->order_number . '-' . $missionOrder->employee->first_name . ' ' .$missionOrder->employee->last_name)
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une mission</h2>
     <div class="w-11/12">
@@ -55,31 +54,36 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-1 mb-2">
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de départ<span class="text-red-500">*</span>
                 </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->departure_location }}</label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->departure_location }}</label>
             </div>
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
+                    Lieu de la mission<span class="text-red-500">*</span>
                 </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->arrive_location }}</label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->arrive_location }}</label>
+            </div>
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de retour<span class="text-red-500">*</span>
+                </x-label>
+                <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->return_location }}</label>
             </div>
         </div>
+
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-3/4 px-3">
                 <x-label class="inline">
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->start_date->format('d/m/Y') }}
                     at {{ $missionOrder->start_time }}</label>
                 <x-label class="inline">
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->end_date->format('d/m/Y') }}
@@ -181,7 +185,9 @@
                         hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
                         w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
+                            auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700
                     hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
@@ -197,7 +203,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $missionOrder->employee->department_id))
@@ -214,7 +221,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $missionOrder->employee->department_id))
@@ -233,7 +241,9 @@
                             auth()->user()->employee->department_id == $missionOrder->employee->department_id)
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                    @elseif(auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
+                            auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif

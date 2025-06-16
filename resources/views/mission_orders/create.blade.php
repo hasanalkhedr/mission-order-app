@@ -73,23 +73,34 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de départ<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input required name="departure_location" value="{{ old('departure_location') }}" />
+                <x-text-input required name="departure_location" id="departure_location" value="{{ old('departure_location') }}"  onblur="returnLocationValue();"/>
             </div>
-            <div class="w-1/2 px-3">
+            <div class="w-1/3 px-3">
                 <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
+                    Lieu de mission<span class="text-red-500">*</span>
                 </x-label>
                 <x-text-input required name="arrive_location" value="{{ old('arrive_location') }}" />
+            </div>
+            <div class="w-1/3 px-3">
+                <x-label>
+                    Lieu de retour<span class="text-red-500">*</span>
+                </x-label>
+                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location') }}"/>
+                <script>
+                    function returnLocationValue() {
+                        document.getElementById('return_location').value = document.getElementById('departure_location').value;
+                    }
+                </script>
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input name="start_date" value="{{ old('start_date') }}" type="date" required>
                 </x-date-time-input>
@@ -100,7 +111,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-2/3 px-3">
                 <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <x-date-time-input name="end_date" value="{{ old('end_date') }}" type="date" required>
                 </x-date-time-input>
@@ -238,7 +249,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 
@@ -298,7 +309,7 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                         e.preventDefault();
                         alert(
                             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                            );
+                        );
                     }
                 });
             });

@@ -83,6 +83,7 @@ public static function generateOrderNumber()
         'memor_status',
         'advance',
         'memor_date',
+        'return_location'
     ];
     protected $casts = [
         'order_date' => 'date',

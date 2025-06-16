@@ -91,6 +91,7 @@ class MissionOrderController extends Controller
             'charge' => 'required',
             'ijm' => 'required',
             'assurance' => 'required',
+            'return_location' => 'nullable',
             'advance' => [
                 'nullable',
                 'numeric',
@@ -144,7 +145,7 @@ class MissionOrderController extends Controller
             }
         }
         $advance = $request->advance ? $request->advance : 0;
-        $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance]));
+        $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':
@@ -208,6 +209,7 @@ class MissionOrderController extends Controller
             'charge' => 'required',
             'ijm' => 'required',
             'assurance' => 'required',
+            'return_location' => 'nullable',
             'advance' => [
                 'nullable',
                 'numeric',
@@ -261,7 +263,8 @@ class MissionOrderController extends Controller
             }
         }
         $advance = $request->advance ? $request->advance : 0;
-        $missionOrder->update(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance]));
+        $missionOrder->update(array_merge($request->except(['advance']),
+            ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':
@@ -369,7 +372,7 @@ class MissionOrderController extends Controller
             'no_ded_accomodation' => 'required|numeric',
             'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
-            'total_amount' => 'required|numeric',
+            'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',
         ]);
         $action = $request->input('action');
