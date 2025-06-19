@@ -11,13 +11,15 @@
                 <x-label>
                     Tournee #
                 </x-label>
-                <x-readonly-text-input name="order_number" value="{{$tournee->order_number}}" />
+                <x-readonly-text-input name="order_number" value="{{ $tournee->order_number }}" />
             </div>
             <div class="w-1/3 px-3">
                 <x-label>
                     Date le Ordre:<span class="text-red-500">*</span>
                 </x-label>
-                <x-date-time-input class="appearance-none block h-12 w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" name="order_date" value="{{ $tournee->order_date->format('Y-m-d') }}" type="date" readonly>
+                <x-date-time-input
+                    class="appearance-none block h-12 w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    name="order_date" value="{{ $tournee->order_date->format('Y-m-d') }}" type="date" readonly>
                 </x-date-time-input>
             </div>
             <div class="w-1/3 px-3">
@@ -72,63 +74,140 @@
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('purpose', $tournee->purpose) }}</textarea>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu de départ<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="departure_location"
-                    value="{{ old('departure_location', $tournee->departure_location) }}" />
+        <div x-data="destinationManager({{ $tournee->tourneeDestinations->toJson() }})">
+            <!-- Destinations container -->
+            <div class="border rounded-md p-2 border-gray-300 mb-4">
+                <template x-for="(destination, index) in destinations" :key="index">
+                    <div class="destination-field border rounded-md p-2 border-gray-300 mb-4">
+                        <!-- Include hidden ID field for existing destinations -->
+                        <template x-if="destination.id">
+                            <input type="hidden" x-bind:name="`destinations[${index}][id]`" x-model="destination.id">
+                        </template>
+
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de départ<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-text-input x-model="destination.departure_location"
+                                    x-bind:name="`destinations[${index}][departure_location]`" required />
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de mission<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-text-input x-model="destination.arrive_location"
+                                    x-bind:name="`destinations[${index}][arrive_location]`" required />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input x-model="destination.start_date"
+                                    x-bind:name="`destinations[${index}][start_date]`" required type="date">
+                                </x-date-time-input>
+                                <x-date-time-input x-model="destination.start_time"
+                                    x-bind:name="`destinations[${index}][start_time]`" required type="time">
+                                </x-date-time-input>
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input x-model="destination.end_date"
+                                    x-bind:name="`destinations[${index}][end_date]`" required type="date">
+                                </x-date-time-input>
+                                <x-date-time-input x-model="destination.end_time"
+                                    x-bind:name="`destinations[${index}][end_time]`" required type="time">
+                                </x-date-time-input>
+                            </div>
+                        </div>
+                        <button x-show="destinations.length > 1" x-on:click="removeDestination(index)" type="button"
+                            class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
+                            Supprimer cette destination
+                        </button>
+                    </div>
+                </template>
             </div>
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="arrive_location"
-                    value="{{ old('arrive_location', $tournee->arrive_location) }}" />
+
+            <!-- Add destination button -->
+            <div class="mt-4">
+                <button x-on:click="addDestination()" type="button"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Ajouter une autre destination
+                </button>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input name="start_date" value="{{ old('start_date', $tournee->start_date->format('Y-m-d')) }}"
-                    type="date" required>
-                </x-date-time-input>
-                <x-date-time-input name="start_time" value="{{ old('start_time', $tournee->start_time) }}"
-                    type="time" required>
-                </x-date-time-input>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input name="end_date" value="{{ old('end_date', $tournee->end_date->format('Y-m-d')) }}" type="date"
-                    required>
-                </x-date-time-input>
-                <x-date-time-input name="end_time" value="{{ old('end_time', $tournee->end_time) }}" type="time"
-                    required>
-                </x-date-time-input>
-            </div>
-        </div>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('destinationManager', (initialDestinations = null) => ({
+                    destinations: initialDestinations ?
+                        initialDestinations.map(dest => ({
+                            ...dest,
+                            start_date: dest.start_date ? dest.start_date.split('T')[0] : '',
+                            end_date: dest.end_date ? dest.end_date.split('T')[0] : '',
+                            //start_time: dest.start_time ? dest.start_time.substring(0, 5) : '',
+                            //end_time: dest.end_time ? dest.end_time.substring(0, 5) : ''
+                        })) :
+                        [{
+                            departure_location: '',
+                            arrive_location: '',
+                            start_date: '',
+                            start_time: '',
+                            end_date: '',
+                            end_time: ''
+                        }],
+
+                    addDestination() {
+                        const lastDestination = this.destinations[this.destinations.length - 1];
+                        this.destinations.push({
+                            departure_location: lastDestination.arrive_location,
+                            arrive_location: '',
+                            start_date: lastDestination.end_date,
+                            start_time: lastDestination.end_time,
+                            end_date: '',
+                            end_time: ''
+                        });
+                    },
+
+                    removeDestination(index) {
+                        if (this.destinations.length > 1) {
+                            // // Mark for deletion if it's an existing destination
+                            // if (this.destinations[index].id) {
+                            //     this.destinations[index]._destroy = true;
+                            // } else {
+                                this.destinations.splice(index, 1);
+                            //}
+                        }
+                    },
+
+                    init() {
+                        // Initialize with old input if available (form validation errors)
+                        @if (old('destinations'))
+                            this.destinations = @json(old('destinations'));
+                        @endif
+                    }
+                }));
+            });
+        </script>
         <x-form-divider>Frais Tournee</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
                     Pays de Tournee<span class="text-red-500">*</span>
                 </x-label>
-                    <x-select-input name="bareme_id" required >
-                        @foreach ($baremes as $b)
+                <x-select-input name="bareme_id" required>
+                    @foreach ($baremes as $b)
                         <option selected value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
                             Hebergement:{{ $b->accomodation_cost }})
                         </option>
-                        @endforeach
-                    </x-select-input>
+                    @endforeach
+                </x-select-input>
             </div>
         </div>
         <!-- Add the new advance payment section here -->
@@ -156,7 +235,8 @@
                 <x-label>
                     Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input name="advance" value="{{ old('advance', $tournee->advance) }}" id="advance_amount_input" />
+                <x-text-input name="advance" value="{{ old('advance', $tournee->advance) }}"
+                    id="advance_amount_input" />
                 <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
                     hébergement)</small>
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
@@ -226,7 +306,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 
@@ -286,7 +366,7 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                         e.preventDefault();
                         alert(
                             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                            );
+                        );
                     }
                 });
             });
@@ -358,8 +438,10 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                             <div class="p-6">
                                 <div class="text-base leading-relaxed text-gray-500">
                                     <ul>
-                                        <li>{{__('When save the tournee as draft, you can edit or delete it later.')}}</li>
-                                        <li>{{__('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.')}}</li>
+                                        <li>{{ __('When save the tournee as draft, you can edit or delete it later.') }}
+                                        </li>
+                                        <li>{{ __('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.') }}
+                                        </li>
                                     </ul>
                                 </div>
                                 <div

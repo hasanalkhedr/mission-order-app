@@ -3,9 +3,9 @@
     use App\Models\Department;
 @endphp
 @extends('layouts.app')
-@section('title', $tournee->order_number.'-'.$tournee->employee->first_name.' '.$tournee->employee->last_name)
+@section('title', $tournee->order_number . '-' . $tournee->employee->first_name . ' ' . $tournee->employee->last_name)
 @section('content')
-<h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une tournee</h2>
+    <h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une tournee</h2>
     <div class="w-11/12">
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-1/5 px-3">
@@ -20,7 +20,7 @@
                     Ordre de Tournee Date
                 </x-label>
                 <label
-                    class="ms-1 text-sm font-bold {{$tournee->order_date > $tournee->start_date ? 'text-red-600 bg-yellow-400' : 'text-blue-600'}} dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->order_date->format('d/m/Y') }}</label>
+                    class="ms-1 text-sm font-bold {{ $tournee->order_date > $tournee->start_date ? 'text-red-600 bg-yellow-400' : 'text-blue-600' }} dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->order_date->format('d/m/Y') }}</label>
             </div>
             <div class="w-1/5 px-3">
                 <x-label>
@@ -55,54 +55,55 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-1 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu de départ<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->departure_location }}</label>
-            </div>
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->arrive_location }}</label>
-            </div>
+            <h2 class="text-md text-center justify-center text-blue-500">Destinations du Tournee</h2>
+            <table class="w-full text-xs text-center text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">#</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de départ</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure d'arrivée lieu de mission
+                    </th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de mission</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure de départ lieu de mission
+                    </th>
+                </thead>
+                <tbody>
+                    @foreach ($tournee->tourneeDestinations as $index => $destination)
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $index }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->departure_location }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->start_date->format('d/m/Y') }} at
+                                {{ $destination->start_time }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->arrive_location }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->end_date->format('d/m/Y') }} at
+                                {{ $destination->end_time }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        <div class="flex flex-wrap -mx-1 mb-2">
-            <div class="w-3/4 px-3">
-                <x-label class="inline">
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->start_date->format('d/m/Y') }}
-                    at {{ $tournee->start_time }}</label>
-                <x-label  class="inline">
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->end_date->format('d/m/Y') }}
-                    at {{ $tournee->end_time }}</label>
-
-            </div>
+        {{-- <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-1/4">
-                @if (auth()->user()->employee->hasRole('sg') && $tournee->status=='sg_approve')
+                @if (auth()->user()->employee->hasRole('sg') && $tournee->status == 'sg_approve')
                 <x-primary-button data-modal-toggle="editDatesModal-{{ $tournee->id }}">{{__('Change Dates')}}</x-primary-button>
                 @include('partials.modals._tournee-change-dates')
                 @endif
             </div>
-        </div>
+        </div> --}}
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-full px-3">
                 <x-label>
                     Pays de Tournee<span class="text-red-500">*</span>
                 </x-label>
                 <label class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">
-                        {{ $tournee->bareme->pays }}
-                        (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }} /
-                        Repas:{{ $tournee->bareme->meal_cost }} /
-                        Hebergement:{{ $tournee->bareme->accomodation_cost }})
+                    {{ $tournee->bareme->pays }}
+                    (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }} /
+                    Repas:{{ $tournee->bareme->meal_cost }} /
+                    Hebergement:{{ $tournee->bareme->accomodation_cost }})
                 </label>
             </div>
         </div>
@@ -152,10 +153,10 @@
                 @break
 
                 @case('sup_approve')
-                @if ((auth()->user()->employee->hasRole('supervisor')) &&
-                        in_array(
-                            $tournee->employee->department_id,
-                            Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
+                    @if (auth()->user()->employee->hasRole('supervisor') &&
+                            in_array(
+                                $tournee->employee->department_id,
+                                Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         <button
                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
                             type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
@@ -166,7 +167,9 @@
                         hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
                         w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
+                            auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700
                     hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
@@ -182,7 +185,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -199,7 +203,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -218,7 +223,9 @@
                             auth()->user()->employee->department_id == $tournee->employee->department_id)
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                    @elseif(auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
+                            auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
@@ -226,11 +233,12 @@
 
                 @case('paid')
                 @break
+
             @endswitch
         </div>
     </div>
     <div class="w-11/12 flex flex-wrap -mx-1 mb-2 border border-gray-200">
-        <h4 class="text-1xl text-blue-600 w-full text-center">{{__('Tournee Approves:')}}</h4>
+        <h4 class="text-1xl text-blue-600 w-full text-center">{{ __('Tournee Approves:') }}</h4>
 
         <table class="w-full text-sm text-left text-gray-500">
             @unless ($tournee->getTourneeAprroves()->isEmpty())
@@ -259,7 +267,7 @@
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
                                     {{-- {{config('globals.roles.'. $approve->employee->role) }} --}}
-                                    {{implode('|',$approve->employee->getRoles())}}
+                                    {{ implode('|', $approve->employee->getRoles()) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

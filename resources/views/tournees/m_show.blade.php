@@ -48,29 +48,36 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-1 mb-2">
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de la tournee<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->arrive_location }}</label>
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->start_date->format('d/m/Y') }}
-                    at {{ $tournee->start_time }}</label>
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <label
-                    class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->end_date->format('d/m/Y') }}
-                    at {{ $tournee->end_time }}</label>
-            </div>
+            <h2 class="text-md text-center justify-center text-blue-500">Destinations du Tournee</h2>
+            <table class="w-full text-xs text-center text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">#</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de départ</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure d'arrivée lieu de mission
+                    </th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de mission</th>
+                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure de départ lieu de mission
+                    </th>
+                </thead>
+                <tbody>
+                    @foreach ($tournee->tourneeDestinations as $index => $destination)
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $index }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->departure_location }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->start_date->format('d/m/Y') }} at
+                                {{ $destination->start_time }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->arrive_location }}</td>
+                            <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                {{ $destination->end_date->format('d/m/Y') }} at
+                                {{ $destination->end_time }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-full px-3">
@@ -124,24 +131,26 @@
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Nature de
-                la dépense</th>
-                <th scope="col"
-                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                                                            Détails</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Date
-                dépense</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Montant</th>
-            <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Devise</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">Type
+                                    </th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Nature de
+                                        la dépense</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Détails</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Date
+                                        dépense</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Montant</th>
+                                    <th scope="col"
+                                        class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                        Devise</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Document
                                     </th>
@@ -151,53 +160,53 @@
                                 @forelse ($tournee->expenses as $expense)
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                         <!-- Type -->
-                <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                @if ($expense->type === 'transport')
-                                                                    <span class="text-blue-600 font-medium">Transport</span>
-                                                                @else
-                                                                    <span class="text-green-600 font-medium">Repas</span>
-                                                                @endif
-                                                            </td>
-                <!-- Description -->
-                                                            <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                {{ Str::limit($expense->description, 20) }}
-                                                            </td>
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            @if ($expense->type === 'transport')
+                                                <span class="text-blue-600 font-medium">Transport</span>
+                                            @else
+                                                <span class="text-green-600 font-medium">Repas</span>
+                                            @endif
+                                        </td>
+                                        <!-- Description -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ Str::limit($expense->description, 20) }}
+                                        </td>
 
-                                                            <!-- Details -->
-                                                            <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                @if ($expense->type === 'transport')
-                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
-                                                                    @if ($expense->transport_details)
-                                                                        <span
-                                                                            class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
-                                                                    @endif
-                                                                @else
-                                                                    {{ Str::limit($expense->meal_location, 15) }}
-                                                                    <span
-                                                                        class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
-                                                                        pers.</span>
-                                                                @endif
-                                                            </td>
-                <!-- Date -->
-                                                            <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                {{ $expense->expense_date->format('d/m/Y') }}
-                                                            </td>
+                                        <!-- Details -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            @if ($expense->type === 'transport')
+                                                {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                @if ($expense->transport_details)
+                                                    <span
+                                                        class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
+                                                @endif
+                                            @else
+                                                {{ Str::limit($expense->meal_location, 15) }}
+                                                <span
+                                                    class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
+                                                    pers.</span>
+                                            @endif
+                                        </td>
+                                        <!-- Date -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ $expense->expense_date->format('d/m/Y') }}
+                                        </td>
 
-                                                            <!-- Amount -->
-                <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                {{ number_format($expense->amount, 2) }}
-                                                            </td>
+                                        <!-- Amount -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ number_format($expense->amount, 2) }}
+                                        </td>
 
-                                                            <!-- Currency -->
-                                                            <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                {{ $expense->currency }}
-                                                            </td>
+                                        <!-- Currency -->
+                                        <td
+                                            class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                            {{ $expense->currency }}
+                                        </td>
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <button
@@ -272,7 +281,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -289,7 +299,8 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -308,7 +319,9 @@
                             auth()->user()->employee->department_id == $tournee->employee->department_id)
                         <a href="{{ route('tournees.m_report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                    @elseif(auth()->user()->employee->hasRole('director') ||
+                            auth()->user()->employee->hasRole('controller') ||
+                            auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.m_report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
@@ -350,7 +363,7 @@
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
                                     {{-- {{ config('globals.roles.' . $approve->employee->role) }} --}}
-                                    {{implode('|',$approve->employee->getRoles())}}
+                                    {{ implode('|', $approve->employee->getRoles()) }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

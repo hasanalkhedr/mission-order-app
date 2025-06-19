@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Bareme;
 use App\Models\Employee;
 use App\Models\Tournee;
+use App\Models\TourneeDestination;
 use App\Models\User;
 use App\Notifications\MemoireTourneeLevelNotification;
 use App\Notifications\TourneeLevelNotification;
@@ -22,7 +23,7 @@ class TourneeController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id','desc')->paginate(10);
+            })->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
@@ -30,11 +31,11 @@ class TourneeController extends Controller
             })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id','desc')->paginate(10);
+            })->orderBy('id', 'desc')->paginate(10);
         } else {
             $tournees = Tournee::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id','desc')->paginate(10);
+            })->orderBy('id', 'desc')->paginate(10);
         }
         return view('tournees.index', compact('tournees', 'search'));
     }
@@ -65,7 +66,7 @@ class TourneeController extends Controller
     {
         if (auth()->user()->employee->allow_order) {
             //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
-            $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
+            $baremes = Bareme::where('pays', 'LIKE', '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $tour_number = Tournee::generateOrderNumber();
             $chancellery_rate = ChancelleryRate::currentRate()->rate;
             return view('tournees.create', compact('baremes', 'tour_number', 'chancellery_rate'));
@@ -79,16 +80,16 @@ class TourneeController extends Controller
             //'order_date' => 'required|date|before_or_equal:start_date',
             'employee_id' => 'required',
             'purpose' => 'required',
-            'arrive_location' => 'required',
-            'departure_location' => 'required',
-
             'bareme_id' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i',
             'charge' => 'required',
             'ijm' => 'required',
+            'destinations' => 'required|array|min:1',
+            'destinations.*.departure_location' => 'required|string',
+            'destinations.*.arrive_location' => 'required|string',
+            'destinations.*.start_date' => 'required|date',
+            'destinations.*.start_time' => 'required',
+            'destinations.*.end_date' => 'required|date',
+            'destinations.*.end_time' => 'required',
             'advance' => [
                 'nullable',
                 'numeric',
@@ -134,6 +135,11 @@ class TourneeController extends Controller
         }
         $advance = $request->advance ? $request->advance : 0;
         $tournee = Tournee::create(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance]));
+
+        $destinations = $request->input('destinations');
+        foreach ($destinations as $destination) {
+            TourneeDestination::create(array_merge($destination, ['tournee_id' => $tournee->id]));
+        }
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':
@@ -173,7 +179,7 @@ class TourneeController extends Controller
     {
         if ($tournee->employee_id == auth()->user()->employee->id) {
             //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
-            $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
+            $baremes = Bareme::where('pays', 'LIKE', '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $chancellery_rate = ChancelleryRate::currentRate()->rate;
             return view('tournees.edit', compact('tournee', 'baremes', 'chancellery_rate'));
         } else {
@@ -186,16 +192,16 @@ class TourneeController extends Controller
             //'order_date' => 'required|date|before_or_equal:start_date',
             'employee_id' => 'required',
             'purpose' => 'required',
-            'arrive_location' => 'required',
-            'departure_location' => 'required',
-
             'bareme_id' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'start_time' => 'required',
-            'end_time' => 'required',
             'charge' => 'required',
             'ijm' => 'required',
+            'destinations' => 'required|array|min:1',
+            'destinations.*.departure_location' => 'required|string',
+            'destinations.*.arrive_location' => 'required|string',
+            'destinations.*.start_date' => 'required|date',
+            'destinations.*.start_time' => 'required',
+            'destinations.*.end_date' => 'required|date',
+            'destinations.*.end_time' => 'required',
             'advance' => [
                 'nullable',
                 'numeric',
@@ -240,6 +246,34 @@ class TourneeController extends Controller
         }
         $advance = $request->advance ? $request->advance : 0;
         $tournee->update(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance]));
+
+        // Get existing destination IDs
+        $existingIds = $tournee->tourneeDestinations()->pluck('id')->toArray();
+        $updatedIds = [];
+
+        // Process destinations
+        foreach ($request->destinations as $destinationData) {
+            if (isset($destinationData['id'])) {
+                // Update existing destination
+                $destination = TourneeDestination::find($destinationData['id']);
+                if ($destination) {
+                    $destination->update($destinationData);
+                    $updatedIds[] = $destination->id;
+                }
+            } else {
+                // Create new destination
+                $newDestination = $tournee->tourneeDestinations()->create($destinationData);
+                $updatedIds[] = $newDestination->id;
+            }
+        }
+
+        // Delete destinations that weren't included or were marked for deletion
+        $toDelete = array_diff($existingIds, $updatedIds);
+
+        if (!empty($toDelete)) {
+            TourneeDestination::whereIn('id', $toDelete)->delete();
+        }
+
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':
@@ -301,7 +335,7 @@ class TourneeController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')->orderBy('id','desc')->paginate(10);
+            })->where('status', 'like', 'approved')->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
 
@@ -309,12 +343,12 @@ class TourneeController extends Controller
                 $query->whereIn('department_id', $dep_ids);
             })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id','desc')->paginate(10);
+            })->orderBy('id', 'desc')->paginate(10);
         } else {
             $tournees = Tournee::where('employee_id', '=', auth()->user()->employee->id)
                 ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-                })->orderBy('id','desc')->paginate(10);
+                })->orderBy('id', 'desc')->paginate(10);
         }
         return view('tournees.m_index', compact('tournees', 'search'));
     }
@@ -347,7 +381,7 @@ class TourneeController extends Controller
             'no_ded_accomodation' => 'required|numeric',
             'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
-            'total_amount' => 'required|numeric',
+            'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',
 
         ]);
@@ -383,7 +417,7 @@ class TourneeController extends Controller
         $tournee->update([
             'no_ded_accomodation' => 0,
             'no_ded_meals' => 0,
-           // 'advance' => 0,
+            // 'advance' => 0,
             'total_amount' => 0,
             'memor_status' => null,
         ]);

@@ -49,24 +49,43 @@
                             <td class="w-1/3">Objet :</td>
                             <td class="w-2/3">{{ $tournee->purpose }}</td>
                         </tr>
-                        <tr>
-                            <td class="w-1/3">Lieu de départ :</td>
-                            <td class="w-2/3">{{ $tournee->departure_location }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Lieu d'arrivée :</td>
-                            <td class="w-2/3">{{ $tournee->arrive_location }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Débute le :</td>
-                            <td class="w-2/3">{{ $tournee->start_date->format('d/m/Y') }} heure
-                                {{ $tournee->start_time }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">S'achève le :</td>
-                            <td class="w-2/3">{{ $tournee->end_date->format('d/m/Y') }} heure
-                                {{ $tournee->end_time }}</td>
-                        </tr>
+                        <tr><td colspan="2" class="w-full">
+                            <h2 class="text-md text-center justify-center text-blue-500">Destinations du Tournee</h2>
+                            <table class="w-full text-xs text-center text-gray-500">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">#</th>
+                                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de départ</th>
+                                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure d'arrivée lieu de mission
+                                    </th>
+                                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de mission</th>
+                                    <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure de départ lieu de mission
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($tournee->tourneeDestinations as $index => $destination)
+                                        <tr class="bg-white hover:bg-gray-50">
+                                            <td
+                                                class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                                {{ $index }}</td>
+                                            <td
+                                                class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                                {{ $destination->departure_location }}</td>
+                                            <td
+                                                class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                                {{ $destination->start_date->format('d/m/Y') }} at
+                                                {{ $destination->start_time }}</td>
+                                            <td
+                                                class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                                {{ $destination->arrive_location }}</td>
+                                            <td
+                                                class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                                {{ $destination->end_date->format('d/m/Y') }} at
+                                                {{ $destination->end_time }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </td></tr>
                     </tbody>
                 </table>
                 <table class="table-auto w-full text-left">
@@ -143,7 +162,8 @@
                                     <div class="w-1/3">
                                         <span class="font-light text-md text-right">
                                             @if ($director && $director->signature && $director->signature->status == 'approved')
-                                                <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                                <img src="{{ asset('storage/' . $director->signature->signature_path) }}"
+                                                    class="w-60 h-auto max-w-60">
                                             @endif
                                         </span>
                                     </div>
@@ -157,14 +177,14 @@
 
         </div>
         <!-- Add a print button -->
-    <div class="mt-6 no-print text-center">
-        <button onclick="window.print()" class="bg-blue-500 px-4 py-3 hover:bg-blue-700 text-white font-bold rounded">
-            {{ __('Print Report') }}
-        </button>
-        <button id="download-pdf" class="bg-blue-500 px-4 py-3  hover:bg-blue-700 text-white font-bold rounded">
-            {{ __('Save as PDF file') }}
-        </button>
-    </div>
+        <div class="mt-6 no-print text-center">
+            <button onclick="window.print()" class="bg-blue-500 px-4 py-3 hover:bg-blue-700 text-white font-bold rounded">
+                {{ __('Print Report') }}
+            </button>
+            <button id="download-pdf" class="bg-blue-500 px-4 py-3  hover:bg-blue-700 text-white font-bold rounded">
+                {{ __('Save as PDF file') }}
+            </button>
+        </div>
     </div>
     <script>
         document.getElementById("download-pdf").addEventListener("click", function() {

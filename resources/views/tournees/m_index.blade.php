@@ -30,9 +30,6 @@
                             {{ __('Pays') }}
                         </th>
                         <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                            {{ __('Lieu de la mission') }}
-                        </th>
-                        <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                             {{ __('Début le') }}
                         </th>
                         <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
@@ -67,17 +64,12 @@
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
-                                    {{ $tournee->arrive_location }}
+                                    {{ $tournee->firstDestination->start_date->format('d/m/Y') }} at {{ $tournee->firstDestination->start_time }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">
                                 <div class="cursor-pointer">
-                                    {{ $tournee->start_date->format('d/m/Y') }} at {{ $tournee->start_time }}
-                                </div>
-                            </td>
-                            <td class="py-4 px-6 border-b cursor-pointer">
-                                <div class="cursor-pointer">
-                                    {{ $tournee->end_date->format('d/m/Y') }} at {{ $tournee->end_time }}
+                                    {{ $tournee->lastDestination->end_date->format('d/m/Y') }} at {{ $tournee->lastDestination->end_time }}
                                 </div>
                             </td>
                             <td class="py-4 px-6 border-b cursor-pointer">

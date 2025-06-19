@@ -70,42 +70,126 @@
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('purpose') }}</textarea>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu de départ<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="departure_location" value="{{ old('departure_location') }}" />
+
+        <div x-data="destinationManager()">
+            <!-- Destinations container -->
+            <div class="border rounded-md p-2 border-gray-300 mb-4">
+                <template x-for="(destination, index) in destinations" :key="index">
+                    <div class="destination-field border rounded-md p-2 border-gray-300 mb-4">
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de départ<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-text-input
+                                    x-model="destination.departure_location"
+                                    x-bind:name="`destinations[${index}][departure_location]`"
+                                    required />
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de mission<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-text-input
+                                    x-model="destination.arrive_location"
+                                    x-bind:name="`destinations[${index}][arrive_location]`"
+                                    required />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input
+                                    x-model="destination.start_date"
+                                    x-bind:name="`destinations[${index}][start_date]`"
+                                    required type="date">
+                                </x-date-time-input>
+                                <x-date-time-input
+                                    x-model="destination.start_time"
+                                    x-bind:name="`destinations[${index}][start_time]`"
+                                    required type="time">
+                                </x-date-time-input>
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input
+                                    x-model="destination.end_date"
+                                    x-bind:name="`destinations[${index}][end_date]`"
+                                    required type="date">
+                                </x-date-time-input>
+                                <x-date-time-input
+                                    x-model="destination.end_time"
+                                    x-bind:name="`destinations[${index}][end_time]`"
+                                    required type="time">
+                                </x-date-time-input>
+                            </div>
+                        </div>
+                        <button
+                            x-show="destinations.length > 1"
+                            x-on:click="removeDestination(index)"
+                            type="button"
+                            class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
+                            Supprimer cette destination
+                        </button>
+                    </div>
+                </template>
             </div>
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="arrive_location" value="{{ old('arrive_location') }}" />
+
+            <!-- Add destination button -->
+            <div class="mt-4">
+                <button
+                    x-on:click="addDestination()"
+                    type="button"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Ajouter une autre destination
+                </button>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Débute le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input required name="start_date" value="{{ old('start_date') }}" type="date">
-                </x-date-time-input>
-                <x-date-time-input required name="start_time" value="{{ old('start_time') }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    S'achève le : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input required name="end_date" value="{{ old('end_date') }}" type="date">
-                </x-date-time-input>
-                <x-date-time-input required name="end_time" value="{{ old('end_time') }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('destinationManager', () => ({
+                    destinations: [{
+                        departure_location: '',
+                        arrive_location: '',
+                        start_date: '',
+                        start_time: '',
+                        end_date: '',
+                        end_time: ''
+                    }],
+
+                    addDestination() {
+                        const lastDestination = this.destinations[this.destinations.length - 1];
+                        this.destinations.push({
+                            departure_location: lastDestination.arrive_location,
+                            arrive_location: '',
+                            start_date: lastDestination.end_date,
+                            start_time: lastDestination.end_time,
+                            end_date: '',
+                            end_time: ''
+                        });
+                    },
+
+                    removeDestination(index) {
+                        if (this.destinations.length > 1) {
+                            this.destinations.splice(index, 1);
+                        }
+                    },
+
+                    init() {
+                        // Initialize with old input if available
+                        @if(old('destinations'))
+                            this.destinations = @json(old('destinations'));
+                        @endif
+                    }
+                }));
+            });
+        </script>
+
         <x-form-divider>Frais Mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
@@ -123,7 +207,6 @@
                     </x-select-input>
             </div>
         </div>
-        <!-- Add the new advance payment section here -->
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
@@ -142,7 +225,6 @@
             </div>
         </div>
 
-        <!-- Add this after your existing advance amount field -->
         <div class="flex flex-wrap -mx-3 mb-2" id="advance_amount_container" style="display: none;">
             <div class="w-1/2 px-3">
                 <x-label>
@@ -155,7 +237,6 @@
             </div>
         </div>
 
-        <!-- Add this JavaScript to calculate and validate the advance amount -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const advanceRadios = document.querySelectorAll('.advance-radio');

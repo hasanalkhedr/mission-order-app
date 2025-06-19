@@ -18,7 +18,7 @@
                 </x-label>
                 <x-date-time-input
                     class="appearance-none block h-12 w-full bg-white text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    name="memor_date" value="{{ old('memor_date', $tournee->end_date->format('Y-m-d')) }}" type="date"
+                    name="memor_date" value="{{ old('memor_date', $tournee->lastDestination->end_date->format('Y-m-d')) }}" type="date"
                     required>
                 </x-date-time-input>
             </div>
@@ -70,38 +70,81 @@
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $tournee->purpose }}</textarea>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Lieu de la Tournee
-                </x-label>
-                <x-readonly-text-input value="{{ $tournee->arrive_location }}" />
+
+<div x-data="destinationManager({{ $tournee->tourneeDestinations->toJson() }})">
+            <!-- Destinations container -->
+            <div class="border rounded-md p-2 border-gray-300 mb-4">
+                <template x-for="(destination, index) in destinations" :key="index">
+                    <div class="destination-field border rounded-md p-2 border-gray-300 mb-4">
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de départ<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-readonly-text-input x-model="destination.departure_location"/>
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Lieu de mission<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-readonly-text-input x-model="destination.arrive_location"/>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-[2px]">
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input x-model="destination.start_date" disapled type="date">
+                                </x-date-time-input>
+                                <x-date-time-input x-model="destination.start_time" disapled type="time">
+                                </x-date-time-input>
+                            </div>
+                            <div class="w-1/2 px-3">
+                                <x-label>
+                                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
+                                </x-label>
+                                <x-date-time-input x-model="destination.end_date" disapled type="date">
+                                </x-date-time-input>
+                                <x-date-time-input x-model="destination.end_time" disapled type="time">
+                                </x-date-time-input>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date d’arrivé : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input disabled name="start_date" value="{{ $tournee->start_date->format('Y-m-d') }}"
-                    type="date">
-                </x-date-time-input>
-                <x-date-time-input disabled name="start_time" value="{{ $tournee->start_time }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date de départ : Date & Heure :<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input readonly name="end_date" value="{{ $tournee->end_date->format('Y-m-d') }}"
-                    type="date">
-                </x-date-time-input>
-                <x-date-time-input disabled name="end_time" value="{{ $tournee->end_time }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('destinationManager', (initialDestinations = null) => ({
+                    destinations: initialDestinations ?
+                        initialDestinations.map(dest => ({
+                            ...dest,
+                            start_date: dest.start_date ? dest.start_date.split('T')[0] : '',
+                            end_date: dest.end_date ? dest.end_date.split('T')[0] : '',
+                            //start_time: dest.start_time ? dest.start_time.substring(0, 5) : '',
+                            //end_time: dest.end_time ? dest.end_time.substring(0, 5) : ''
+                        })) :
+                        [{
+                            departure_location: '',
+                            arrive_location: '',
+                            start_date: '',
+                            start_time: '',
+                            end_date: '',
+                            end_time: ''
+                        }],
+
+                    init() {
+                        // Initialize with old input if available (form validation errors)
+                        @if (old('destinations'))
+                            this.destinations = @json(old('destinations'));
+                        @endif
+                    }
+                }));
+            });
+        </script>
+
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>

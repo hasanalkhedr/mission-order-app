@@ -70,12 +70,12 @@
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $tournee->start_date->format('d/m/Y') }} at {{ $tournee->start_time }}
+                                {{ $tournee->firstDestination->start_date->format('d/m/Y') }} at {{ $tournee->firstDestination->start_time }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $tournee->end_date->format('d/m/Y') }} at {{ $tournee->end_time }}
+                                {{ $tournee->lastDestination->end_date->format('d/m/Y') }} at {{ $tournee->lastDestination->end_time }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
