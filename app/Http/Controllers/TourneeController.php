@@ -96,18 +96,16 @@ class TourneeController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
-                    // Calculate full calendar days difference
-                    $diffDays = abs($end->diffInDays($start));
-
-                    $totalDays = $diffDays;
-
-                    // Add extra day if start time is before 5 AM
+                    $destinations = $request->input('destinations');
+                    $totalDays = 0;
+                    foreach ($destinations as $destination) {
+                        $start = Carbon::parse($destination['start_date'] . ' ' . $destination['start_time']);
+                        $end = Carbon::parse($destination['end_date'] . ' ' . $destination['end_time']);
+                        $totalDays += abs($end->diffInDays($start));
+                    }
                     if ($start->hour < 5) {
                         $totalDays += 1;
                     }
-
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
                     if ($value > $maxAdvanceInLocal) {
@@ -115,7 +113,6 @@ class TourneeController extends Controller
                     }
                 }
             ],
-
         ]);
         $action = $request->input('action');
         $status = '';
@@ -208,14 +205,13 @@ class TourneeController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
-                    // Calculate full calendar days difference
-                    $diffDays = abs($end->diffInDays($start));
-
-                    $totalDays = $diffDays;
-
-                    // Add extra day if start time is before 5 AM
+                    $destinations = $request->input('destinations');
+                    $totalDays = 0;
+                    foreach ($destinations as $destination) {
+                        $start = Carbon::parse($destination['start_date'] . ' ' . $destination['start_time']);
+                        $end = Carbon::parse($destination['end_date'] . ' ' . $destination['end_time']);
+                        $totalDays += abs($end->diffInDays($start));
+                    }
                     if ($start->hour < 5) {
                         $totalDays += 1;
                     }

@@ -231,9 +231,9 @@
                     Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
                 </x-label>
                 <x-text-input name="advance" value="{{ old('advance') }}" id="advance_amount_input" />
-                <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
+                {{-- <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
                     hébergement)</small>
-                <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
+                <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p> --}}
             </div>
         </div>
 
@@ -242,14 +242,14 @@
                 const advanceRadios = document.querySelectorAll('.advance-radio');
                 const advanceAmountContainer = document.getElementById('advance_amount_container');
                 const advanceAmountInput = document.getElementById('advance_amount_input');
-                const maxAdvanceSpan = document.getElementById('max_advance');
-                const advanceError = document.getElementById('advance_error');
-                const baremeSelect = document.querySelector('select[name="bareme_id"]');
-                const startDateInput = document.querySelector('input[name="start_date"]');
-                const endDateInput = document.querySelector('input[name="end_date"]');
-                const startTimeInput = document.querySelector('input[name="start_time"]');
-                const endTimeInput = document.querySelector('input[name="end_time"]');
-
+                // const maxAdvanceSpan = document.getElementById('max_advance');
+                // const advanceError = document.getElementById('advance_error');
+                // const baremeSelect = document.querySelector('select[name="bareme_id"]');
+                // const startDateInput = document.querySelector('input[name="start_date"]');
+                // const endDateInput = document.querySelector('input[name="end_date"]');
+                // const startTimeInput = document.querySelector('input[name="start_time"]');
+                // const endTimeInput = document.querySelector('input[name="end_time"]');
+/*
                 // Store bareme data for calculation
                 const baremes = {!! json_encode(
                     $baremes->keyBy('id')->map(function ($item) {
@@ -322,14 +322,14 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                         return true;
                     }
                 }
-
+*/
                 // Toggle advance amount visibility
                 function toggleAdvanceAmount() {
                     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
                     if (needsAdvance === '1') {
                         advanceAmountContainer.style.display = 'flex';
                         advanceAmountInput.required = true;
-                        updateMaxAdvance();
+                        //updateMaxAdvance();
                     } else {
                         advanceAmountContainer.style.display = 'none';
                         advanceAmountInput.required = false;
@@ -344,24 +344,24 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                     radio.addEventListener('change', toggleAdvanceAmount);
                 });
 
-                baremeSelect.addEventListener('change', updateMaxAdvance);
-                startDateInput.addEventListener('change', updateMaxAdvance);
-                endDateInput.addEventListener('change', updateMaxAdvance);
-                startTimeInput.addEventListener('change', updateMaxAdvance);
-                endTimeInput.addEventListener('change', updateMaxAdvance);
-                advanceAmountInput.addEventListener('input', validateAdvanceAmount);
+                // baremeSelect.addEventListener('change', updateMaxAdvance);
+                // startDateInput.addEventListener('change', updateMaxAdvance);
+                // endDateInput.addEventListener('change', updateMaxAdvance);
+                // startTimeInput.addEventListener('change', updateMaxAdvance);
+                // endTimeInput.addEventListener('change', updateMaxAdvance);
+                // advanceAmountInput.addEventListener('input', validateAdvanceAmount);
 
                 // Also validate before form submission
-                document.querySelector('form').addEventListener('submit', function(e) {
-                    const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
+                // document.querySelector('form').addEventListener('submit', function(e) {
+                //     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
 
-                    if (needsAdvance === '1' && !validateAdvanceAmount()) {
-                        e.preventDefault();
-                        alert(
-                            'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                            );
-                    }
-                });
+                //     if (needsAdvance === '1' && !validateAdvanceAmount()) {
+                //         e.preventDefault();
+                //         alert(
+                //             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
+                //             );
+                //     }
+                // });
             });
         </script>
         <div class="flex flex-wrap -mx-3 mb-2">
