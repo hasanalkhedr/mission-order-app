@@ -18,6 +18,10 @@ class Expense extends Model
         'transport_details',
         'meal_location',
         'meal_participants',
+        'passenger',
+        'distance',
+        'material',
+        'visits'
     ];
     protected $casts = [
         'expense_date' => 'date'

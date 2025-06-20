@@ -14,12 +14,16 @@ class ExpenseController extends Controller
         $missionOrder = MissionOrder::findOrFail($request->input('mission_order_id'));
         $rules = [
             'mission_order_id' => 'required',
-            'type' => 'required|in:transport,extra_meal',
+            'type' => 'required|in:transport,extra_meal,other',
             'amount' => 'required|decimal:0,3',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $missionOrder->start_date . '|before_or_equal:' . $missionOrder->end_date,
             'description' => 'required',
             'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
+            'passenger' => 'nullable',
+            'distance' => 'nullable',
+            'material' => 'nullable',
+            'visits' => 'nullable',
         ];
 
         // Conditional validation based on expense type
@@ -56,6 +60,10 @@ class ExpenseController extends Controller
             'expense_date' => $validatedData['expense_date'],
             'description' => $validatedData['description'],
             'expense_document' => $validatedData['expense_document'],
+            'passenger' => $validatedData['passenger'] ?? 0,
+            'distance' => $validatedData['distance'] ?? 0,
+            'material' => $validatedData['material'] ?? 0,
+            'visits' => $validatedData['visits'] ?? 0,
         ];
 
         // Add type-specific fields
@@ -85,12 +93,16 @@ class ExpenseController extends Controller
     {
         // Base validation rules
         $rules = [
-            'type' => 'required|in:transport,extra_meal',
+            'type' => 'required|in:transport,extra_meal,other',
             'amount' => 'required|numeric',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $expense->missionOrder->start_date . '|before_or_equal:' . $expense->missionOrder->end_date,
             'description' => 'required',
             'expense_document' => 'sometimes|file|mimes:jpg,jpeg,png,gif,pdf|max:4096', // Changed to 'sometimes'
+            'passenger' => 'nullable',
+            'distance' => 'nullable',
+            'material' => 'nullable',
+            'visits' => 'nullable',
         ];
 
         // Conditional validation based on expense type
@@ -127,6 +139,10 @@ class ExpenseController extends Controller
             'currency' => $validatedData['currency'],
             'expense_date' => $validatedData['expense_date'],
             'description' => $validatedData['description'],
+            'passenger' => $validatedData['passenger'] ?? 0,
+            'distance' => $validatedData['distance'] ?? 0,
+            'material' => $validatedData['material'] ?? 0,
+            'visits' => $validatedData['visits'] ?? 0,
         ];
 
         // Add type-specific fields

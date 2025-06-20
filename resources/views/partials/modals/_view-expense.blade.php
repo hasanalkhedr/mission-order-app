@@ -70,6 +70,34 @@
                             <textarea rows="4" disabled
                                 class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->description }}</textarea>
                         </div>
+<div class="flex flex-wrap -mx-3 mb-0">
+    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher
+        les cases correspondantes)</x-label>
+    <table>
+        <thead>
+            <th class="text-center text-gray-600 border border-blue-600">
+                <x-label>{{ __('passenger') }}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600">
+                <x-label>{{ __('distance') }}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600">
+                <x-label>{{ __('material') }}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600">
+                <x-label>{{ __('visits') }}</x-label></th>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                    <input type="checkbox" disabled @checked($expense->passenger == 1)></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                    <input type="checkbox" disabled @checked($expense->distance == 1)></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                    <input type="checkbox" disabled @checked($expense->material == 1)></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                    <input type="checkbox" disabled @checked($expense->visits == 1)></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                         <div class="-mx-3 w-full mb-0">
                             <x-label>Date de dépense</x-label>
                             <x-date-time-input class="w-full" value="{{ $expense->expense_date->format('Y-m-d') }}"

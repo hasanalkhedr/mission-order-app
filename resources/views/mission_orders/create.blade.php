@@ -77,7 +77,8 @@
                 <x-label>
                     Lieu de départ<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input required name="departure_location" id="departure_location" value="{{ old('departure_location') }}"  onblur="returnLocationValue();"/>
+                <x-text-input required name="departure_location" id="departure_location"
+                    value="{{ old('departure_location') }}" onblur="returnLocationValue();" />
             </div>
             <div class="w-1/3 px-3">
                 <x-label>
@@ -89,7 +90,7 @@
                 <x-label>
                     Lieu de retour<span class="text-red-500">*</span>
                 </x-label>
-                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location') }}"/>
+                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location') }}" />
                 <script>
                     function returnLocationValue() {
                         document.getElementById('return_location').value = document.getElementById('departure_location').value;
@@ -349,6 +350,56 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
         </div>
+        {{-- Reception Fees --}}
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-full px-3 py-1">
+                <x-label class="w-1/3 inline-flex">
+                    Frais de réception<span class="text-red-500">*</span>
+                </x-label>
+                <input required @checked(Str::length(old('reception_fees')) > 0) type="radio" value="1" name="needs_reception_fees" id="needs_reception_fees_yes"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
+                <label for="needs_reception_fees_yes"
+                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
+                <input required @checked(Str::length(old('reception_fees')) == 0) type="radio" value="0" name="needs_reception_fees"
+                    id="needs_reception_fees_no"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
+                <label for="needs_reception_fees_no"
+                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
+            <div class="w-1/2">
+                <x-text-input name="reception_fees" value="{{ old('reception_fees') }}" id="reception_fees_input" />
+                <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const reception_feesRadios = document.querySelectorAll('.reception_fees-radio');
+                const reception_feesContainer = document.getElementById('reception_fees_container');
+                const reception_feesInput = document.getElementById('reception_fees_input');
+
+                function togglereception_fees() {
+                    const needsreception_fees = document.querySelector('input[name="needs_reception_fees"]:checked')
+                        ?.value;
+                    if (needsreception_fees === '1') {
+                        reception_feesContainer.style.display = 'flex';
+                        reception_feesInput.required = true;
+                    } else {
+                        reception_feesContainer.style.display = 'none';
+                        reception_feesInput.required = false;
+                    }
+                }
+
+                // Set initial state
+                togglereception_fees();
+
+                reception_feesRadios.forEach(radio => {
+                    radio.addEventListener('change', togglereception_fees);
+                });
+            });
+        </script>
+
         <x-form-divider>Observations</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">

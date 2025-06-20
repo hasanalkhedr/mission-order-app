@@ -362,5 +362,10 @@
     "Enter how much 1 EURO equals in your local currency": "Entrez combien équivaut à 1 EURO dans votre monnaie locale",
     "Approve Chancellery Rate": "Approuver le taux de la chancellerie",
     "Conversion Rate (1 EURO to Local)": "Taux de conversion (1 EURO en local)",
-    "New missions cannot be created until admin updates the chancellery rate for this month.": "De nouvelles missions ne peuvent pas être créées tant que l'administrateur n'a pas mis à jour le taux de chancellerie pour ce mois."
+    "New missions cannot be created until admin updates the chancellery rate for this month.": "De nouvelles missions ne peuvent pas être créées tant que l'administrateur n'a pas mis à jour le taux de chancellerie pour ce mois.",
+
+    "passenger": "Plusieurs passagers à transporter",
+    "distance": "Distances importantes à parcourir",
+    "material": "Matérials conséquents à transporter",
+    "visits": "Tournée, plusieurs sites visités"
 }

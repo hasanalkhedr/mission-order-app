@@ -36,6 +36,7 @@
                                     <option value="">--sélectionner le type--</option>
                                     <option value="transport">transport</option>
                                     <option value="extra_meal">repas supplémentaire</option>
+                                    <option value="other">autre</option>
                                 </x-select-input>
                             </div>
 
@@ -78,6 +79,27 @@
                                 <textarea id="description" name="description" rows="4" required placeholder=""
                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
                             </div>
+
+<div class="flex flex-wrap -mx-3 mb-0">
+     <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher les cases correspondantes)</x-label>
+     <table>
+        <thead>
+            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("passenger")}}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("distance")}}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("material")}}</x-label></th>
+            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("visits")}}</x-label></th>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="passenger" @checked(old('passenger'))></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="distance" @checked(old('distance'))></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="material" @checked(old('material'))></td>
+                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="visits" @checked(old('visits'))></td>
+            </tr>
+        </tbody>
+     </table>
+</div>
+
                             <div class="-mx-3 w-full mb-0">
                                 <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
                                 <x-date-time-input required class="w-full" id="expense_date" name="expense_date"

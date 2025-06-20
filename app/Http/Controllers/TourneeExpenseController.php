@@ -9,45 +9,21 @@ use Storage;
 
 class TourneeExpenseController extends Controller
 {
-    // public function store(Request $request)
-    // {
-    //     $tournee = Tournee::find($request->input('tournee_id'));
-    //     $request->validate([
-    //         'tournee_id' => 'required',
-    //         'amount' => 'required|numeric',
-    //         'currency' => 'required',
-    //         'expense_date' => 'required|date|after_or_equal:' . $tournee->start_date . '|before_or_equal:' . $tournee->end_date,
-    //         'description' => 'required',
-    //         // 'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //         'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
-    //     ]);
-
-    //     $expense = TourneeExpense::create($request->all());
-    //     if ($request->hasFile('expense_document')) {
-    //         // Store the image in 'storage/app/public/profile_pictures'
-    //         $file = $request->file('expense_document');
-    //         $filename = $request->input('tournee_id') . '-t-' . $expense->id . '.' . $file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
-
-    //         $path = $file->storeAs('expense_documents', $filename, 'public');
-
-    //         // Save the image path to the user's profile
-    //         $expense->expense_document = $path;
-    //         $expense->save();
-    //     }
-    //     return redirect()->route('tournees.m_create', $request->input('tournee_id'));
-    // }
-
     public function store(Request $request)
     {
         $tournee = Tournee::findOrFail($request->input('tournee_id'));
         $rules = [
             'tournee_id' => 'required',
-            'type' => 'required|in:transport,extra_meal',
+            'type' => 'required|in:transport,extra_meal,other',
             'amount' => 'required|decimal:0,3',
             'currency' => 'required',
-            'expense_date' => 'required|date|after_or_equal:' . $tournee->start_date . '|before_or_equal:' . $tournee->end_date,
+            'expense_date' => 'required|date|after_or_equal:' . $tournee->firstDestination->start_date . '|before_or_equal:' . $tournee->lastDestination->end_date,
             'description' => 'required',
             'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
+            'passenger' => 'nullable',
+            'distance' => 'nullable',
+            'material' => 'nullable',
+            'visits' => 'nullable',
         ];
 
         // Conditional validation based on expense type
@@ -84,6 +60,10 @@ class TourneeExpenseController extends Controller
             'expense_date' => $validatedData['expense_date'],
             'description' => $validatedData['description'],
             'expense_document' => $validatedData['expense_document'],
+            'passenger' => $validatedData['passenger'] ?? 0,
+            'distance' => $validatedData['distance'] ?? 0,
+            'material' => $validatedData['material'] ?? 0,
+            'visits' => $validatedData['visits'] ?? 0,
         ];
 
         // Add type-specific fields
@@ -109,44 +89,20 @@ class TourneeExpenseController extends Controller
         return redirect()->route('tournees.m_create', $request->input('tournee_id'))
             ->with('success', 'Dépense créée avec succès');
     }
-
-    // public function update(Request $request, TourneeExpense $expense)
-    // {
-    //     $request->validate([
-    //         'amount' => 'required|numeric',
-    //         'currency' => 'required',
-    //         'expense_date' => 'required|date|after_or_equal:' . $expense->tournee->start_date . '|before_or_equal:' . $expense->tournee->end_date,
-
-    //         'description' => 'required',
-    //         //'expense_document' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //         'expense_document' => 'required|file|mimes:jpg,jpeg,png,gif,pdf|max:4096',
-    //     ]);
-
-    //     $expense->update($request->all());
-    //     if ($request->hasFile('expense_document')) {
-    //         // Store the image in 'storage/app/public/profile_pictures'
-    //         $file = $request->file('expense_document');
-    //         $filename = $expense->tournee_id . '-' . $expense->id . '.' . $file->getClientOriginalExtension(); // e.g. 1609459200.jpeg
-
-    //         $path = $file->storeAs('expense_documents', $filename, 'public');
-
-    //         // Save the image path to the user's profile
-    //         $expense->expense_document = $path;
-    //         $expense->save();
-    //     }
-    //     return redirect()->route('tournees.m_create', $expense->tournee_id);
-    // }
-
     public function update(Request $request, TourneeExpense $tourneeExpense)
     {
         // Base validation rules
         $rules = [
-            'type' => 'required|in:transport,extra_meal',
+            'type' => 'required|in:transport,extra_meal,other',
             'amount' => 'required|numeric',
             'currency' => 'required',
-            'expense_date' => 'required|date|after_or_equal:' . $tourneeExpense->tournee->start_date . '|before_or_equal:' . $tourneeExpense->tournee->end_date,
+            'expense_date' => 'required|date|after_or_equal:' . $tourneeExpense->tournee->firstDestination->start_date . '|before_or_equal:' . $tourneeExpense->tournee->lastDestination->end_date,
             'description' => 'required',
             'expense_document' => 'sometimes|file|mimes:jpg,jpeg,png,gif,pdf|max:4096', // Changed to 'sometimes'
+            'passenger' => 'nullable',
+            'distance' => 'nullable',
+            'material' => 'nullable',
+            'visits' => 'nullable',
         ];
 
         // Conditional validation based on expense type
@@ -183,6 +139,10 @@ class TourneeExpenseController extends Controller
             'currency' => $validatedData['currency'],
             'expense_date' => $validatedData['expense_date'],
             'description' => $validatedData['description'],
+            'passenger' => $validatedData['passenger'] ?? 0,
+            'distance' => $validatedData['distance'] ?? 0,
+            'material' => $validatedData['material'] ?? 0,
+            'visits' => $validatedData['visits'] ?? 0,
         ];
 
         // Add type-specific fields

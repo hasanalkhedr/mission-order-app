@@ -123,6 +123,12 @@
                         <tr>
                             <td colspan="2" class="w-full">{{ $tournee->budget_text }}</td>
                         </tr>
+                        @if($tournee->reception_fees)
+                        <tr>
+                            <td class="w-2/3">Frais de réception :</td>
+                            <td class="w-1/3">{{ $tournee->reception_fees }}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
                 <table class="table-auto w-full text-left">

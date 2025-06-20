@@ -24,8 +24,10 @@
                                 <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                                     @if($expense->type === 'transport')
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
-                                    @else
+                                    @elseif ($expense->type === 'extra_meal')
                                         <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Repas</span>
+                                    @else
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
                                     @endif
                                 </td>
 
@@ -43,7 +45,7 @@
                                                 <p class="text-xs text-gray-500">{{ $expense->transport_details }}</p>
                                             @endif
                                         </div>
-                                    @else
+                                    @elseif($expense->type === 'extra_meal')
                                         <div class="text-sm">
                                             <span class="font-semibold">{{ $expense->meal_location }}</span>
                                             <p class="text-xs text-gray-500">{{ $expense->meal_participants }} personnes</p>
@@ -79,11 +81,11 @@
                                             class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
                                             data-modal-toggle="deleteExpenseModal-{{ $expense->id }}">{{ __('Delete') }}</button>
                                     </div>
+                                    @include('partials.modals._view-expense')
+                                    @include('partials.modals._edit-expense')
+                                    @include('partials.modals._delete-expense')
                                 </td>
                             </tr>
-                            @include('partials.modals._view-expense')
-                            @include('partials.modals._edit-expense')
-                            @include('partials.modals._delete-expense')
                         @endforeach
                     </tbody>
                     <tfoot>

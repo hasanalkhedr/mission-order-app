@@ -125,6 +125,12 @@
                         <tr>
                             <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
                         </tr>
+                        @if($missionOrder->reception_fees)
+                        <tr>
+                            <td class="w-2/3">Frais de réception :</td>
+                            <td class="w-1/3">{{ $missionOrder->reception_fees }}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
                 <table class="table-auto w-full text-left">
