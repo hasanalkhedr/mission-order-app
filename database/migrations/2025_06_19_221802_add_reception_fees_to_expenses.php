@@ -11,17 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->boolean('passenger')->default(false);
-            $table->boolean('distance')->default(false);
-            $table->boolean('material')->default(false);
-            $table->boolean('visits')->default(false);
+        Schema::table('mission_orders', function (Blueprint $table) {
+            $table->string('reception_fees')->nullable();
         });
-        Schema::table('tournee_expenses', function (Blueprint $table) {
-            $table->boolean('passenger')->default(false);
-            $table->boolean('distance')->default(false);
-            $table->boolean('material')->default(false);
-            $table->boolean('visits')->default(false);
+        Schema::table('tournees', function (Blueprint $table) {
+            $table->string('reception_fees')->nullable();
         });
     }
 
@@ -30,17 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->dropColumn('passenger');
-            $table->dropColumn('distance');
-            $table->dropColumn('material');
-            $table->dropColumn('visits');
+        Schema::table('mission_orders', function (Blueprint $table) {
+            $table->dropColumn('reception_fees');
         });
-        Schema::table('tournee_expenses', function (Blueprint $table) {
-            $table->dropColumn('passenger');
-            $table->dropColumn('distance');
-            $table->dropColumn('material');
-            $table->dropColumn('visits');
+        Schema::table('tournees', function (Blueprint $table) {
+            $table->dropColumn('reception_fees');
         });
     }
 };
