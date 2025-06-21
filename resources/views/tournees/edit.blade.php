@@ -446,6 +446,144 @@
                 });
             });
         </script>
+
+{{-- Pre Expenses --}}
+<x-form-divider>Dépenses prévues</x-form-divider>
+<div class="flex flex-col" x-data="expensesManager({{ $tournee->expenses->toJson() }})">
+    <div class="-m-1.5 overflow-x-auto">
+        <div class="p-1.5 min-w-full inline-block align-middle">
+            <div class="overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
+                            {{-- <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Détails</th> --}}
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form></form>
+                        <template x-for="(expense, index) in expenses" :key="index">
+                            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                <!-- Type Column -->
+                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                    {{-- <template x-if="expense.type=='transport'">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
+                                    </template>
+                                    <template x-if="expense.type=='extra-meal'">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Repas</span>
+                                    </template>
+                                    <template x-if="expense.type=='other'">
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
+                                    </template> --}}
+                                    <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type">
+                                    <option value="">--sélectionner le type--</option>
+                                    <option value="transport">transport</option>
+                                    <option value="extra_meal">repas supplémentaire</option>
+                                    <option value="other">autre</option>
+                                </x-select-input>
+                                </td>
+
+                                <!-- Description Column -->
+                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                    <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="4" required placeholder=""
+                                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"></textarea>
+                                </td>
+
+                                {{-- <!-- Details Column -->
+                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                    <template x-if="expense.type=='transport'">
+                                        <div class="text-sm">
+                                            <span class="font-semibold" x-text="expense.transport_type"></span>
+                                            <template x-if="expense.transport_details">
+                                                <p class="text-xs text-gray-500" x-text="expense.transport_details"></p>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <template x-if="expense.type=='extra-meal'">
+                                        <div class="text-sm">
+                                            <span class="font-semibold" x-text="expense.meal_location"></span>
+                                            <p class="text-xs text-gray-500" x-text="expense.meal_participants"> personnes</p>
+                                        </div>
+                                    </template>
+                                </td> --}}
+
+                                <!-- Actions Column -->
+                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex justify-center space-x-2">
+                                        {{-- <button type="button"
+                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                                            data-modal-toggle="viewExpenseModal-{{ $expense->id }}">{{ __('View') }}</button>
+                                        <button type="button"
+                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                                            data-modal-toggle="editExpenseModal-{{ $expense->id }}">{{ __('Edit') }}</button> --}}
+                                        <button type="button"
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                                            x-on:click="removeExpense(index)">{{ __('Delete') }}</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4">
+                <button
+                    x-on:click="addExpense()"
+                    type="button"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Ajouter depense
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('expensesManager', (initialExpenses = null) => ({
+            expenses: initialExpenses ?
+                        initialExpenses.map(dest => ({
+                            ...dest,
+                        })) :
+             [{
+                type: '',
+                transport_type: '',
+                transport_details: '',
+                meal_location: '',
+                meal_participants: '',
+                description: ''
+            }],
+
+            addExpense() {
+                this.expenses.push({
+                    type: '',
+                transport_type: '',
+                transport_details: '',
+                meal_location: '',
+                meal_participants: '',
+                description: ''
+                });
+            },
+
+            removeExpense(index) {
+                console.log(index);
+                console.log(this.expenses);
+                if (this.expenses.length > 1) {
+                    this.expenses.splice(index, 1);
+                }
+            },
+
+            init() {
+                // Initialize with old input if available
+                @if(old('expenses'))
+                    this.expenses = @json(old('expenses'));
+                @endif
+            }
+        }));
+    });
+</script>
+
         <x-form-divider>Observations</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">

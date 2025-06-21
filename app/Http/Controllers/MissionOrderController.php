@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Expense;
 class MissionOrderController extends Controller
 {
     public function index(Request $request)
@@ -117,6 +118,9 @@ class MissionOrderController extends Controller
                     }
                 }
             ],
+            'expenses' => 'nullable|array',
+            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
+            'expenses.*.description' => 'required|string',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -146,6 +150,19 @@ class MissionOrderController extends Controller
         }
         $advance = $request->advance ? $request->advance : 0;
         $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
+
+$expenses = $request->input('expenses');
+        foreach ($expenses as $expense) {
+            Expense::create(array_merge($expense,
+                [
+                    'amount' => 0,
+                    'currency' => 'EURO',
+                    'expense_date' => $missionOrder->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $missionOrder->id
+                ]));
+        }
+
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':
@@ -235,6 +252,9 @@ class MissionOrderController extends Controller
                     }
                 }
             ],
+            'expenses' => 'nullable|array',
+            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
+            'expenses.*.description' => 'required|string',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -265,6 +285,37 @@ class MissionOrderController extends Controller
         $advance = $request->advance ? $request->advance : 0;
         $missionOrder->update(array_merge($request->except(['advance']),
             ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
+
+$expenses = $request->input('expenses');
+        $existingIds = $missionOrder->expenses()->pluck('id')->toArray();
+        $updatedIds = [];
+        foreach ($expenses as $expense) {
+            if (isset($expense['id'])) {
+                // Update existing destination
+                $existedExpense = Expense::find($expense['id']);
+                if ($existedExpense) {
+                    $existedExpense->update($expense);
+                    $updatedIds[] = $existedExpense->id;
+                }
+            } else {
+                // Create new destination
+                $newExpense = $missionOrder->expenses()->create(array_merge($expense,
+                [
+                    'amount' => 0,
+                    'currency' => 'EURO',
+                    'expense_date' => $missionOrder->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $missionOrder->id
+                ]));
+                $updatedIds[] = $newExpense->id;
+            }
+        }
+        $toDelete = array_diff($existingIds, $updatedIds);
+
+        if (!empty($toDelete)) {
+            Expense::whereIn('id', $toDelete)->delete();
+        }
+
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':

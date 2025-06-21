@@ -8,6 +8,7 @@ use App\Models\Bareme;
 use App\Models\Employee;
 use App\Models\Tournee;
 use App\Models\TourneeDestination;
+use App\Models\TourneeExpense;
 use App\Models\User;
 use App\Notifications\MemoireTourneeLevelNotification;
 use App\Notifications\TourneeLevelNotification;
@@ -113,6 +114,9 @@ class TourneeController extends Controller
                     }
                 }
             ],
+            'expenses' => 'nullable|array',
+            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
+            'expenses.*.description' => 'required|string',
         ]);
         $action = $request->input('action');
         $status = '';
@@ -136,6 +140,17 @@ class TourneeController extends Controller
         $destinations = $request->input('destinations');
         foreach ($destinations as $destination) {
             TourneeDestination::create(array_merge($destination, ['tournee_id' => $tournee->id]));
+        }
+        $expenses = $request->input('expenses');
+        foreach ($expenses as $expense) {
+            TourneeExpense::create(array_merge($expense,
+                [
+                    'amount' => 0,
+                    'currency' => 'EURO',
+                    'expense_date' => $tournee->firstDestination->start_date,
+                    'expense_document' => '',
+                    'tournee_id' => $tournee->id
+                ]));
         }
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
@@ -223,6 +238,9 @@ class TourneeController extends Controller
                     }
                 }
             ],
+            'expenses' => 'nullable|array',
+            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
+            'expenses.*.description' => 'required|string',
         ]);
         $action = $request->input('action');
         $status = '';
@@ -268,6 +286,36 @@ class TourneeController extends Controller
 
         if (!empty($toDelete)) {
             TourneeDestination::whereIn('id', $toDelete)->delete();
+        }
+
+        $expenses = $request->input('expenses');
+        $existingIds = $tournee->expenses()->pluck('id')->toArray();
+        $updatedIds = [];
+        foreach ($expenses as $expense) {
+            if (isset($expense['id'])) {
+                // Update existing destination
+                $existedExpense = TourneeExpense::find($expense['id']);
+                if ($existedExpense) {
+                    $existedExpense->update($expense);
+                    $updatedIds[] = $existedExpense->id;
+                }
+            } else {
+                // Create new destination
+                $newExpense = $tournee->expenses()->create(array_merge($expense,
+                [
+                    'amount' => 0,
+                    'currency' => 'EURO',
+                    'expense_date' => $tournee->firstDestination->start_date,
+                    'expense_document' => '',
+                    'tournee_id' => $tournee->id
+                ]));
+                $updatedIds[] = $newExpense->id;
+            }
+        }
+        $toDelete = array_diff($existingIds, $updatedIds);
+
+        if (!empty($toDelete)) {
+            TourneeExpense::whereIn('id', $toDelete)->delete();
         }
 
         $notification = new TourneeLevelNotification($tournee);
