@@ -15,7 +15,7 @@
                 <div class="flex flex-wrap mb-2">
                     <x-application-logo class="w-2/5"></x-application-logo>
                     <div class="w-3/5 px-10 mt-10 mb-6 md:mb-0 text-end">
-                        <p>Beyrouth, {{ $missionOrder->order_date->format('d/m/Y') }}</p>
+                        <p>New Delhi, {{ $missionOrder->order_date->format('d/m/Y') }}</p>
                     </div>
                     <div class="w-full px-3 mt-4 mb-2 md:mb-0 text-center">
                         <h3 class="text-lg font-semibold">ORDRE DE MISSION {{ $missionOrder->order_number }}</h3>
@@ -155,12 +155,12 @@
                     <tbody>
                         <tr>
                             <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
-                                <span class="font-bold text-lg w-24 text-center">SCIORTINO Sabine</span>
+                                <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="w-full px-24 pt-0 pb-2 text-right">
-                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
                             </td>
                         </tr>
                         <tr>

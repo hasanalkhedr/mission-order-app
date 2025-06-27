@@ -7,7 +7,7 @@
             <div class="flex justify-between items-start mb-2">
                 <x-application-logo class="h-16" />
                 <div class="text-right">
-                    <p>Beyrouth, {{ $tournee->memor_date->format('d/m/Y') }}</p>
+                    <p>New Delhi, {{ $tournee->memor_date->format('d/m/Y') }}</p>
                 </div>
             </div>
 
@@ -362,7 +362,7 @@
                             <span></span>
                         </td>
                         <td class="w-7/12 text-center">
-                            <span class="font-bold text-lg w-24 text-center">SCIORTINO Sabine</span>
+                            <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
                         </td>
                     </tr>
                     <tr>
@@ -373,7 +373,7 @@
                             </span>
                         </td>
                         <td class="w-6/12 text-center">
-                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IF</span>
+                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
                         </td>
                     </tr>
                     <tr>
