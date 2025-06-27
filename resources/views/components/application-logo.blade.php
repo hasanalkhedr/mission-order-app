@@ -1,1 +1,1 @@
-<img src="{{ Vite::asset('resources/images/logo-IFI.jpeg') }}" {{$attributes}}/>
+<img src="{{ asset('resources/images/logo-IFI.jpeg') }}" {{$attributes}}/>
