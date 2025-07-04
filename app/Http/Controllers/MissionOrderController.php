@@ -450,7 +450,7 @@ $expenses = $request->input('expenses');
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
         $director = Employee::whereJsonContains('roles', 'director')->first();
-        $current_rate = ChancelleryRate::currentRate()->rate;
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->order_date)->rate;
         return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
     }
     public function m_destroy(Request $request, MissionOrder $missionOrder)

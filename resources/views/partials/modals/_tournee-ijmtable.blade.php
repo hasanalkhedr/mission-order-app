@@ -85,7 +85,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$tournee->memor_date->format('F Y')}}</td>
+                            <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$tournee->order_date->format('F Y')}}</td>
                             <th scope="col" colspan="3"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                                 Total
