@@ -138,7 +138,7 @@
                 </x-disabled-select-input>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
+        {{-- <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/2 px-3">
                 <x-label>
                     Nuitées à déduire des IJM<span class="text-red-500">*</span>
@@ -165,10 +165,10 @@
                 <x-label>{{__('Submit Values before add expenses')}}</x-label>
                 <x-primary-button name="action" value="partialSubmit" class="h-11">Soumettre des valeurs</x-primary-button>
             </div>
-        </div>
+        </div> --}}
         <x-form-divider>Frais Mission</x-form-divider>
         @include('partials.modals._expensestable')
-        <x-form-divider>Hebergement</x-form-divider>
+        <x-form-divider><!-- Hebergement --></x-form-divider>
         @include('partials.modals._ijmtable')
         <div class="-mx-3 mb-2">
             <div class="w-full px-3 text-end">

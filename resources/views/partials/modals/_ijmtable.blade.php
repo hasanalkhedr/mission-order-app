@@ -30,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="hidden">
                             <th scope="col"
                                 class="px-6 py-1 text-start text-xs font-medium text-gray-600 uppercase border border-gray-400">
                                 Indemnité d’hébèrgement
@@ -88,7 +88,7 @@
                             <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$missionOrder->order_date->format('F Y')}}</td>
                             <th scope="col" colspan="3"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                                Total
+                                Total (avec hébergement)
                             </th>
                             <th scope="col"
                                 class="px-6 py-1 text-start text-xs font-bold text-blue-600 uppercase border border-gray-500">
@@ -129,25 +129,25 @@
                 <script>
                     function calculateTotal() {
                         document.getElementById('no_remaining_accomodation').textContent = {{ $missionOrder->no_accomodation }} -
-                            document.getElementById('no_ded_accomodation').value;
+                            /*document.getElementById('no_ded_accomodation').value*/0;
                         document.getElementById('value_remaining_accomodation').textContent = ({{ $missionOrder->no_accomodation }} -
-                            document.getElementById('no_ded_accomodation').value) * {{ $missionOrder->bareme->accomodation_cost }};
-                        document.getElementById('no_remaining_meals').textContent = {{ $missionOrder->no_meals }} - document
-                            .getElementById('no_ded_meals').value;
-                        document.getElementById('value_remaining_meals').textContent = ({{ $missionOrder->no_meals }} - document
-                            .getElementById('no_ded_meals').value) * {{ $missionOrder->bareme->meal_cost }};
-                        document.getElementById('total').textContent = ({{ $missionOrder->no_accomodation }} - document.getElementById(
-                                'no_ded_accomodation').value) * {{ $missionOrder->bareme->accomodation_cost }} + (
-                                {{ $missionOrder->no_meals }} - document.getElementById('no_ded_meals').value) *
+                            /*document.getElementById('no_ded_accomodation').value*/0) * {{ $missionOrder->bareme->accomodation_cost }};
+                        document.getElementById('no_remaining_meals').textContent = {{ $missionOrder->no_meals }} -
+                            /*document.getElementById('no_ded_meals').value*/0;
+                        document.getElementById('value_remaining_meals').textContent = ({{ $missionOrder->no_meals }} -
+                            /*document.getElementById('no_ded_meals').value*/0) * {{ $missionOrder->bareme->meal_cost }};
+                        document.getElementById('total').textContent = ({{ $missionOrder->no_accomodation }} -
+                            /*document.getElementById('no_ded_accomodation').value*/0) * {{ $missionOrder->bareme->accomodation_cost }} + (
+                                {{ $missionOrder->no_meals }} - /*document.getElementById('no_ded_meals').value*/0) *
                             {{ $missionOrder->bareme->meal_cost }};
                         document.getElementById('total_hidden').value = {{ $current_rate }} * ((
-                                {{ $missionOrder->no_accomodation }} - document.getElementById('no_ded_accomodation').value) *
-                            {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $missionOrder->bareme->meal_cost }});
+                                {{ $missionOrder->no_accomodation }} - /*document.getElementById('no_ded_accomodation').value*/0) *
+                            {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} -
+                                /*document.getElementById('no_ded_meals').value*/0) * {{ $missionOrder->bareme->meal_cost }});
                         document.getElementById('totalLocal').textContent = {{ $current_rate }} * ((
-                                {{ $missionOrder->no_accomodation }} - document.getElementById('no_ded_accomodation').value) *
-                            {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} - document
-                                .getElementById('no_ded_meals').value) * {{ $missionOrder->bareme->meal_cost }});
+                                {{ $missionOrder->no_accomodation }} - /*document.getElementById('no_ded_accomodation').value*/0) *
+                            {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} -
+                                /*document.getElementById('no_ded_meals').value*/0) * {{ $missionOrder->bareme->meal_cost }});
                     }
 calculateTotal();
                     document.getElementById('no_ded_accomodation').addEventListener('input', calculateTotal);

@@ -36,6 +36,7 @@
                                     <option value="">--sélectionner le type--</option>
                                     <option value="transport">transport</option>
                                     <option value="extra_meal">repas supplémentaire</option>
+                                    <option value="extra_accomodation">hébergement supplémentaire</option>
                                     <option value="other">autre</option>
                                 </x-select-input>
                             </div>
@@ -51,6 +52,7 @@
                                         <option value="taxi_uber">Taxi/Uber</option>
                                         <option value="public_transport">Transport public</option>
                                         <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                        <option value="autre">autre</option>
                                     </x-select-input>
                                 </div>
                                 <div class="flex flex-wrap -mx-3 mb-0">
@@ -58,29 +60,7 @@
                                     <textarea id="transport_details" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
                                         class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details') }}</textarea>
                                 </div>
-                            </div>
-
-                            <!-- Meal Type Fields (hidden by default) -->
-                            <div id="mealFields" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
-                                    <x-text-input id="meal_location" name="meal_location" value="{{ old('meal_location') }}"
-                                        placeholder="Nom du restaurant ou adresse"/>
-                                </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
-                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
-                                        value="{{ old('meal_participants', 1) }}" min="1"/>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap -mx-3 mb-0">
-                                <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
-                                <textarea id="description" name="description" rows="4" required placeholder=""
-                                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
-                            </div>
-
-<div class="flex flex-wrap -mx-3 mb-0">
      <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher les cases correspondantes)</x-label>
      <table>
         <thead>
@@ -99,6 +79,29 @@
         </tbody>
      </table>
 </div>
+                            </div>
+
+                            <!-- Meal Type Fields (hidden by default) -->
+                            <div id="mealFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
+                                    <x-text-input id="meal_location" name="meal_location" value="{{ old('meal_location') }}"
+                                        placeholder="Nom du restaurant ou adresse"/>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
+                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
+                                        value="{{ old('meal_participants', 1) }}" min="1"/>
+                                </div>
+                            </div>
+
+                            {{-- <div class="flex flex-wrap -mx-3 mb-0">
+                                <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
+                                <textarea id="description" name="description" rows="4" required placeholder=""
+                                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
+                            </div> --}}
+
+
 
                             <div class="-mx-3 w-full mb-0">
                                 <x-label>Date de dépense<span class="text-red-500">*</span></x-label>

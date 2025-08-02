@@ -37,8 +37,15 @@ class MissionOrderController extends Controller
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id','desc')->paginate(10);
         }
+        $countries = MissionOrder::with('bareme')
+            ->get()
+            ->pluck('bareme.pays')
+            ->unique()
+            ->filter()
+            ->values();
+        $employees = Employee::select('id', 'first_name', 'last_name')->get();
 
-        return view('mission_orders.index', compact('missionOrders', 'search'));
+        return view('mission_orders.index', compact('missionOrders', 'search', 'countries', 'employees'));
     }
     public function show(MissionOrder $missionOrder)
     {
@@ -91,7 +98,7 @@ class MissionOrderController extends Controller
             'end_time' => 'required|date_format:H:i',
             'charge' => 'required',
             'ijm' => 'required',
-            'assurance' => 'required',
+            //'assurance' => 'required',
             'return_location' => 'nullable',
             'advance' => [
                 'nullable',
@@ -119,8 +126,8 @@ class MissionOrderController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
-            'expenses.*.description' => 'required|string',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_meal,other',
+            'expenses.*.description' => 'nullable|string',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -151,7 +158,7 @@ class MissionOrderController extends Controller
         $advance = $request->advance ? $request->advance : 0;
         $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
 
-$expenses = $request->input('expenses');
+$expenses = $request->input('expenses') ?? [];
         foreach ($expenses as $expense) {
             Expense::create(array_merge($expense,
                 [
@@ -286,7 +293,7 @@ $expenses = $request->input('expenses');
         $missionOrder->update(array_merge($request->except(['advance']),
             ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
 
-$expenses = $request->input('expenses');
+$expenses = $request->input('expenses') ?? [];
         $existingIds = $missionOrder->expenses()->pluck('id')->toArray();
         $updatedIds = [];
         foreach ($expenses as $expense) {

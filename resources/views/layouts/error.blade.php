@@ -123,12 +123,12 @@
                         </li>
                         <hr />
                         <!-- My Profile Item -->
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('employees.show', auth()->user()->employee) }}"
                                 class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                                 <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('signatures.index') }}"
                                 class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
@@ -152,7 +152,7 @@
                             </a>
                         </li>
                         <hr />
-                        <!-- Settings Menu -->
+                        {{-- <!-- Settings Menu -->
                         @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
                             <li>
                                 <button type="button"
@@ -185,7 +185,7 @@
                                 </ul>
                             </li>
                             <hr />
-                        @endif
+                        @endif --}}
                     </ul>
                 </nav>
             </aside>
@@ -273,13 +273,13 @@
                         </ul>
                     </li>
                     <hr />
-                    <!-- My Profile Item -->
+                    {{-- <!-- My Profile Item -->
                     <li>
                         <a href="{{ route('employees.show', auth()->user()->employee) }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                             <span class="mx-2 font-medium">{{ __('Mon Profil') }}</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li>
                         <a href="{{ route('signatures.index') }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
@@ -303,7 +303,7 @@
                         </a>
                     </li>
                     <hr />
-                    <!-- Settings Menu -->
+                    {{-- <!-- Settings Menu -->
                     @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
                         <li>
                             <button type="button"
@@ -336,7 +336,7 @@
                             </ul>
                         </li>
                         <hr />
-                    @endif
+                    @endif --}}
                 </ul>
             </nav>
         </div>
@@ -344,14 +344,13 @@
         <div class="flex-1 flex flex-col">
             <header class="bg-white w-full shadow px-6 py-4 flex justify-between items-center no-print">
 
-                <nav class="w-full bg-white border-b-2 border-indigo-600 flex justify-between">
+                {{-- <nav class="w-full bg-white border-b-2 border-indigo-600 flex justify-between">
                     <div class="flex flex-col py-2">
                         <div class="px-2 text-xl font-bold text-black">
                             {{ auth()->user()->employee->first_name }} {{ auth()->user()->employee->last_name }}
                         </div>
                         <div class="px-2  text-md italic text-black">
                             ({{ implode(' | ', auth()->user()->employee->getRoles()) }})
-                            {{-- {{ config('globals.roles.' . auth()->user()->employee->role) }} --}}
                         </div>
                     </div>
                     <div class="flex mx-2">
@@ -367,7 +366,7 @@
                             </form>
                         </div>
                     </div>
-                </nav>
+                </nav> --}}
 
             </header>
             @include('flash-messages.error-flash-message')

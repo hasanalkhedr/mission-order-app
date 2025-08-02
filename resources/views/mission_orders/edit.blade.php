@@ -65,11 +65,58 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet<span class="text-red-500">*</span>
+                    Objet/Motifs<span class="text-red-500">*</span>
                 </x-label>
-                <textarea name="purpose" rows="2" required
-                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('purpose', $missionOrder->purpose) }}</textarea>
+                <textarea name="purpose" rows="2" required minlength="100"
+                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-1 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                    oninput="updateCharCounter(this)">{{ old('purpose', $missionOrder->purpose) }}</textarea>
+                <div class="flex justify-between items-center">
+                    <small class="text-gray-500">Minimum 100 caractères requis</small>
+                    <small id="char-counter" class="text-gray-500">0/100</small>
+                </div>
+                <div id="purpose-error" class="text-red-500 hidden mt-1">Le texte doit contenir au moins 100 caractères.
+                </div>
             </div>
+
+            <script>
+                // Initialize counter on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    updateCharCounter(textarea);
+                });
+
+                function updateCharCounter(textarea) {
+                    const charCount = textarea.value.length;
+                    const counterElement = document.getElementById('char-counter');
+
+                    // Update counter display
+                    counterElement.textContent = `${charCount}/100`;
+
+                    // Change color based on count
+                    if (charCount < 100) {
+                        counterElement.classList.add('text-red-500');
+                        counterElement.classList.remove('text-gray-500', 'text-green-500');
+                    } else {
+                        counterElement.classList.add('text-green-500');
+                        counterElement.classList.remove('text-gray-500', 'text-red-500');
+                    }
+                }
+
+                // Validate on form submission
+                document.querySelector('form')?.addEventListener('submit', function(e) {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    const errorElement = document.getElementById('purpose-error');
+
+                    if (textarea.value.length < 100) {
+                        e.preventDefault();
+                        errorElement.textContent = "Le texte doit contenir au moins 100 caractères."; // French message
+                        errorElement.classList.remove('hidden');
+                        textarea.focus();
+                    } else {
+                        errorElement.classList.add('hidden');
+                    }
+                });
+            </script>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/3 px-3">
