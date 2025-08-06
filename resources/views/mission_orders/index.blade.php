@@ -1,5 +1,5 @@
 @php
-use App\Models\Department;
+    use App\Models\Department;
 @endphp
 @extends('layouts.app')
 
@@ -34,10 +34,12 @@ use App\Models\Department;
                     <th scope="col" class="py-3 px-6 blue-color">
                         <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Employée') }}</span>
-                            <select x-model="filters.employee_id" class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <select x-model="filters.employee_id"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <option value="">All Employees</option>
-                                @foreach($employees as $employee)
-                                    <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
+                                @foreach ($employees as $employee)
+                                    <option value="{{ $employee->id }}">{{ $employee->first_name }}
+                                        {{ $employee->last_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -45,18 +47,28 @@ use App\Models\Department;
                     <th scope="col" class="py-3 px-6 blue-color">
                         <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Pays') }}</span>
-                            <select x-model="filters.country" class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <select x-model="filters.country"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <option value="">All Countries</option>
-                                @foreach($countries as $country)
+                                @foreach ($countries as $country)
                                     <option value="{{ $country }}">{{ $country }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </th>
                     <th scope="col" class="py-3 px-6 blue-color">
-                        <div class="flex flex-col">
+                        {{-- <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
                             <div class="flex space-x-1 mt-1">
+                                <input type="date" x-model="filters.start_date_from" placeholder="From"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <input type="date" x-model="filters.start_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            </div>
+                        </div> --}}
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
+                            <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.start_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <input type="date" x-model="filters.start_date_to" placeholder="To"
@@ -66,8 +78,9 @@ use App\Models\Department;
                     </th>
                     <th scope="col" class="py-3 px-6 blue-color">
                         <div class="flex flex-col">
-                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('S\'achève le') }}</span>
-                            <div class="flex space-x-1 mt-1">
+                            <span @click="sortByColumn"
+                                class="cursor-pointer font-semibold">{{ __('S\'achève le') }}</span>
+                            <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.end_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <input type="date" x-model="filters.end_date_to" placeholder="To"
@@ -78,14 +91,16 @@ use App\Models\Department;
                     <th scope="col" class="py-3 px-6 blue-color">
                         <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Statut') }}</span>
-                            <select x-model="filters.status" class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            <select x-model="filters.status"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <option value="">All Statuses</option>
-                                <option value="draft">Draft</option>
-                                <option value="sup_approve">Supervisor Approve</option>
-                                <option value="director_approve">Director Approve</option>
-                                <option value="sg_approve">SG Approve</option>
-                                <option value="approved">Approved</option>
-                                <option value="paid">Paid</option>
+                                <option value="draft">Brouillon</option>
+                                <option value="sup_approve">Validation chef de secteur</option>
+                                <option value="director_approve">Validation directeur</option>
+                                <option value="sg_approve">Validation ordonnateur</option>
+                                <option value="controller_approve">validation gestionnaire</option>
+                                <option value="approved">Valide</option>
+                                <option value="rejected">Rejetée</option>
                             </select>
                         </div>
                     </th>
@@ -99,7 +114,7 @@ use App\Models\Department;
                     <tr class="bg-white hover:bg-gray-50"
                         x-show="filterRow({
                             order_number: '{{ $missionOrder->order_number }}',
-                            employee: { first_name: '{{ $missionOrder->employee->first_name }}', last_name: '{{ $missionOrder->employee->last_name }}' },
+                            employee: { id: '{{$missionOrder->employee->id}}', first_name: '{{ $missionOrder->employee->first_name }}', last_name: '{{ $missionOrder->employee->last_name }}' },
                             bareme: { pays: '{{ $missionOrder->bareme->pays }}' },
                             start_date: '{{ $missionOrder->start_date->format('Y-m-d') }}',
                             end_date: '{{ $missionOrder->end_date->format('Y-m-d') }}',
@@ -156,7 +171,10 @@ use App\Models\Department;
                             @break
 
                             @case('sup_approve')
-                                @if (auth()->user()->employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
+                                @if (auth()->user()->employee->hasRole('supervisor') &&
+                                        in_array(
+                                            $missionOrder->employee->department_id,
+                                            Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                                     <td class="text-center px-0 py-1 border-b">
                                         <button
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
@@ -169,7 +187,9 @@ use App\Models\Department;
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                                @if (auth()->user()->employee->hasRole('director') ||
+                                        auth()->user()->employee->hasRole('controller') ||
+                                        auth()->user()->employee->hasRole('sg'))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
@@ -187,9 +207,11 @@ use App\Models\Department;
                                         </button>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
+                                @if (auth()->user()->employee->hasRole('director') ||
+                                        auth()->user()->employee->hasRole('controller') ||
+                                        auth()->user()->employee->hasRole('sg') ||
                                         (auth()->user()->employee->hasRole('supervisor') &&
-                                        auth()->user()->employee->department_id === $missionOrder->employee->department_id))
+                                            auth()->user()->employee->department_id === $missionOrder->employee->department_id))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
@@ -207,9 +229,11 @@ use App\Models\Department;
                                         </button>
                                     </td>
                                 @endif
-                                @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
+                                @if (auth()->user()->employee->hasRole('director') ||
+                                        auth()->user()->employee->hasRole('controller') ||
+                                        auth()->user()->employee->hasRole('sg') ||
                                         (auth()->user()->employee->hasRole('supervisor') &&
-                                        auth()->user()->employee->department_id === $missionOrder->employee->department_id))
+                                            auth()->user()->employee->department_id === $missionOrder->employee->department_id))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
@@ -233,7 +257,9 @@ use App\Models\Department;
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                     </td>
-                                @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                                @elseif(auth()->user()->employee->hasRole('director') ||
+                                        auth()->user()->employee->hasRole('controller') ||
+                                        auth()->user()->employee->hasRole('sg'))
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
@@ -284,7 +310,7 @@ use App\Models\Department;
                 }
 
                 // Filter by employee
-                if (this.filters.employee_id && mission.employee_id != this.filters.employee_id) {
+                if (this.filters.employee_id && mission.employee.id != this.filters.employee_id) {
                     return false;
                 }
 

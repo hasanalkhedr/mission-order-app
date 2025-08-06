@@ -1,11 +1,11 @@
 <?php
 return [
     'roles' => [
-        'employee' => 'généralement les ADL',
+        'employee' => 'Agent',
         'supervisor' => 'Chef de Service',
         'attached' => 'Attaché',
-        'sg' => 'SG/SGA',
+        'sg' => 'Ordonateur',
         'director' => 'Directeur/Directeur Adjoint',
-        'controller' => 'Contrôleur',
+        'controller' => 'Gestionaire',
     ]
 ];

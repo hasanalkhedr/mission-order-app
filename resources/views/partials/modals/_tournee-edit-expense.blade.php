@@ -33,11 +33,13 @@
                         <div class="w-2/3 px-3">
                             <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Type de dépense<span class="text-red-500">*</span></x-label>
-                                <x-select-input id="type-edit-{{ $expense->id }}" name="type" onchange="updateExpenseFieldsEdit('{{ $expense->id }}')">
+                                <x-select-input id="type-edit-{{ $expense->id }}" name="type"
+                                    onchange="updateExpenseFieldsEdit('{{ $expense->id }}')">
                                     <option value="">--sélectionner le type--</option>
-                                    <option value="transport" @selected(old('type', $expense->type) == 'transport')>transport</option>
-                                    <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>repas supplémentaire</option>
-                                    <option value="other" @selected(old('type', $expense->type) == 'other')>autre</option>
+                                    <option value="transport" @selected(old('type', $expense->type) == 'transport')>Transport</option>
+                                    <option value="extra_accomodation" @selected(old('type', $expense->type) == 'extra_accomodation')>Hébergement</option>
+                                    <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>Repas</option>
+                                    <option value="other" @selected(old('type', $expense->type) == 'other')>Autre</option>
                                 </x-select-input>
                             </div>
 
@@ -52,6 +54,7 @@
                                         <option value="taxi_uber" @selected(old('transport_type', $expense->transport_type) == 'taxi_uber')>Taxi/Uber</option>
                                         <option value="public_transport" @selected(old('transport_type', $expense->transport_type) == 'public_transport')>Transport public</option>
                                         <option value="car_rental_with_driver" @selected(old('transport_type', $expense->transport_type) == 'car_rental_with_driver')>Location de voiture avec chauffeur</option>
+                                        <option value="autre" @selected(old('transport_type', $expense->transport_type) == 'autre')>autre</option>
                                     </x-select-input>
                                 </div>
                                 <div class="flex flex-wrap -mx-3 mb-0">
@@ -59,60 +62,97 @@
                                     <textarea id="transport_details-edit-{{ $expense->id }}" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
                                         class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details', $expense->transport_details) }}</textarea>
                                 </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
+                                        (cocher
+                                        les cases correspondantes)</x-label>
+                                    <table>
+                                        <thead>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('passenger') }}</x-label>
+                                            </th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('distance') }}</x-label>
+                                            </th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('material') }}</x-label>
+                                            </th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('visits') }}</x-label>
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="passenger"
+                                                        @checked(old('passenger', $expense->passenger))>
+                                                </td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="distance"
+                                                        @checked(old('distance', $expense->distance))>
+                                                </td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="material"
+                                                        @checked(old('material', $expense->material))>
+                                                </td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="visits"
+                                                        @checked(old('visits', $expense->visits))>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
-                            <!-- Meal Type Fields -->
-                            <div id="mealFields-edit-{{ $expense->id }}" class="{{ $expense->type == 'extra_meal' ? '' : 'hidden' }}">
+                            <!-- Meal Type Fields (hidden by default) -->
+                            <div id="mealFields-edit-{{ $expense->id }}" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
-                                    <x-text-input id="meal_location-edit-{{ $expense->id }}" name="meal_location"
-                                        value="{{ old('meal_location', $expense->meal_location) }}"
-                                        placeholder="Nom du restaurant ou adresse"/>
+
+                                    <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option @selected(old('meal_location', $expense->meal_location) == 'temps de transport') value="temps de transport">temps de transport</option>
+                                    </x-select-input>
                                 </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
+                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
-                                    <x-text-input type="number" id="meal_participants-edit-{{ $expense->id }}" name="meal_participants"
-                                        value="{{ old('meal_participants', $expense->meal_participants) }}" min="1"/>
+                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
+                                        value="{{ old('meal_participants', 1) }}" min="1" />
+                                </div> --}}
+                            </div>
+                            <div id="herFields-edit-{{ $expense->id }}" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+
+                                    <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option @selected(old('meal_location', $expense->meal_location) == 'Frais hébergement') value="Frais hébergement">Frais hébergement</option>
+                                    </x-select-input>
                                 </div>
+                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
+                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
+                                        value="{{ old('meal_participants', 1) }}" min="1" />
+                                </div> --}}
+                            </div>
+                            <div id="other-edit-{{ $expense->id }}" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-text-input type="text" id="description-edit-{{ $expense->id }}" name="description"
+                                        value="{{ old('description', $expense->description) }}" />
+
+                                </div>
+
                             </div>
 
-                            <div class="flex flex-wrap -mx-3 mb-0">
+                            {{-- <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
                                 <textarea id="description-edit-{{ $expense->id }}" name="description" rows="4" required
                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description', $expense->description) }}</textarea>
-                            </div>
-<div class="flex flex-wrap -mx-3 mb-0">
-    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher
-        les cases correspondantes)</x-label>
-    <table>
-        <thead>
-            <th class="text-center text-gray-600 border border-blue-600">
-                <x-label>{{ __('passenger') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
-                <x-label>{{ __('distance') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
-                <x-label>{{ __('material') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
-                <x-label>{{ __('visits') }}</x-label></th>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                    <input type="checkbox" value="1" name="passenger"
-                        @checked(old('passenger', $expense->passenger))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                    <input type="checkbox" value="1" name="distance"
-                        @checked(old('distance', $expense->distance))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                    <input type="checkbox" value="1" name="material"
-                        @checked(old('material', $expense->material))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                    <input type="checkbox" value="1" name="visits"
-                        @checked(old('visits', $expense->visits))></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                            </div> --}}
+
                             <div class="-mx-3 w-full mb-0">
                                 <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
                                 <x-date-time-input class="w-full" id="expense_date-edit-{{ $expense->id }}" name="expense_date"
@@ -229,10 +269,15 @@
         const expenseType = document.getElementById('type-edit-' + expenseId).value;
         const transportFields = document.getElementById('transportFields-edit-' + expenseId);
         const mealFields = document.getElementById('mealFields-edit-' + expenseId);
+        const herFields = document.getElementById('herFields-edit-' + expenseId);
+        const other = document.getElementById('other-edit-' + expenseId);
 
         // Hide all fields first
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
+        herFields.classList.add('hidden');
+        other.classList.add('hidden');
+
 
         // Show relevant fields based on selected type
         if (expenseType === 'transport') {
@@ -240,18 +285,24 @@
             // Set required attributes for transport fields
             document.getElementById('transport_type-edit-' + expenseId).required = true;
             document.getElementById('meal_location-edit-' + expenseId).required = false;
-            document.getElementById('meal_participants-edit-' + expenseId).required = false;
+            //document.getElementById('meal_participants-edit-' + expenseId).required = false;
         } else if (expenseType === 'extra_meal') {
             mealFields.classList.remove('hidden');
             // Set required attributes for meal fields
             document.getElementById('transport_type-edit-' + expenseId).required = false;
             document.getElementById('meal_location-edit-' + expenseId).required = true;
-            document.getElementById('meal_participants-edit-' + expenseId).required = true;
+            //document.getElementById('meal_participants-edit-' + expenseId).required = true;
+        } else if (expenseType === 'extra_accomodation') {
+            herFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type-edit-' + expenseId).required = false;
+            document.getElementById('meal_location-edit-' + expenseId).required = true;
+            //document.getElementById('meal_participants').required = true;
         } else {
-            // No type selected
+                        other.classList.remove('hidden');
             document.getElementById('transport_type-edit-' + expenseId).required = false;
             document.getElementById('meal_location-edit-' + expenseId).required = false;
-            document.getElementById('meal_participants-edit-' + expenseId).required = false;
+            //document.getElementById('meal_participants').required = false;
         }
     }
 

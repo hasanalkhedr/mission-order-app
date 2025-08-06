@@ -24,34 +24,101 @@
         @unless ($tournees->isEmpty())
             <thead class="text-s text-gray-700 uppercase bg-gray-50">
                 <tr>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Tournee #') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Tournee #') }}</span>
+                            <input type="text" x-model="filters.order_number" placeholder="Filter..."
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                        </div>
                     </th>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Employée') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Employée') }}</span>
+                            <select x-model="filters.employee_id"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <option value="">All Employees</option>
+                                @foreach ($employees as $employee)
+                                    <option value="{{ $employee->id }}">{{ $employee->first_name }}
+                                        {{ $employee->last_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </th>
-                    {{-- <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Objet') }}
-                    </th> --}}
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Pays') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Pays') }}</span>
+                            <select x-model="filters.country"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <option value="">All Countries</option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country }}">{{ $country }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </th>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Début le') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        {{-- <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
+                            <div class="flex space-x-1 mt-1">
+                                <input type="date" x-model="filters.start_date_from" placeholder="From"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <input type="date" x-model="filters.start_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            </div>
+                        </div> --}}
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
+                            <div class="mt-1 space-y-1">
+                                <input type="date" x-model="filters.start_date_from" placeholder="From"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <input type="date" x-model="filters.start_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            </div>
+                        </div>
                     </th>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('S’achève le') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn"
+                                class="cursor-pointer font-semibold">{{ __('S\'achève le') }}</span>
+                            <div class="mt-1 space-y-1">
+                                <input type="date" x-model="filters.end_date_from" placeholder="From"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <input type="date" x-model="filters.end_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                            </div>
+                        </div>
                     </th>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Statut') }}
+                    <th scope="col" class="py-3 px-6 blue-color">
+                        <div class="flex flex-col">
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Statut') }}</span>
+                            <select x-model="filters.status"
+                                class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                <option value="">All Statuses</option>
+                                <option value="draft">Brouillon</option>
+                                <option value="sup_approve">Validation chef de secteur</option>
+                                <option value="director_approve">Validation directeur</option>
+                                <option value="sg_approve">Validation ordonnateur</option>
+                                <option value="controller_approve">validation gestionnaire</option>
+                                <option value="approved">Valide</option>
+                                <option value="rejected">Rejetée</option>
+                            </select>
+                        </div>
                     </th>
-                    <th colspan="2" scope="col" class="py-3 px-6 blue-color text-center">Actions
+                    <th colspan="2" scope="col" class="py-3 px-6 blue-color text-center">
+                        <span class="font-semibold">Actions</span>
                     </th>
                 </tr>
             </thead>
             <tbody x-ref="tbody">
                 @foreach ($tournees as $tournee)
-                    <tr class="bg-white hover:bg-gray-50">
+                    <tr class="bg-white hover:bg-gray-50" x-show="filterRow({
+                            order_number: '{{ $tournee->order_number }}',
+                            employee: { id: '{{$tournee->employee->id}}', first_name: '{{ $tournee->employee->first_name }}', last_name: '{{ $tournee->employee->last_name }}' },
+                            bareme: { pays: '{{ $tournee->bareme->pays }}' },
+                            start_date: '{{ $tournee->firstDestination->start_date->format('Y-m-d') }}',
+                            end_date: '{{ $tournee->lastDestination->end_date->format('Y-m-d') }}',
+                            status: '{{ $tournee->status }}'
+                        })">
                         <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer"
                             onclick="window.location.href = '{{ url(route('tournees.show', $tournee->id)) }}'">
                             <div class="cursor-pointer">
@@ -202,7 +269,7 @@
                 @endforeach
             @else
                 <tr class="border-gray-300">
-                    <td colspan="4" class="px-4 py-8 border-t border-gray-300 text-lg">
+                    <td colspan="7" class="px-4 py-8 border-t border-gray-300 text-lg">
                         <p class="text-center">{{ __('No Tournees Found') }}</p>
                     </td>
                 </tr>
@@ -221,8 +288,68 @@
         return {
             sortBy: "",
             sortAsc: false,
+            filters: {
+                order_number: '',
+                employee_id: '',
+                country: '',
+                start_date_from: '',
+                start_date_to: '',
+                end_date_from: '',
+                end_date_to: '',
+                status: ''
+            },
+            filterRow(mission) {
+                // Filter by order number
+                if (this.filters.order_number &&
+                    !mission.order_number.toLowerCase().includes(this.filters.order_number.toLowerCase())) {
+                    return false;
+                }
+
+                // Filter by employee
+                if (this.filters.employee_id && mission.employee.id != this.filters.employee_id) {
+                    return false;
+                }
+
+                // Filter by country
+                if (this.filters.country && mission.bareme.pays !== this.filters.country) {
+                    return false;
+                }
+
+                // Filter by start date range
+                const startDate = new Date(mission.start_date);
+                if (this.filters.start_date_from) {
+                    const fromDate = new Date(this.filters.start_date_from);
+                    if (startDate < fromDate) return false;
+                }
+                if (this.filters.start_date_to) {
+                    const toDate = new Date(this.filters.start_date_to);
+                    if (startDate > toDate) return false;
+                }
+
+                // Filter by end date range
+                const endDate = new Date(mission.end_date);
+                if (this.filters.end_date_from) {
+                    const fromDate = new Date(this.filters.end_date_from);
+                    if (endDate < fromDate) return false;
+                }
+                if (this.filters.end_date_to) {
+                    const toDate = new Date(this.filters.end_date_to);
+                    if (endDate > toDate) return false;
+                }
+
+                // Filter by status
+                if (this.filters.status && mission.status !== this.filters.status) {
+                    return false;
+                }
+
+                return true;
+            },
             sortByColumn($event) {
-                if (this.sortBy === $event.target.innerText) {
+                // Find the span element that was clicked
+                const spanElement = $event.target.closest('span');
+                if (!spanElement) return;
+
+                if (this.sortBy === spanElement.innerText) {
                     if (this.sortAsc) {
                         this.sortBy = "";
                         this.sortAsc = false;
@@ -230,14 +357,14 @@
                         this.sortAsc = !this.sortAsc;
                     }
                 } else {
-                    this.sortBy = $event.target.innerText;
+                    this.sortBy = spanElement.innerText;
                 }
 
                 let rows = this.getTableRows()
                     .sort(
                         this.sortCallback(
-                            Array.from($event.target.parentNode.children).indexOf(
-                                $event.target
+                            Array.from($event.target.closest('th').parentNode.children).indexOf(
+                                $event.target.closest('th')
                             )
                         )
                     )

@@ -2,20 +2,22 @@
 @section('title', __('Create Tournee'))
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une Tournee</h2>
-    <form action="{{ route('tournees.store') }}" method="POST" class="w-11/12 items-center">
+    <form id="mainForm" action="{{ route('tournees.store') }}" method="POST" class="w-11/12 items-center">
         @csrf
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/3 px-3">
                 <x-label>
                     Tournee #
                 </x-label>
-                <x-readonly-text-input name="order_number" value="{{$tour_number }}" />
+                <x-readonly-text-input name="order_number" value="{{ $tour_number }}" />
             </div>
             <div class="w-1/3 px-3">
                 <x-label>
                     Date le Ordre:<span class="text-red-500">*</span>
                 </x-label>
-                <x-date-time-input class="appearance-none block h-12 w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" name="order_date" value="{{  (new \DateTime())->format('Y-m-d') }}" type="date" readonly>
+                <x-date-time-input
+                    class="appearance-none block h-12 w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    name="order_date" value="{{ (new \DateTime())->format('Y-m-d') }}" type="date" readonly>
                 </x-date-time-input>
             </div>
             <div class="w-1/3 px-3">
@@ -64,11 +66,57 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet<span class="text-red-500">*</span>
+                    Objet/Motifs<span class="text-red-500">*</span>
                 </x-label>
-                <textarea name="purpose" rows="2" required
-                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('purpose') }}</textarea>
+                <textarea name="purpose" rows="2" required minlength="100"
+                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                    oninput="updateCharCounter(this)">{{ old('purpose') }}</textarea>
+                <div class="flex justify-between items-center">
+                    <small class="text-gray-500">Minimum 100 caractères requis</small>
+                    <small id="char-counter" class="text-gray-500">0/100</small>
+                </div>
+                <div id="purpose-error" class="text-red-500 hidden mt-1">Le texte doit contenir au moins 100 caractères.
+                </div>
             </div>
+            <script>
+                // Initialize counter on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    updateCharCounter(textarea);
+                });
+
+                function updateCharCounter(textarea) {
+                    const charCount = textarea.value.length;
+                    const counterElement = document.getElementById('char-counter');
+
+                    // Update counter display
+                    counterElement.textContent = `${charCount}/100`;
+
+                    // Change color based on count
+                    if (charCount < 100) {
+                        counterElement.classList.add('text-red-500');
+                        counterElement.classList.remove('text-gray-500', 'text-green-500');
+                    } else {
+                        counterElement.classList.add('text-green-500');
+                        counterElement.classList.remove('text-gray-500', 'text-red-500');
+                    }
+                }
+
+                // Validate on form submission
+                document.querySelector('#mainForm')?.addEventListener('submit', function(e) {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    const errorElement = document.getElementById('purpose-error');
+
+                    if (textarea.value.length < 100) {
+                        e.preventDefault();
+                        errorElement.textContent = "Le texte doit contenir au moins 100 caractères."; // French message
+                        errorElement.classList.remove('hidden');
+                        textarea.focus();
+                    } else {
+                        errorElement.classList.add('hidden');
+                    }
+                });
+            </script>
         </div>
 
         <div x-data="destinationManager()">
@@ -81,19 +129,15 @@
                                 <x-label>
                                     Lieu de départ<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-text-input
-                                    x-model="destination.departure_location"
-                                    x-bind:name="`destinations[${index}][departure_location]`"
-                                    required />
+                                <x-text-input x-model="destination.departure_location"
+                                    x-bind:name="`destinations[${index}][departure_location]`" required />
                             </div>
                             <div class="w-1/2 px-3">
                                 <x-label>
                                     Lieu de mission<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-text-input
-                                    x-model="destination.arrive_location"
-                                    x-bind:name="`destinations[${index}][arrive_location]`"
-                                    required />
+                                <x-text-input x-model="destination.arrive_location"
+                                    x-bind:name="`destinations[${index}][arrive_location]`" required />
                             </div>
                         </div>
                         <div class="flex flex-wrap -mx-3 mb-[2px]">
@@ -101,37 +145,84 @@
                                 <x-label>
                                     Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-date-time-input
-                                    x-model="destination.start_date"
-                                    x-bind:name="`destinations[${index}][start_date]`"
-                                    required type="date">
+                                <x-date-time-input id="start_date-${index}" x-model="destination.start_date"
+                                    x-bind:name="`destinations[${index}][start_date]`" required type="date">
                                 </x-date-time-input>
-                                <x-date-time-input
-                                    x-model="destination.start_time"
-                                    x-bind:name="`destinations[${index}][start_time]`"
-                                    required type="time">
+                                <x-date-time-input x-model="destination.start_time"
+                                    x-bind:name="`destinations[${index}][start_time]`" required type="time">
                                 </x-date-time-input>
                             </div>
                             <div class="w-1/2 px-3">
                                 <x-label>
                                     Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-date-time-input
-                                    x-model="destination.end_date"
-                                    x-bind:name="`destinations[${index}][end_date]`"
-                                    required type="date">
+                                <x-date-time-input id="end_date-${index}" x-model="destination.end_date"
+                                    x-bind:name="`destinations[${index}][end_date]`" required type="date">
                                 </x-date-time-input>
-                                <x-date-time-input
-                                    x-model="destination.end_time"
-                                    x-bind:name="`destinations[${index}][end_time]`"
-                                    required type="time">
+                                <x-date-time-input x-model="destination.end_time"
+                                    x-bind:name="`destinations[${index}][end_time]`" required type="time">
                                 </x-date-time-input>
                             </div>
                         </div>
-                        <button
-                            x-show="destinations.length > 1"
-                            x-on:click="removeDestination(index)"
-                            type="button"
+                        <div id="weekend-warning"
+                            class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+                            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une
+                                justification dans la description.</p>
+                        </div>
+
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const startDateInput = document.getElementById('start_date');
+                                const endDateInput = document.getElementById('end_date');
+                                const descriptionTextarea = document.getElementById('description');
+                                const weekendWarning = document.getElementById('weekend-warning');
+
+                                function checkForWeekend() {
+                                    const startDate = new Date(startDateInput.value);
+                                    const endDate = new Date(endDateInput.value);
+
+                                    if (!startDateInput.value || !endDateInput.value) return;
+
+                                    // Check if any day in the range is Saturday (6) or Sunday (0)
+                                    let hasWeekend = false;
+                                    const currentDate = new Date(startDate);
+
+                                    while (currentDate <= endDate) {
+                                        const day = currentDate.getDay();
+                                        if (day === 0 || day === 6) {
+                                            hasWeekend = true;
+                                            break;
+                                        }
+                                        currentDate.setDate(currentDate.getDate() + 1);
+                                    }
+
+                                    if (hasWeekend) {
+                                        weekendWarning.classList.remove('hidden');
+                                        descriptionTextarea.setAttribute('required', 'required');
+                                        descriptionTextarea.classList.add('border-red-500');
+                                    } else {
+                                        weekendWarning.classList.add('hidden');
+                                        descriptionTextarea.removeAttribute('required');
+                                        descriptionTextarea.classList.remove('border-red-500');
+                                    }
+                                }
+
+                                startDateInput.addEventListener('change', checkForWeekend);
+                                endDateInput.addEventListener('change', checkForWeekend);
+
+                                // Also check on form submission
+                                document.querySelector('form').addEventListener('submit', function(e) {
+                                    checkForWeekend();
+                                    if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
+                                        .trim()) {
+                                        e.preventDefault();
+                                        descriptionTextarea.focus();
+                                    }
+                                });
+                            });
+                        </script>
+                        <button x-show="destinations.length > 1" x-on:click="removeDestination(index)" type="button"
                             class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                             Supprimer cette destination
                         </button>
@@ -141,9 +232,7 @@
 
             <!-- Add destination button -->
             <div class="mt-4">
-                <button
-                    x-on:click="addDestination()"
-                    type="button"
+                <button x-on:click="addDestination()" type="button"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Ajouter une autre destination
                 </button>
@@ -182,7 +271,7 @@
 
                     init() {
                         // Initialize with old input if available
-                        @if(old('destinations'))
+                        @if (old('destinations'))
                             this.destinations = @json(old('destinations'));
                         @endif
                     }
@@ -196,15 +285,15 @@
                 <x-label>
                     Pays de Mission<span class="text-red-500">*</span>
                 </x-label>
-                    <x-select-input required name="bareme_id" required>
-                        @foreach ($baremes as $b)
+                <x-select-input required name="bareme_id" required>
+                    @foreach ($baremes as $b)
                         <option selected value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
                             Hebergement:{{ $b->accomodation_cost }})
                         </option>
-                        @endforeach
-                    </x-select-input>
+                    @endforeach
+                </x-select-input>
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -212,12 +301,12 @@
                 <x-label class="w-1/3 inline-flex">
                     Demande d'avance<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('advance') > 0) type="radio" value="1" name="needs_advance"
+                <input required @checked(old('advance', 0) > 0) type="radio" value="1" name="needs_advance"
                     id="needs_advance_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_yes"
                     class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('advance') == 0) type="radio" value="0" name="needs_advance"
+                <input required @checked(old('advance', 0) == 0) type="radio" value="0" name="needs_advance"
                     id="needs_advance_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_no"
@@ -249,80 +338,80 @@
                 // const endDateInput = document.querySelector('input[name="end_date"]');
                 // const startTimeInput = document.querySelector('input[name="start_time"]');
                 // const endTimeInput = document.querySelector('input[name="end_time"]');
-/*
-                // Store bareme data for calculation
-                const baremes = {!! json_encode(
-                    $baremes->keyBy('id')->map(function ($item) {
-                        return [
-                            'accomodation_cost' => $item->accomodation_cost,
-                            'currency' => $item->currency,
-                        ];
-                    }),
-                ) !!};
+                /*
+                                // Store bareme data for calculation
+                                const baremes = {!! json_encode(
+                                    $baremes->keyBy('id')->map(function ($item) {
+                                        return [
+                                            'accomodation_cost' => $item->accomodation_cost,
+                                            'currency' => $item->currency,
+                                        ];
+                                    }),
+                                ) !!};
 
-                // Function to calculate days difference with 5 AM rule
-                function calculateDays() {
-                    if (!startDateInput.value || !endDateInput.value) return 0;
+                                // Function to calculate days difference with 5 AM rule
+                                function calculateDays() {
+                                    if (!startDateInput.value || !endDateInput.value) return 0;
 
-                    const startDate = new Date(`${startDateInput.value}T${startTimeInput.value || '00:00'}`);
-                    const endDate = new Date(`${endDateInput.value}T${endTimeInput.value || '00:00'}`);
+                                    const startDate = new Date(`${startDateInput.value}T${startTimeInput.value || '00:00'}`);
+                                    const endDate = new Date(`${endDateInput.value}T${endTimeInput.value || '00:00'}`);
 
-                    // Calculate full calendar days difference
-                    const timezoneOffset = startDate.getTimezoneOffset() * 60000;
-                    const normalizedStart = new Date(startDate - timezoneOffset);
-                    const normalizedEnd = new Date(endDate - timezoneOffset);
+                                    // Calculate full calendar days difference
+                                    const timezoneOffset = startDate.getTimezoneOffset() * 60000;
+                                    const normalizedStart = new Date(startDate - timezoneOffset);
+                                    const normalizedEnd = new Date(endDate - timezoneOffset);
 
-                    // Get date parts only (ignoring time)
-                    const startDateOnly = new Date(normalizedStart.toISOString().split('T')[0]);
-                    const endDateOnly = new Date(normalizedEnd.toISOString().split('T')[0]);
+                                    // Get date parts only (ignoring time)
+                                    const startDateOnly = new Date(normalizedStart.toISOString().split('T')[0]);
+                                    const endDateOnly = new Date(normalizedEnd.toISOString().split('T')[0]);
 
-                    // Difference in full calendar days
-                    const diffDays = Math.round((endDateOnly - startDateOnly) / (1000 * 60 * 60 * 24));
+                                    // Difference in full calendar days
+                                    const diffDays = Math.round((endDateOnly - startDateOnly) / (1000 * 60 * 60 * 24));
 
 
-                    let totalDays = diffDays;
+                                    let totalDays = diffDays;
 
-                    // Add extra day if start time is before 5 AM
-                    if (startDate.getHours() < 5) {
-                        totalDays += 1;
-                    }
+                                    // Add extra day if start time is before 5 AM
+                                    if (startDate.getHours() < 5) {
+                                        totalDays += 1;
+                                    }
 
-                    return totalDays;
-                }
+                                    return totalDays;
+                                }
 
-                // Function to calculate max advance amount
-                function calculateMaxAdvance() {
-                    const selectedBareme = baremeSelect.value;
-                    if (!selectedBareme) return 0;
+                                // Function to calculate max advance amount
+                                function calculateMaxAdvance() {
+                                    const selectedBareme = baremeSelect.value;
+                                    if (!selectedBareme) return 0;
 
-                    const days = calculateDays();
-                    const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
-                    const totalCost = days * dailyCost;
-                    const maxAdvance = totalCost * 0.75; // 75% of total
-const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
-                    return maxAdvanceInLocal.toFixed(2);
-                }
+                                    const days = calculateDays();
+                                    const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
+                                    const totalCost = days * dailyCost;
+                                    const maxAdvance = totalCost * 0.75; // 75% of total
+                const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
+                                    return maxAdvanceInLocal.toFixed(2);
+                                }
 
-                // Function to update max advance display
-                function updateMaxAdvance() {
-                    const maxAdvance = calculateMaxAdvance();
-                    maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
-                }
+                                // Function to update max advance display
+                                function updateMaxAdvance() {
+                                    const maxAdvance = calculateMaxAdvance();
+                                    maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
+                                }
 
-                // Function to validate advance amount
-                function validateAdvanceAmount() {
-                    const maxAdvance = parseFloat(calculateMaxAdvance());
-                    const requestedAdvance = parseFloat(advanceAmountInput.value) || 0;
+                                // Function to validate advance amount
+                                function validateAdvanceAmount() {
+                                    const maxAdvance = parseFloat(calculateMaxAdvance());
+                                    const requestedAdvance = parseFloat(advanceAmountInput.value) || 0;
 
-                    if (requestedAdvance > maxAdvance) {
-                        advanceError.classList.remove('hidden');
-                        return false;
-                    } else {
-                        advanceError.classList.add('hidden');
-                        return true;
-                    }
-                }
-*/
+                                    if (requestedAdvance > maxAdvance) {
+                                        advanceError.classList.remove('hidden');
+                                        return false;
+                                    } else {
+                                        advanceError.classList.add('hidden');
+                                        return true;
+                                    }
+                                }
+                */
                 // Toggle advance amount visibility
                 function toggleAdvanceAmount() {
                     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
@@ -369,21 +458,21 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                 <x-label class="w-1/3 inline-flex">
                     Prise en charge des frais de transport<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('charge') == 1) type="radio" value="1" name="charge"
+                <input required @checked(old('charge', 1) == 1) type="radio" value="1" name="charge"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('charge') == 0) type="radio" value="0" name="charge"
+                <input required @checked(old('charge', 1) == 0) type="radio" value="0" name="charge"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
-                    Prise en charge des indemnités journalières de mission<span class="text-red-500">*</span>
+                    Prise en charge frais d'hébergement<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('ijm') == 1) type="radio" value="1" name="ijm"
+                <input required @checked(old('ijm', 1) == 1) type="radio" value="1" name="ijm"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
-                <input required @checked(old('ijm') == 0) type="radio" value="0" name="ijm"
+                <input required @checked(old('ijm', 1) == 0) type="radio" value="0" name="ijm"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
@@ -394,11 +483,12 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                 <x-label class="w-1/3 inline-flex">
                     Frais de réception<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(Str::length(old('reception_fees')) > 0) type="radio" value="1" name="needs_reception_fees" id="needs_reception_fees_yes"
+                <input required @checked(old('needs_reception_fees', 0) > 0) type="radio" value="1" name="needs_reception_fees"
+                    id="needs_reception_fees_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
                 <label for="needs_reception_fees_yes"
                     class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(Str::length(old('reception_fees')) == 0) type="radio" value="0" name="needs_reception_fees"
+                <input required @checked(old('needs_reception_fees', 0) == 0) type="radio" value="0" name="needs_reception_fees"
                     id="needs_reception_fees_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
                 <label for="needs_reception_fees_no"
@@ -407,7 +497,7 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
         </div>
         <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
             <div class="w-1/2">
-                <x-text-input name="reception_fees" value="{{ old('reception_fees') }}" id="reception_fees_input" />
+                <x-text-input name="reception_fees" value="{{ old('needs_reception_fees') }}" id="reception_fees_input" />
                 <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
             </div>
         </div>
@@ -438,28 +528,34 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
             });
         </script>
 
-{{-- Pre Expenses --}}
-<x-form-divider>Dépenses prévues</x-form-divider>
-<div class="flex flex-col" x-data="expensesManager()">
-    <div class="-m-1.5 overflow-x-auto">
-        <div class="p-1.5 min-w-full inline-block align-middle">
-            <div class="overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
-                            {{-- <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Détails</th> --}}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <form></form>
-                        <template x-for="(expense, index) in expenses" :key="index">
-                            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                <!-- Type Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    {{-- <template x-if="expense.type=='transport'">
+        {{-- Pre Expenses --}}
+        <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
+        <div class="flex flex-col" x-data="expensesManager()">
+            <div class="-m-1.5 overflow-x-auto">
+                <div class="p-1.5 min-w-full inline-block align-middle">
+                    <div class="overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
+                                        la dépense</th>
+                                    {{-- <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Détails</th> --}}
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <form></form>
+                                <template x-for="(expense, index) in expenses" :key="index">
+                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                        <!-- Type Column -->
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                            {{-- <template x-if="expense.type=='transport'">
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
                                     </template>
                                     <template x-if="expense.type=='extra-meal'">
@@ -468,115 +564,128 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                                     <template x-if="expense.type=='other'">
                                         <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
                                     </template> --}}
-                                    <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type">
-                                    <option value="">--sélectionner le type--</option>
-                                    <option value="transport">transport</option>
-                                    <option value="extra_meal">repas supplémentaire</option>
-                                    <option value="other">autre</option>
-                                </x-select-input>
-                                </td>
+                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type"
+                                                x-on:change="expense.nature = ''">
+                                                <option value="">--sélectionner le type--</option>
+                                                <option value="transport">transport</option>
+                                                <option value="extra_accomodation">hébergement</option>
+                                                <option value="extra_meal">repas</option>
+                                                <option value="other">autre</option>
+                                            </x-select-input>
+                                        </td>
 
-                                <!-- Description Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                    <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="4" required placeholder=""
-                                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"></textarea>
-                                </td>
-
-                                {{-- <!-- Details Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                    <template x-if="expense.type=='transport'">
-                                        <div class="text-sm">
-                                            <span class="font-semibold" x-text="expense.transport_type"></span>
-                                            <template x-if="expense.transport_details">
-                                                <p class="text-xs text-gray-500" x-text="expense.transport_details"></p>
+                                        <!-- Nature Column -->
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                            <template x-if="expense.type === 'transport'">
+                                                <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
+                                                    x-model="expense.transport_type" required>
+                                                    <option value="">--sélectionner--</option>
+                                                    <option value="plane">Avion</option>
+                                                    <option value="train">Train</option>
+                                                    <option value="taxi_uber/Uber">Taxi/Uber</option>
+                                                    <option value="public_transport public">Transport public</option>
+                                                    <option value="car_rental_with_driver de voiture avec chauffeur">Location de voiture
+                                                        avec chauffeur</option>
+                                                    <option value="autre">autre</option>
+                                                </x-select-input>
                                             </template>
-                                        </div>
-                                    </template>
-                                    <template x-if="expense.type=='extra-meal'">
-                                        <div class="text-sm">
-                                            <span class="font-semibold" x-text="expense.meal_location"></span>
-                                            <p class="text-xs text-gray-500" x-text="expense.meal_participants"> personnes</p>
-                                        </div>
-                                    </template>
-                                </td> --}}
 
-                                <!-- Actions Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex justify-center space-x-2">
-                                        {{-- <button type="button"
+                                            <template x-if="expense.type === 'extra_meal'">
+                                                <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
+                                                    x-model="expense.meal_location" required>
+                                                    <option value="">--sélectionner--</option>
+                                                    <option value="temps de transport">temps de transport</option>
+                                                </x-select-input>
+                                            </template>
+
+                                            <template x-if="expense.type === 'extra_accomodation'">
+                                                <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
+                                                    x-model="expense.meal_location" required>
+                                                    <option value="">--sélectionner--</option>
+                                                    <option value="Frais hébergement">Frais hébergement</option>
+                                                </x-select-input>
+                                            </template>
+
+                                            <template x-if="expense.type === 'other'">
+                                                <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required
+                                                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                                                    placeholder="Décrivez la nature de la dépense"></textarea>
+                                            </template>
+                                        </td>
+
+                                        <!-- Actions Column -->
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex justify-center space-x-2">
+                                                {{-- <button type="button"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
                                             data-modal-toggle="viewExpenseModal-{{ $expense->id }}">{{ __('View') }}</button>
                                         <button type="button"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
                                             data-modal-toggle="editExpenseModal-{{ $expense->id }}">{{ __('Edit') }}</button> --}}
-                                        <button type="button"
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
-                                            x-on:click="removeExpense(index)">{{ __('Delete') }}</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-4">
-                <button
-                    x-on:click="addExpense()"
-                    type="button"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Ajouter depense
-                </button>
+                                                <button type="button"
+                                                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                                                    x-on:click="removeExpense(index)">{{ __('Delete') }}</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4">
+                        <button x-on:click="addExpense()" type="button"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Ajouter depense
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('expensesManager', () => ({
-            expenses: [{
-                type: '',
-                transport_type: '',
-                transport_details: '',
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('expensesManager', () => ({
+                    expenses: [{
+                        type: '',
+                        transport_type: '',
                 meal_location: '',
-                meal_participants: '',
                 description: ''
-            }],
+                    }],
 
-            addExpense() {
-                this.expenses.push({
-                    type: '',
-                transport_type: '',
-                transport_details: '',
+                    addExpense() {
+                        this.expenses.push({
+                            type: '',
+                            transport_type: '',
                 meal_location: '',
-                meal_participants: '',
                 description: ''
-                });
-            },
+                        });
+                    },
 
-            removeExpense(index) {
-                console.log(index);
-                console.log(this.expenses);
-                if (this.expenses.length > 1) {
-                    this.expenses.splice(index, 1);
-                }
-            },
+                    removeExpense(index) {
+                        if (this.expenses.length > 0) {
+                            this.expenses.splice(index, 1);
+                        }
+                    },
 
-            init() {
-                // Initialize with old input if available
-                @if(old('expenses'))
-                    this.expenses = @json(old('expenses'));
-                @endif
-            }
-        }));
-    });
-</script>
+                    init() {
+                        // Initialize with old input if available
+                        @if (old('expenses'))
+                            this.expenses = @json(old('expenses'));
+                        @else
+                            this.expenses = [];
+                        @endif
+                    }
+                }));
+            });
+        </script>
         <x-form-divider>Observations</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
                     Observation
                 </x-label>
-                <textarea name="description" rows="4"
+                <textarea name="description" rows="4" id="description"
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
             </div>
         </div>
@@ -611,8 +720,10 @@ const maxAdvanceInLocal = maxAdvance * {{$chancellery_rate}};
                             <div class="p-6">
                                 <div class="text-base leading-relaxed text-gray-500">
                                     <ul>
-                                        <li>{{__('When save the tournee as draft, you can edit or delete it later.')}}</li>
-                                        <li>{{__('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.')}}</li>
+                                        <li>{{ __('When save the tournee as draft, you can edit or delete it later.') }}
+                                        </li>
+                                        <li>{{ __('When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.') }}
+                                        </li>
                                     </ul>
                                 </div>
                                 <div

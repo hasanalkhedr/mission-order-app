@@ -38,7 +38,16 @@ class TourneeController extends Controller
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id', 'desc')->paginate(10);
         }
-        return view('tournees.index', compact('tournees', 'search'));
+
+        $countries = Tournee::with('bareme')
+            ->get()
+            ->pluck('bareme.pays')
+            ->unique()
+            ->filter()
+            ->values();
+        $employees = Employee::select('id', 'first_name', 'last_name')->get();
+
+        return view('tournees.index', compact('tournees', 'search', 'countries', 'employees'));
     }
     public function show(Tournee $tournee)
     {
@@ -115,8 +124,8 @@ class TourneeController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
-            'expenses.*.description' => 'required|string',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
+            'expenses.*.description' => 'nullable|string',
         ]);
         $action = $request->input('action');
         $status = '';
@@ -141,7 +150,7 @@ class TourneeController extends Controller
         foreach ($destinations as $destination) {
             TourneeDestination::create(array_merge($destination, ['tournee_id' => $tournee->id]));
         }
-        $expenses = $request->input('expenses');
+        $expenses = $request->input('expenses') ?? [];
         foreach ($expenses as $expense) {
             TourneeExpense::create(array_merge($expense,
                 [
@@ -239,8 +248,8 @@ class TourneeController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
-            'expenses.*.description' => 'required|string',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
+            'expenses.*.description' => 'nullable|string',
         ]);
         $action = $request->input('action');
         $status = '';
@@ -394,7 +403,14 @@ class TourneeController extends Controller
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
                 })->orderBy('id', 'desc')->paginate(10);
         }
-        return view('tournees.m_index', compact('tournees', 'search'));
+        $countries = Tournee::with('bareme')
+            ->get()
+            ->pluck('bareme.pays')
+            ->unique()
+            ->filter()
+            ->values();
+        $employees = Employee::select('id', 'first_name', 'last_name')->get();
+        return view('tournees.m_index', compact('tournees', 'search', 'countries', 'employees'));
     }
     public function m_show(Request $request, Tournee $tournee)
     {

@@ -2,7 +2,7 @@
 @section('title', __('Create Mission'))
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">Demander une mission</h2>
-    <form action="{{ route('mission_orders.store') }}" method="POST" class="w-11/12 items-center">
+    <form id="mainForm" action="{{ route('mission_orders.store') }}" method="POST" class="w-11/12 items-center">
         @csrf
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/3 px-3">
@@ -104,7 +104,7 @@
                 }
 
                 // Validate on form submission
-                document.querySelector('form')?.addEventListener('submit', function(e) {
+                document.querySelector('#mainForm')?.addEventListener('submit', function(e) {
                     const textarea = document.querySelector('textarea[name="purpose"]');
                     const errorElement = document.getElementById('purpose-error');
 
@@ -146,83 +146,86 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
-    <div class="w-2/3 px-3">
-        <x-label>
-            Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
-        </x-label>
-        <x-date-time-input name="start_date" id="start_date" value="{{ old('start_date') }}" type="date" required>
-        </x-date-time-input>
-        <x-date-time-input name="start_time" value="{{ old('start_time') }}" type="time" required>
-        </x-date-time-input>
-    </div>
-</div>
-<div class="flex flex-wrap -mx-3 mb-2">
-    <div class="w-2/3 px-3">
-        <x-label>
-            Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
-        </x-label>
-        <x-date-time-input name="end_date" id="end_date" value="{{ old('end_date') }}" type="date" required>
-        </x-date-time-input>
-        <x-date-time-input name="end_time" value="{{ old('end_time') }}" type="time" required>
-        </x-date-time-input>
-    </div>
-</div>
+            <div class="w-2/3 px-3">
+                <x-label>
+                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
+                </x-label>
+                <x-date-time-input name="start_date" id="start_date" value="{{ old('start_date') }}" type="date"
+                    required>
+                </x-date-time-input>
+                <x-date-time-input name="start_time" value="{{ old('start_time') }}" type="time" required>
+                </x-date-time-input>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-2/3 px-3">
+                <x-label>
+                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
+                </x-label>
+                <x-date-time-input name="end_date" id="end_date" value="{{ old('end_date') }}" type="date" required>
+                </x-date-time-input>
+                <x-date-time-input name="end_time" value="{{ old('end_time') }}" type="time" required>
+                </x-date-time-input>
+            </div>
+        </div>
 
-<div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
-    <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la description.</p>
-</div>
+        <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
+                description.</p>
+        </div>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
-    const descriptionTextarea = document.getElementById('description');
-    const weekendWarning = document.getElementById('weekend-warning');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const startDateInput = document.getElementById('start_date');
+                const endDateInput = document.getElementById('end_date');
+                const descriptionTextarea = document.getElementById('description');
+                const weekendWarning = document.getElementById('weekend-warning');
 
-    function checkForWeekend() {
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
+                function checkForWeekend() {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
 
-        if (!startDateInput.value || !endDateInput.value) return;
+                    if (!startDateInput.value || !endDateInput.value) return;
 
-        // Check if any day in the range is Saturday (6) or Sunday (0)
-        let hasWeekend = false;
-        const currentDate = new Date(startDate);
+                    // Check if any day in the range is Saturday (6) or Sunday (0)
+                    let hasWeekend = false;
+                    const currentDate = new Date(startDate);
 
-        while (currentDate <= endDate) {
-            const day = currentDate.getDay();
-            if (day === 0 || day === 6) {
-                hasWeekend = true;
-                break;
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
+                    while (currentDate <= endDate) {
+                        const day = currentDate.getDay();
+                        if (day === 0 || day === 6) {
+                            hasWeekend = true;
+                            break;
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
 
-        if (hasWeekend) {
-            weekendWarning.classList.remove('hidden');
-            descriptionTextarea.setAttribute('required', 'required');
-            descriptionTextarea.classList.add('border-red-500');
-        } else {
-            weekendWarning.classList.add('hidden');
-            descriptionTextarea.removeAttribute('required');
-            descriptionTextarea.classList.remove('border-red-500');
-        }
-    }
+                    if (hasWeekend) {
+                        weekendWarning.classList.remove('hidden');
+                        descriptionTextarea.setAttribute('required', 'required');
+                        descriptionTextarea.classList.add('border-red-500');
+                    } else {
+                        weekendWarning.classList.add('hidden');
+                        descriptionTextarea.removeAttribute('required');
+                        descriptionTextarea.classList.remove('border-red-500');
+                    }
+                }
 
-    startDateInput.addEventListener('change', checkForWeekend);
-    endDateInput.addEventListener('change', checkForWeekend);
+                startDateInput.addEventListener('change', checkForWeekend);
+                endDateInput.addEventListener('change', checkForWeekend);
 
-    // Also check on form submission
-    document.querySelector('form').addEventListener('submit', function(e) {
-        checkForWeekend();
-        if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value.trim()) {
-            e.preventDefault();
-            descriptionTextarea.focus();
-        }
-    });
-});
-</script>
+                // Also check on form submission
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    checkForWeekend();
+                    if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
+                        .trim()) {
+                        e.preventDefault();
+                        descriptionTextarea.focus();
+                    }
+                });
+            });
+        </script>
         <x-form-divider>Frais Mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
@@ -264,12 +267,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <x-label class="w-1/3 inline-flex">
                     Demande d'avance<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('advance',0) > 0) type="radio" value="1" name="needs_advance"
+                <input required @checked(old('advance', 0) > 0) type="radio" value="1" name="needs_advance"
                     id="needs_advance_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_yes"
                     class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('advance',0) == 0) type="radio" value="0" name="needs_advance"
+                <input required @checked(old('advance', 0) == 0) type="radio" value="0" name="needs_advance"
                     id="needs_advance_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 advance-radio">
                 <label for="needs_advance_no"
@@ -427,8 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     id="charge_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label for="charge_yes" class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('charge', 1) == 0) type="radio" value="0" name="charge"
-                    id="charge_no"
+                <input required @checked(old('charge', 1) == 0) type="radio" value="0" name="charge" id="charge_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label for="charge_no" class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
@@ -436,10 +438,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <x-label class="w-1/3 inline-flex">
                     Prise en charge frais d'hébergement<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('ijm',1) == 1) type="radio" value="1" name="ijm"
+                <input required @checked(old('ijm', 1) == 1) type="radio" value="1" name="ijm"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
-                <input required @checked(old('ijm',1) == 0) type="radio" value="0" name="ijm"
+                <input required @checked(old('ijm', 1) == 0) type="radio" value="0" name="ijm"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
@@ -461,12 +463,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <x-label class="w-1/3 inline-flex">
                     Frais de réception<span class="text-red-500">*</span>
                 </x-label>
-                <input required @checked(old('needs_reception_fees',0) > 0) type="radio" value="1" name="needs_reception_fees"
+                <input required @checked(old('needs_reception_fees', 0) > 0) type="radio" value="1" name="needs_reception_fees"
                     id="needs_reception_fees_yes"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
                 <label for="needs_reception_fees_yes"
                     class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('needs_reception_fees',0) == 0) type="radio" value="0" name="needs_reception_fees"
+                <input required @checked(old('needs_reception_fees', 0) == 0) type="radio" value="0" name="needs_reception_fees"
                     id="needs_reception_fees_no"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
                 <label for="needs_reception_fees_no"
@@ -507,7 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </script>
 
         {{-- Pre Expenses --}}
-        <x-form-divider>Dépenses Supplémentaires</x-form-divider>
+        <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
         <div class="flex flex-col" x-data="expensesManager()">
             <div class="-m-1.5 overflow-x-auto">
                 <div class="p-1.5 min-w-full inline-block align-middle">
@@ -515,9 +517,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
+                                        la dépense</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -525,57 +532,61 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <template x-for="(expense, index) in expenses" :key="index">
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                         <!-- Type Column -->
-                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type" x-on:change="expense.nature = ''">
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type"
+                                                x-on:change="expense.nature = ''">
                                                 <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                <option value="extra_meal">repas supplémentaire</option>
-                                                <option value="extra_accomodation">hébergement supplémentaire</option>
+                                                <option value="extra_accomodation">hébergement</option>
+                                                <option value="extra_meal">repas</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
                                         </td>
 
                                         <!-- Nature Column -->
-                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <template x-if="expense.type === 'transport'">
-                                                <x-select-input x-bind:name="`expenses[${index}][nature]`" x-model="expense.nature" required>
+                                                <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
+                                                    x-model="expense.transport_type" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Avion">Avion</option>
-                                                    <option value="Train">Train</option>
-                                                    <option value="Taxi/Uber">Taxi/Uber</option>
-                                                    <option value="Transport public">Transport public</option>
-                                                    <option value="Location de voiture avec chauffeur">Location de voiture avec chauffeur</option>
+                                                    <option value="plane">Avion</option>
+                                                    <option value="train">Train</option>
+                                                    <option value="taxi_uber/Uber">Taxi/Uber</option>
+                                                    <option value="public_transport public">Transport public</option>
+                                                    <option value="car_rental_with_driver de voiture avec chauffeur">Location de voiture
+                                                        avec chauffeur</option>
                                                     <option value="autre">autre</option>
                                                 </x-select-input>
                                             </template>
 
                                             <template x-if="expense.type === 'extra_meal'">
-                                                <x-select-input x-bind:name="`expenses[${index}][nature]`" x-model="expense.nature" required>
+                                                <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
+                                                    x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="A">A</option>
-                                                    <option value="B">B</option>
-                                                    <option value="C">C</option>
+                                                    <option value="temps de transport">temps de transport</option>
                                                 </x-select-input>
                                             </template>
 
                                             <template x-if="expense.type === 'extra_accomodation'">
-                                                <x-select-input x-bind:name="`expenses[${index}][nature]`" x-model="expense.nature" required>
+                                                <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
+                                                    x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="A">A</option>
-                                                    <option value="B">B</option>
-                                                    <option value="C">C</option>
+                                                    <option value="Frais hébergement">Frais hébergement</option>
                                                 </x-select-input>
                                             </template>
 
                                             <template x-if="expense.type === 'other'">
-                                                <textarea x-bind:name="`expenses[${index}][nature]`" x-model="expense.nature" rows="2" required
+                                                <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required
                                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
                                                     placeholder="Décrivez la nature de la dépense"></textarea>
                                             </template>
                                         </td>
 
                                         <!-- Actions Column -->
-                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td
+                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex justify-center space-x-2">
                                                 <button type="button"
                                                     class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
@@ -602,13 +613,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 Alpine.data('expensesManager', () => ({
                     expenses: [{
                         type: '',
-                        nature: ''
+                        description: '',
+                        transport_type: '',
+                        meal_location: ''
                     }],
 
                     addExpense() {
                         this.expenses.push({
                             type: '',
-                            nature: ''
+                            description: '',
+                            transport_type: '',
+                            meal_location: ''
                         });
                     },
 
@@ -637,8 +652,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     Observation
                 </x-label>
                 <textarea name="description" id="description" rows="4"
-    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
- </div>
+                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
+            </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">

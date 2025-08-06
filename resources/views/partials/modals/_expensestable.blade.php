@@ -8,7 +8,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
+                            {{-- <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th> --}}
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Détails</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date dépense</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Montant</th>
@@ -26,29 +26,31 @@
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
                                     @elseif ($expense->type === 'extra_meal')
                                         <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Repas</span>
+                                    @elseif ($expense->type === 'extra_accomodation')
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Hebergement</span>
                                     @else
                                         <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
                                     @endif
                                 </td>
 
-                                <!-- Description Column -->
+                                {{-- <!-- Description Column -->
                                 <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                     {{ $expense->description }}
-                                </td>
+                                </td> --}}
 
                                 <!-- Details Column -->
                                 <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                     @if($expense->type === 'transport')
                                         <div class="text-sm">
-                                            <span class="font-semibold">{{ __('expense.transport_types.' . $expense->transport_type) }}</span>
+                                            <span class="font-semibold">{{ __( 'expense.transport_types.' .$expense->transport_type) }}</span>
                                             @if($expense->transport_details)
                                                 <p class="text-xs text-gray-500">{{ $expense->transport_details }}</p>
                                             @endif
                                         </div>
-                                    @elseif($expense->type === 'extra_meal')
+                                    @elseif($expense->type === 'extra_meal' || $expense->type === 'extra_accomodation')
                                         <div class="text-sm">
                                             <span class="font-semibold">{{ $expense->meal_location }}</span>
-                                            <p class="text-xs text-gray-500">{{ $expense->meal_participants }} personnes</p>
+                                            {{-- <p class="text-xs text-gray-500">{{ $expense->meal_participants }} personnes</p> --}}
                                         </div>
                                     @endif
                                 </td>

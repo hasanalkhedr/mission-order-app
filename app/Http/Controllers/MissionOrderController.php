@@ -126,7 +126,7 @@ class MissionOrderController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
@@ -232,7 +232,7 @@ $expenses = $request->input('expenses') ?? [];
             'end_time' => 'required',
             'charge' => 'required',
             'ijm' => 'required',
-            'assurance' => 'required',
+            //'assurance' => 'required',
             'return_location' => 'nullable',
             'advance' => [
                 'nullable',
@@ -260,8 +260,8 @@ $expenses = $request->input('expenses') ?? [];
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'required|string|in:transport,extra_meal,other',
-            'expenses.*.description' => 'required|string',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
+            'expenses.*.description' => 'nullable|string',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -397,8 +397,15 @@ $expenses = $request->input('expenses') ?? [];
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
                 })->orderBy('id','desc')->paginate(10);
         }
+        $countries = MissionOrder::with('bareme')
+            ->get()
+            ->pluck('bareme.pays')
+            ->unique()
+            ->filter()
+            ->values();
+        $employees = Employee::select('id', 'first_name', 'last_name')->get();
 
-        return view('mission_orders.m_index', compact('missionOrders', 'search'));
+        return view('mission_orders.m_index', compact('missionOrders', 'search', 'countries', 'employees'));
     }
     public function m_show(Request $request, MissionOrder $missionOrder)
     {

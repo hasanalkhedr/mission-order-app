@@ -34,9 +34,10 @@
                                 <x-label>type de dépense<span class="text-red-500">*</span></x-label>
                                 <x-select-input id="type" name="type" onchange="updateExpenseFields()">
                                     <option value="">--sélectionner le type--</option>
-                                    <option value="transport">transport</option>
-                                    <option value="extra_meal">repas supplémentaire</option>
-                                    <option value="other">autre</option>
+                                    <option value="transport">Transport</option>
+                                    <option value="extra_accomodation">Hébergement</option>
+                                    <option value="extra_meal">Repas</option>
+                                    <option value="other">Autre</option>
                                 </x-select-input>
                             </div>
 
@@ -50,55 +51,100 @@
                                         <option value="train">Train</option>
                                         <option value="taxi_uber">Taxi/Uber</option>
                                         <option value="public_transport">Transport public</option>
-                                        <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                        <option value="car_rental_with_driver">Location de voiture avec chauffeur
+                                        </option>
+                                        <option value="autre">autre</option>
                                     </x-select-input>
                                 </div>
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-label>Détails du transport</x-label>
-                                    <textarea id="transport_details" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
+                                    <textarea id="transport_details" name="transport_details" rows="2"
+                                        placeholder="Numéro de vol, numéro de train, etc."
                                         class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details') }}</textarea>
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
+                                        (cocher les cases correspondantes)</x-label>
+                                    <table>
+                                        <thead>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('passenger') }}</x-label></th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('distance') }}</x-label></th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('material') }}</x-label></th>
+                                            <th class="text-center text-gray-600 border border-blue-600">
+                                                <x-label>{{ __('visits') }}</x-label></th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="passenger"
+                                                        @checked(old('passenger'))></td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="distance"
+                                                        @checked(old('distance'))></td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="material"
+                                                        @checked(old('material'))></td>
+                                                <td
+                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="visits"
+                                                        @checked(old('visits'))></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
                             <!-- Meal Type Fields (hidden by default) -->
                             <div id="mealFields" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Lieu du repas<span class="text-red-500">*</span></x-label>
-                                    <x-text-input id="meal_location" name="meal_location" value="{{ old('meal_location') }}"
-                                        placeholder="Nom du restaurant ou adresse"/>
+
+                                    <x-select-input id="meal_location" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option value="temps de transport">temps de transport</option>
+                                    </x-select-input>
                                 </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
+                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
                                     <x-text-input type="number" id="meal_participants" name="meal_participants"
-                                        value="{{ old('meal_participants', 1) }}" min="1"/>
+                                        value="{{ old('meal_participants', 1) }}" min="1" />
+                                </div> --}}
+                            </div>
+                            <div id="herFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+
+                                    <x-select-input id="meal_location" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option value="Frais hébergement">Frais hébergement</option>
+                                    </x-select-input>
                                 </div>
+                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
+                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
+                                        value="{{ old('meal_participants', 1) }}" min="1" />
+                                </div> --}}
+                            </div>
+                            <div id="other" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-text-input type="text" id="description" name="description"
+                                        value="{{ old('description', '') }}" />
+
+                                </div>
+
                             </div>
 
-                            <div class="flex flex-wrap -mx-3 mb-0">
+                            {{-- <div class="flex flex-wrap -mx-3 mb-0">
                                 <x-label>Nature de dépense<span class="text-red-500">*</span></x-label>
                                 <textarea id="description" name="description" rows="4" required placeholder=""
                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>
-                            </div>
+                            </div> --}}
 
-<div class="flex flex-wrap -mx-3 mb-0">
-     <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher les cases correspondantes)</x-label>
-     <table>
-        <thead>
-            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("passenger")}}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("distance")}}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("material")}}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600"><x-label>{{__("visits")}}</x-label></th>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="passenger" @checked(old('passenger'))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="distance" @checked(old('distance'))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="material" @checked(old('material'))></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs"><input type="checkbox" value="1" name="visits" @checked(old('visits'))></td>
-            </tr>
-        </tbody>
-     </table>
-</div>
+
 
                             <div class="-mx-3 w-full mb-0">
                                 <x-label>Date de dépense<span class="text-red-500">*</span></x-label>
@@ -120,7 +166,8 @@
                             <div class="relative w-full h-full mx-auto">
                                 <!-- PDF Preview Container -->
                                 <div id="pdfPreview" class="hidden w-full h-full">
-                                    <embed id="pdfEmbed" src="" type="application/pdf" width="100%" height="100%">
+                                    <embed id="pdfEmbed" src="" type="application/pdf" width="100%"
+                                        height="100%">
                                     <div class="text-center mt-2 text-sm text-gray-600">PDF Preview</div>
                                 </div>
 
@@ -130,9 +177,10 @@
                                     alt="Document de dépenses" class="object-cover w-full h-full">
 
                                 <!-- File Upload Button -->
-                                <div class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
-                                    <input type="file" name="expense_document" id="expense_document" class="hidden"
-                                        accept=".pdf,.jpg,.jpeg,.png,.gif" required>
+                                <div
+                                    class="rounded-xl absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-50 hover:opacity-100 transition-opacity">
+                                    <input type="file" name="expense_document" id="expense_document"
+                                        class="hidden" accept=".pdf,.jpg,.jpeg,.png,.gif" required>
                                     <button type="button" id="browseButton"
                                         class="text-white bg-blue-600 hover:bg-blue-700 rounded-xl w-1/2">
                                         <img src="{{ Vite::asset('resources/images/browse-image.png') }}"
@@ -169,153 +217,163 @@
 </div>
 
 <script>
-// Define all functions first
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    // Define all functions first
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    // Update file info display
-    document.getElementById('fileName').textContent = file.name;
-    document.getElementById('fileInfo').classList.remove('hidden');
+        // Update file info display
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileInfo').classList.remove('hidden');
 
-    // Handle preview based on file type
-    if (file.type === 'application/pdf') {
-        // Show PDF preview
-        document.getElementById('expenseDocumentPreview').classList.add('hidden');
-        document.getElementById('pdfPreview').classList.remove('hidden');
+        // Handle preview based on file type
+        if (file.type === 'application/pdf') {
+            // Show PDF preview
+            document.getElementById('expenseDocumentPreview').classList.add('hidden');
+            document.getElementById('pdfPreview').classList.remove('hidden');
 
-        // Update PDF embed source
-        const pdfEmbed = document.getElementById('pdfEmbed');
-        pdfEmbed.src = URL.createObjectURL(file);
-    } else if (file.type.startsWith('image/')) {
-        // Show image preview
-        document.getElementById('pdfPreview').classList.add('hidden');
-        document.getElementById('expenseDocumentPreview').classList.remove('hidden');
+            // Update PDF embed source
+            const pdfEmbed = document.getElementById('pdfEmbed');
+            pdfEmbed.src = URL.createObjectURL(file);
+        } else if (file.type.startsWith('image/')) {
+            // Show image preview
+            document.getElementById('pdfPreview').classList.add('hidden');
+            document.getElementById('expenseDocumentPreview').classList.remove('hidden');
 
-        // Update image preview
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('expenseDocumentPreview').src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+            // Update image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('expenseDocumentPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Enable submit button if all required fields are filled
+        checkRequiredFields();
     }
 
-    // Enable submit button if all required fields are filled
-    checkRequiredFields();
-}
+    function checkRequiredFields() {
+        const form = document.getElementById('expenseForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const requiredFields = form.querySelectorAll('[required]');
+        let allFilled = true;
 
-function checkRequiredFields() {
-    const form = document.getElementById('expenseForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const requiredFields = form.querySelectorAll('[required]');
-    let allFilled = true;
-
-    requiredFields.forEach((field) => {
-        if (field.type === 'file') {
-            if (!field.files || field.files.length === 0) {
+        requiredFields.forEach((field) => {
+            if (field.type === 'file') {
+                if (!field.files || field.files.length === 0) {
+                    allFilled = false;
+                }
+            } else if (!field.value.trim()) {
                 allFilled = false;
             }
-        } else if (!field.value.trim()) {
-            allFilled = false;
-        }
-    });
+        });
 
-    // Check additional required fields based on expense type
-    const expenseType = document.getElementById('type').value;
-    if (expenseType === 'transport') {
-        if (!document.getElementById('transport_type').value.trim()) {
-            allFilled = false;
+        // Check additional required fields based on expense type
+        const expenseType = document.getElementById('type').value;
+        if (expenseType === 'transport') {
+            if (!document.getElementById('transport_type').value.trim()) {
+                allFilled = false;
+            }
+        } else if (expenseType === 'extra_meal') {
+            if (!document.getElementById('meal_location').value.trim() ||
+                !document.getElementById('meal_participants').value.trim()) {
+                allFilled = false;
+            }
         }
-    } else if (expenseType === 'extra_meal') {
-        if (!document.getElementById('meal_location').value.trim() ||
-            !document.getElementById('meal_participants').value.trim()) {
-            allFilled = false;
+
+        // Update submit button state
+        submitBtn.disabled = !allFilled;
+        if (allFilled) {
+            submitBtn.classList.remove('bg-gray-300');
+            submitBtn.classList.add('blue-bg');
+        } else {
+            submitBtn.classList.remove('blue-bg');
+            submitBtn.classList.add('bg-gray-300');
         }
     }
 
-    // Update submit button state
-    submitBtn.disabled = !allFilled;
-    if (allFilled) {
-        submitBtn.classList.remove('bg-gray-300');
-        submitBtn.classList.add('blue-bg');
-    } else {
-        submitBtn.classList.remove('blue-bg');
-        submitBtn.classList.add('bg-gray-300');
-    }
-}
+    function updateExpenseFields() {
+        const expenseType = document.getElementById('type').value;
+        const transportFields = document.getElementById('transportFields');
+        const mealFields = document.getElementById('mealFields');
+        const herFields = document.getElementById('herFields');
+        const other = document.getElementById('other');
 
-function updateExpenseFields() {
-    const expenseType = document.getElementById('type').value;
-    const transportFields = document.getElementById('transportFields');
-    const mealFields = document.getElementById('mealFields');
+        // Hide all fields first
+        transportFields.classList.add('hidden');
+        mealFields.classList.add('hidden');
+        herFields.classList.add('hidden');
+        other.classList.add('hidden');
 
-    // Hide all fields first
-    transportFields.classList.add('hidden');
-    mealFields.classList.add('hidden');
-
-    // Show relevant fields based on selected type
-    if (expenseType === 'transport') {
-        transportFields.classList.remove('hidden');
-        // Set required attributes for transport fields
-        document.getElementById('transport_type').required = true;
-        document.getElementById('meal_location').required = false;
-        document.getElementById('meal_participants').required = false;
-    } else if (expenseType === 'extra_meal') {
-        mealFields.classList.remove('hidden');
-        // Set required attributes for meal fields
-        document.getElementById('transport_type').required = false;
-        document.getElementById('meal_location').required = true;
-        document.getElementById('meal_participants').required = true;
-    } else {
-        // No type selected
-        document.getElementById('transport_type').required = false;
-        document.getElementById('meal_location').required = false;
-        document.getElementById('meal_participants').required = false;
-    }
-
-    // Recheck required fields
-    checkRequiredFields();
-}
-
-// Set up event listeners when DOM is ready
-document.addEventListener("DOMContentLoaded", function() {
-    // File input handling
-    const fileInput = document.getElementById('expense_document');
-    const browseButton = document.getElementById('browseButton');
-
-    fileInput.addEventListener('change', handleFileSelect);
-    browseButton.addEventListener('click', function() {
-        fileInput.click();
-    });
-
-    // Form field validation
-    const form = document.getElementById('expenseForm');
-    form.querySelectorAll('input, select, textarea').forEach((field) => {
-        field.addEventListener('input', checkRequiredFields);
-        if (field.type === 'file') {
-            field.addEventListener('change', checkRequiredFields);
+        // Show relevant fields based on selected type
+        if (expenseType === 'transport') {
+            transportFields.classList.remove('hidden');
+            // Set required attributes for transport fields
+            document.getElementById('transport_type').required = true;
+            document.getElementById('meal_location').required = false;
+            //document.getElementById('meal_participants').required = false;
+        } else if (expenseType === 'extra_meal') {
+            mealFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type').required = false;
+            document.getElementById('meal_location').required = true;
+            //document.getElementById('meal_participants').required = true;
+        } else if (expenseType === 'extra_accomodation') {
+            herFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type').required = false;
+            document.getElementById('meal_location').required = true;
+            //document.getElementById('meal_participants').required = true;
+        } else {
+                        other.classList.remove('hidden');
+            document.getElementById('transport_type').required = false;
+            document.getElementById('meal_location').required = false;
+            document.getElementById('meal_participants').required = false;
         }
+
+        // Recheck required fields
+        checkRequiredFields();
+    }
+
+    // Set up event listeners when DOM is ready
+    document.addEventListener("DOMContentLoaded", function() {
+        // File input handling
+        const fileInput = document.getElementById('expense_document');
+        const browseButton = document.getElementById('browseButton');
+
+        fileInput.addEventListener('change', handleFileSelect);
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // Form field validation
+        const form = document.getElementById('expenseForm');
+        form.querySelectorAll('input, select, textarea').forEach((field) => {
+            field.addEventListener('input', checkRequiredFields);
+            if (field.type === 'file') {
+                field.addEventListener('change', checkRequiredFields);
+            }
+        });
+
+        // Expense type change handler
+        document.getElementById('type').addEventListener('change', updateExpenseFields);
+
+        // Initial check
+        checkRequiredFields();
+
+        // If there's old input (form validation failed), show the appropriate fields
+        @if (old('type'))
+            document.getElementById('type').value = '{{ old('type') }}';
+            updateExpenseFields();
+            @if (old('transport_type'))
+                document.getElementById('transport_type').value = '{{ old('transport_type') }}';
+            @endif
+            @if (old('meal_location'))
+                document.getElementById('meal_location').value = '{{ old('meal_location') }}';
+            @endif
+            @if (old('meal_participants'))
+                document.getElementById('meal_participants').value = '{{ old('meal_participants') }}';
+            @endif
+        @endif
     });
-
-    // Expense type change handler
-    document.getElementById('type').addEventListener('change', updateExpenseFields);
-
-    // Initial check
-    checkRequiredFields();
-
-    // If there's old input (form validation failed), show the appropriate fields
-    @if(old('type'))
-        document.getElementById('type').value = '{{ old("type") }}';
-        updateExpenseFields();
-        @if(old('transport_type'))
-            document.getElementById('transport_type').value = '{{ old("transport_type") }}';
-        @endif
-        @if(old('meal_location'))
-            document.getElementById('meal_location').value = '{{ old("meal_location") }}';
-        @endif
-        @if(old('meal_participants'))
-            document.getElementById('meal_participants').value = '{{ old("meal_participants") }}';
-        @endif
-    @endif
-});
 </script>
