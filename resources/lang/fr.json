@@ -40,8 +40,8 @@
     "No Tournees Found": "Aucune tournee trouvée",
     "No MÉMOIRE DE FRAIS Found": "Aucune MÉMOIRE DE FRAIS trouvée",
     "No Expenses Found": "Aucune dépense trouvée",
-    "Print": "Imprimer",
-    "Print Order": "Imprimer la commande",
+    "Print": "Imprimer/Visualiser",
+    "Print Order": "Imprimer/Visualiser la commande",
     "Approve or Reject": "VALIDER ou rejeter",
     "Approve": "VALIDER",
     "Approve Mission ": "VALIDER la Mission",
@@ -65,7 +65,7 @@
     "Status": "Statut",
     "Date of Approve": "Date d'approbation",
     "No Approves Found": "Aucune approbation trouvée",
-    "Print Report": "Imprimer le rapport",
+    "Print Report": "Imprimer/Visualiser le rapport",
     "Change Dates": "Changer les dates",
 
     "Save as PDF file": "Télécharger en fichier PDF",
@@ -371,5 +371,10 @@
     "material": "Matérials conséquents à transporter",
     "visits": "Tournée, plusieurs sites visités",
 
-    "Location": "Rental"
+    "Location": "Rental",
+    "transport": "transport",
+    "extra_accomodation": "hébergement",
+    "extra_meal": "repas",
+    "other": "autre"
+
 }

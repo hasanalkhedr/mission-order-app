@@ -438,15 +438,15 @@ class TourneeController extends Controller
     public function m_update(Request $request, Tournee $tournee)
     {
         $request->validate([
-            'no_ded_accomodation' => 'required|numeric',
-            'no_ded_meals' => 'required|numeric',
+            //'no_ded_accomodation' => 'required|numeric',
+            //'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
             'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',
 
         ]);
         $action = $request->input('action');
-        $memor_status = '';
+        $memor_status = null;
         if ($action === 'partialSubmit') {
             $tournee->update($request->all());
             return redirect()->route('tournees.m_create', $tournee);

@@ -434,8 +434,8 @@ $expenses = $request->input('expenses') ?? [];
     public function m_update(Request $request, MissionOrder $missionOrder)
     {
         $request->validate([
-            'no_ded_accomodation' => 'required|numeric',
-            'no_ded_meals' => 'required|numeric',
+            //'no_ded_accomodation' => 'required|numeric',
+            //'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
             'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',

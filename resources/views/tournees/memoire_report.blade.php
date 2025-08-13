@@ -143,9 +143,9 @@
                                                             class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                                                             Nature de
                                                             la dépense</th>
-                                                        <th scope="col"
+                                                        {{-- <th scope="col"
                                                             class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                                                            Détails</th>
+                                                            Détails</th> --}}
                                                         <th scope="col"
                                                             class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                                                             Date
@@ -164,20 +164,21 @@
                                                             <!-- Type -->
                                                             <td
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                @if ($expense->type === 'transport')
-                                                                    <span class="text-blue-600 font-medium">Transport</span>
-                                                                @else
-                                                                    <span class="text-green-600 font-medium">Repas</span>
-                                                                @endif
+                                                               {{__($expense->type)}}
                                                             </td>
                                                             <!-- Description -->
                                                             <td
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                                                {{ Str::limit($expense->description, 20) }}
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                @else
+                                                                    {{ $expense->meal_location }}
+                                                                    {{ $expense->description }}
+                                                                @endif
                                                             </td>
 
                                                             <!-- Details -->
-                                                            <td
+                                                            {{-- <td
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                                                                 @if ($expense->type === 'transport')
                                                                     {{ __('expense.transport_types.' . $expense->transport_type) }}
@@ -191,7 +192,7 @@
                                                                         class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
                                                                         pers.</span>
                                                                 @endif
-                                                            </td>
+                                                            </td> --}}
                                                             <!-- Date -->
                                                             <td
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">

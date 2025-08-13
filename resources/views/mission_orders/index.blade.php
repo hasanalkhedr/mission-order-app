@@ -244,8 +244,8 @@
                             @case('approved')
                                 @if ($missionOrder->employee->id == auth()->user()->employee->id)
                                     <td class="text-center px-0 py-1 border-b">
-                                        <a href="{{ route('mission_orders.m_index') }}"
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Memoire') }}</a>
+                                        <a href="{{ route('mission_orders.m_create', $missionOrder->id) }}"
+                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{  __('Add Memoire') }}</a>
                                     </td>
                                     <td class="text-center px-0 py-1 border-b">
                                         <a href="{{ route('mission_orders.report', $missionOrder->id) }}"

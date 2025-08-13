@@ -116,22 +116,107 @@
                 </thead>
                 <tbody>
                     <tr>
+                            <td class="w-2/3">Demande d'avance:</td>
+                            <td class="w-1/3">{{ $tournee->advance >0 ? $tournee->advance : 'NON' }}</td>
+                        </tr>
+                    <tr>
                         <td class="w-2/3">Prise en charge des frais de transport :</td>
                         <td class="w-1/3">{{ $tournee->charge == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
                     <tr>
-                        <td class="w-2/3">Prise en charge des indemnités journalières de tournee :</td>
+                        <td class="w-2/3">Prise en charge frais d'hébergement:</td>
                         <td class="w-1/3">{{ $tournee->ijm == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
                     <tr>
+                            <td class="w-2/3">Frais de réception :</td>
+                            <td class="w-1/3">{{ $tournee->reception_fees ? $tournee->reception_fees : 'NON'}}</td>
+                        </tr>
+                    <tr>
                         <td colspan="2" class="w-full">{{ $tournee->budget_text }}</td>
                     </tr>
-                    @if ($tournee->reception_fees)
-                        <tr>
-                            <td class="w-2/3">Frais de réception :</td>
-                            <td class="w-1/3">{{ $tournee->reception_fees }}</td>
-                        </tr>
-                    @endif
+                </tbody>
+            </table>
+            <!-- Expense Table -->
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th class="px-4">Dépenses prévues supplémentaires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-full">
+                            <div class="flex flex-col">
+                                <div class="-m-1.5 overflow-x-auto">
+                                    <div class="p-[2px] min-w-full inline-block align-middle">
+                                        <div class="overflow-hidden">
+                                            <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Type</th>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Nature de la dépense</th>
+                                                        {{-- <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Détails</th> --}}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse ($tournee->expenses as $expense)
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{-- @if ($expense->type === 'transport')
+                                                                    <span class="text-blue-600 font-medium">Transport</span>
+                                                                @else
+                                                                    <span class="text-green-600 font-medium">Repas</span>
+                                                                @endif --}}
+                                                                {{__($expense->type)}}
+                                                            </td>
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                @else
+                                                                    {{ $expense->meal_location }}
+                                                                    {{ $expense->description }}
+                                                                @endif
+                                                            </td>
+                                                            {{-- <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                    @if ($expense->transport_details)
+                                                                        <span
+                                                                            class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
+                                                                    @endif
+                                                                @else
+                                                                    {{ Str::limit($expense->meal_location, 15) }}
+                                                                    <span
+                                                                        class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
+                                                                        pers.</span>
+                                                                @endif
+                                                            </td> --}}
+                                                        </tr>
+                                                    @empty
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td colspan="6"
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
+                                                                {{ __('No Expenses Found') }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <table class="table-auto w-full text-left">

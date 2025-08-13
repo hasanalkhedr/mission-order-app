@@ -320,9 +320,9 @@
                     Montant de l'avance (INR Roupie indienne)<span class="text-red-500">*</span>
                 </x-label>
                 <x-text-input name="advance" value="{{ old('advance') }}" id="advance_amount_input" />
-                {{-- <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
+                <small class="text-gray-500">Maximum autorisé: <span id="max_advance">0</span> (75% du total
                     hébergement)</small>
-                <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p> --}}
+                <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
             </div>
         </div>
 
@@ -331,87 +331,87 @@
                 const advanceRadios = document.querySelectorAll('.advance-radio');
                 const advanceAmountContainer = document.getElementById('advance_amount_container');
                 const advanceAmountInput = document.getElementById('advance_amount_input');
-                // const maxAdvanceSpan = document.getElementById('max_advance');
-                // const advanceError = document.getElementById('advance_error');
-                // const baremeSelect = document.querySelector('select[name="bareme_id"]');
-                // const startDateInput = document.querySelector('input[name="start_date"]');
-                // const endDateInput = document.querySelector('input[name="end_date"]');
-                // const startTimeInput = document.querySelector('input[name="start_time"]');
-                // const endTimeInput = document.querySelector('input[name="end_time"]');
-                /*
-                                // Store bareme data for calculation
-                                const baremes = {!! json_encode(
-                                    $baremes->keyBy('id')->map(function ($item) {
-                                        return [
-                                            'accomodation_cost' => $item->accomodation_cost,
-                                            'currency' => $item->currency,
-                                        ];
-                                    }),
-                                ) !!};
+                const maxAdvanceSpan = document.getElementById('max_advance');
+                const advanceError = document.getElementById('advance_error');
+                const baremeSelect = document.querySelector('select[name="bareme_id"]');
+                const startDateInput = document.querySelector('input[name="start_date"]');
+                const endDateInput = document.querySelector('input[name="end_date"]');
+                const startTimeInput = document.querySelector('input[name="start_time"]');
+                const endTimeInput = document.querySelector('input[name="end_time"]');
 
-                                // Function to calculate days difference with 5 AM rule
-                                function calculateDays() {
-                                    if (!startDateInput.value || !endDateInput.value) return 0;
+                // Store bareme data for calculation
+                const baremes = {!! json_encode(
+                    $baremes->keyBy('id')->map(function ($item) {
+                        return [
+                            'accomodation_cost' => $item->accomodation_cost,
+                            'currency' => $item->currency,
+                        ];
+                    }),
+                ) !!};
 
-                                    const startDate = new Date(`${startDateInput.value}T${startTimeInput.value || '00:00'}`);
-                                    const endDate = new Date(`${endDateInput.value}T${endTimeInput.value || '00:00'}`);
+                // Function to calculate days difference with 5 AM rule
+                function calculateDays() {
+                    if (!startDateInput.value || !endDateInput.value) return 0;
 
-                                    // Calculate full calendar days difference
-                                    const timezoneOffset = startDate.getTimezoneOffset() * 60000;
-                                    const normalizedStart = new Date(startDate - timezoneOffset);
-                                    const normalizedEnd = new Date(endDate - timezoneOffset);
+                    const startDate = new Date(`${startDateInput.value}T${startTimeInput.value || '00:00'}`);
+                    const endDate = new Date(`${endDateInput.value}T${endTimeInput.value || '00:00'}`);
 
-                                    // Get date parts only (ignoring time)
-                                    const startDateOnly = new Date(normalizedStart.toISOString().split('T')[0]);
-                                    const endDateOnly = new Date(normalizedEnd.toISOString().split('T')[0]);
+                    // Calculate full calendar days difference
+                    const timezoneOffset = startDate.getTimezoneOffset() * 60000;
+                    const normalizedStart = new Date(startDate - timezoneOffset);
+                    const normalizedEnd = new Date(endDate - timezoneOffset);
 
-                                    // Difference in full calendar days
-                                    const diffDays = Math.round((endDateOnly - startDateOnly) / (1000 * 60 * 60 * 24));
+                    // Get date parts only (ignoring time)
+                    const startDateOnly = new Date(normalizedStart.toISOString().split('T')[0]);
+                    const endDateOnly = new Date(normalizedEnd.toISOString().split('T')[0]);
+
+                    // Difference in full calendar days
+                    const diffDays = Math.round((endDateOnly - startDateOnly) / (1000 * 60 * 60 * 24));
 
 
-                                    let totalDays = diffDays;
+                    let totalDays = diffDays;
 
-                                    // Add extra day if start time is before 5 AM
-                                    if (startDate.getHours() < 5) {
-                                        totalDays += 1;
-                                    }
+                    // Add extra day if start time is before 5 AM
+                    if (startDate.getHours() < 5) {
+                        totalDays += 1;
+                    }
 
-                                    return totalDays;
-                                }
+                    return totalDays;
+                }
 
-                                // Function to calculate max advance amount
-                                function calculateMaxAdvance() {
-                                    const selectedBareme = baremeSelect.value;
-                                    if (!selectedBareme) return 0;
+                // Function to calculate max advance amount
+                function calculateMaxAdvance() {
+                    const selectedBareme = baremeSelect.value;
+                    if (!selectedBareme) return 0;
 
-                                    const days = calculateDays();
-                                    const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
-                                    const totalCost = days * dailyCost;
-                                    const maxAdvance = totalCost * 0.75; // 75% of total
-                const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
-                                    return maxAdvanceInLocal.toFixed(2);
-                                }
+                    const days = calculateDays();
+                    const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
+                    const totalCost = days * dailyCost;
+                    const maxAdvance = totalCost * 0.75; // 75% of total
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
+                    return maxAdvanceInLocal.toFixed(2);
+                }
 
-                                // Function to update max advance display
-                                function updateMaxAdvance() {
-                                    const maxAdvance = calculateMaxAdvance();
-                                    maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
-                                }
+                // Function to update max advance display
+                function updateMaxAdvance() {
+                    const maxAdvance = calculateMaxAdvance();
+                    maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
+                }
 
-                                // Function to validate advance amount
-                                function validateAdvanceAmount() {
-                                    const maxAdvance = parseFloat(calculateMaxAdvance());
-                                    const requestedAdvance = parseFloat(advanceAmountInput.value) || 0;
+                // Function to validate advance amount
+                function validateAdvanceAmount() {
+                    const maxAdvance = parseFloat(calculateMaxAdvance());
+                    const requestedAdvance = parseFloat(advanceAmountInput.value) || 0;
 
-                                    if (requestedAdvance > maxAdvance) {
-                                        advanceError.classList.remove('hidden');
-                                        return false;
-                                    } else {
-                                        advanceError.classList.add('hidden');
-                                        return true;
-                                    }
-                                }
-                */
+                    if (requestedAdvance > maxAdvance) {
+                        advanceError.classList.remove('hidden');
+                        return false;
+                    } else {
+                        advanceError.classList.add('hidden');
+                        return true;
+                    }
+                }
+
                 // Toggle advance amount visibility
                 function toggleAdvanceAmount() {
                     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
@@ -433,24 +433,24 @@
                     radio.addEventListener('change', toggleAdvanceAmount);
                 });
 
-                // baremeSelect.addEventListener('change', updateMaxAdvance);
-                // startDateInput.addEventListener('change', updateMaxAdvance);
-                // endDateInput.addEventListener('change', updateMaxAdvance);
-                // startTimeInput.addEventListener('change', updateMaxAdvance);
-                // endTimeInput.addEventListener('change', updateMaxAdvance);
-                // advanceAmountInput.addEventListener('input', validateAdvanceAmount);
+                baremeSelect.addEventListener('change', updateMaxAdvance);
+                startDateInput.addEventListener('change', updateMaxAdvance);
+                endDateInput.addEventListener('change', updateMaxAdvance);
+                startTimeInput.addEventListener('change', updateMaxAdvance);
+                endTimeInput.addEventListener('change', updateMaxAdvance);
+                advanceAmountInput.addEventListener('input', validateAdvanceAmount);
 
-                // Also validate before form submission
-                // document.querySelector('form').addEventListener('submit', function(e) {
-                //     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
+                //Also validate before form submission
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
 
-                //     if (needsAdvance === '1' && !validateAdvanceAmount()) {
-                //         e.preventDefault();
-                //         alert(
-                //             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                //             );
-                //     }
-                // });
+                    if (needsAdvance === '1' && !validateAdvanceAmount()) {
+                        e.preventDefault();
+                        alert(
+                            'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
+                            );
+                    }
+                });
             });
         </script>
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -568,7 +568,7 @@
                                                 x-on:change="expense.nature = ''">
                                                 <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                <option value="extra_accomodation">hébergement</option>
+                                                {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
@@ -583,10 +583,9 @@
                                                     <option value="">--sélectionner--</option>
                                                     <option value="plane">Avion</option>
                                                     <option value="train">Train</option>
-                                                    <option value="taxi_uber/Uber">Taxi/Uber</option>
+                                                    <option value="taxi_uber">Taxi/Uber</option>
                                                     <option value="public_transport public">Transport public</option>
-                                                    <option value="car_rental_with_driver de voiture avec chauffeur">Location de voiture
-                                                        avec chauffeur</option>
+                                                    <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
                                                     <option value="autre">autre</option>
                                                 </x-select-input>
                                             </template>
@@ -599,13 +598,13 @@
                                                 </x-select-input>
                                             </template>
 
-                                            <template x-if="expense.type === 'extra_accomodation'">
+                                            {{-- <template x-if="expense.type === 'extra_accomodation'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
                                                     <option value="Frais hébergement">Frais hébergement</option>
                                                 </x-select-input>
-                                            </template>
+                                            </template> --}}
 
                                             <template x-if="expense.type === 'other'">
                                                 <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required

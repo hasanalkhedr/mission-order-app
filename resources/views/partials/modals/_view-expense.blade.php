@@ -75,24 +75,24 @@
         les cases correspondantes)</x-label>
     <table>
         <thead>
-            <th class="text-center text-gray-600 border border-blue-600">
+            <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600">
                 <x-label>{{ __('passenger') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
+            <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600">
                 <x-label>{{ __('distance') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
+            <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600">
                 <x-label>{{ __('material') }}</x-label></th>
-            <th class="text-center text-gray-600 border border-blue-600">
+            <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600">
                 <x-label>{{ __('visits') }}</x-label></th>
         </thead>
         <tbody>
             <tr>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                     <input type="checkbox" disabled @checked($expense->passenger == 1)></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                     <input type="checkbox" disabled @checked($expense->distance == 1)></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                     <input type="checkbox" disabled @checked($expense->material == 1)></td>
-                <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                     <input type="checkbox" disabled @checked($expense->visits == 1)></td>
             </tr>
         </tbody>

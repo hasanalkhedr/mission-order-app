@@ -168,13 +168,10 @@
                 </x-date-time-input>
             </div>
         </div>
-
         <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
                 description.</p>
         </div>
-
-
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const startDateInput = document.getElementById('start_date');
@@ -279,8 +276,6 @@
                     class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
         </div>
-
-        <!-- Add this after your existing advance amount field -->
         <div class="flex flex-wrap -mx-3 mb-2" id="advance_amount_container" style="display: none;">
             <div class="w-1/2 px-3">
                 <x-label>
@@ -292,8 +287,7 @@
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
             </div>
         </div>
-
-        <!-- Add this JavaScript to calculate and validate the advance amount -->
+        <!-- calculate and validate the advance amount -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const advanceRadios = document.querySelectorAll('.advance-radio');
@@ -421,6 +415,7 @@
                 });
             });
         </script>
+
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
@@ -538,7 +533,7 @@
                                                 x-on:change="expense.nature = ''">
                                                 <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                <option value="extra_accomodation">hébergement</option>
+                                                {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
@@ -553,10 +548,9 @@
                                                     <option value="">--sélectionner--</option>
                                                     <option value="plane">Avion</option>
                                                     <option value="train">Train</option>
-                                                    <option value="taxi_uber/Uber">Taxi/Uber</option>
+                                                    <option value="taxi_uber">Taxi/Uber</option>
                                                     <option value="public_transport public">Transport public</option>
-                                                    <option value="car_rental_with_driver de voiture avec chauffeur">Location de voiture
-                                                        avec chauffeur</option>
+                                                    <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
                                                     <option value="autre">autre</option>
                                                 </x-select-input>
                                             </template>
@@ -569,13 +563,13 @@
                                                 </x-select-input>
                                             </template>
 
-                                            <template x-if="expense.type === 'extra_accomodation'">
+                                            {{-- <template x-if="expense.type === 'extra_accomodation'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
                                                     <option value="Frais hébergement">Frais hébergement</option>
                                                 </x-select-input>
-                                            </template>
+                                            </template> --}}
 
                                             <template x-if="expense.type === 'other'">
                                                 <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required

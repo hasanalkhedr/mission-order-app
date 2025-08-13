@@ -25,8 +25,7 @@
             <!-- Modal body -->
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
                 <form id="editExpenseForm-{{ $expense->id }}" method="POST"
-                    action="{{ route('tournee_expenses.update', $expense->id) }}" enctype="multipart/form-data"
-                    class="expense-form">
+                    action="{{ route('tournee_expenses.update', $expense->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="flex flex-wrap -mx-3 mb-6">
@@ -37,7 +36,7 @@
                                     onchange="updateExpenseFieldsEdit('{{ $expense->id }}')">
                                     <option value="">--sélectionner le type--</option>
                                     <option value="transport" @selected(old('type', $expense->type) == 'transport')>Transport</option>
-                                    <option value="extra_accomodation" @selected(old('type', $expense->type) == 'extra_accomodation')>Hébergement</option>
+                                    {{-- <option value="extra_accomodation" @selected(old('type', $expense->type) == 'extra_accomodation')>Hébergement</option> --}}
                                     <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>Repas</option>
                                     <option value="other" @selected(old('type', $expense->type) == 'other')>Autre</option>
                                 </x-select-input>
@@ -62,46 +61,38 @@
                                     <textarea id="transport_details-edit-{{ $expense->id }}" name="transport_details" rows="2" placeholder="Numéro de vol, numéro de train, etc."
                                         class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details', $expense->transport_details) }}</textarea>
                                 </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
-                                        (cocher
-                                        les cases correspondantes)</x-label>
-                                    <table>
+                                <div class="flex flex-wrap -mx-3 mb-0" id="reasonsTable-{{ $expense->id }}">
+                                    <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher les cases correspondantes)</x-label>
+                                    <table class="w-full" style="table-layout: fixed;width: 100%;">
                                         <thead>
-                                            <th class="text-center text-gray-600 border border-blue-600">
-                                                <x-label>{{ __('passenger') }}</x-label>
-                                            </th>
-                                            <th class="text-center text-gray-600 border border-blue-600">
-                                                <x-label>{{ __('distance') }}</x-label>
-                                            </th>
-                                            <th class="text-center text-gray-600 border border-blue-600">
-                                                <x-label>{{ __('material') }}</x-label>
-                                            </th>
-                                            <th class="text-center text-gray-600 border border-blue-600">
-                                                <x-label>{{ __('visits') }}</x-label>
-                                            </th>
+                                            <tr>
+                                                <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600 px-2 py-1">
+                                                    <x-label class="text-xs">{{ __('passenger') }}</x-label>
+                                                </th>
+                                                <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600 px-2 py-1">
+                                                    <x-label class="text-xs">{{ __('distance') }}</x-label>
+                                                </th>
+                                                <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600 px-2 py-1">
+                                                    <x-label class="text-xs">{{ __('material') }}</x-label>
+                                                </th>
+                                                <th style="word-wrap: break-word;text-wrap: wrap;" class="text-center text-gray-600 border border-blue-600 px-2 py-1">
+                                                    <x-label class="text-xs">{{ __('visits') }}</x-label>
+                                                </th>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td
-                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                    <input type="checkbox" value="1" name="passenger"
-                                                        @checked(old('passenger', $expense->passenger))>
+                                                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="passenger" @checked(old('passenger', $expense->passenger))>
                                                 </td>
-                                                <td
-                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                    <input type="checkbox" value="1" name="distance"
-                                                        @checked(old('distance', $expense->distance))>
+                                                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="distance" @checked(old('distance', $expense->distance))>
                                                 </td>
-                                                <td
-                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                    <input type="checkbox" value="1" name="material"
-                                                        @checked(old('material', $expense->material))>
+                                                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="material" @checked(old('material', $expense->material))>
                                                 </td>
-                                                <td
-                                                    class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                    <input type="checkbox" value="1" name="visits"
-                                                        @checked(old('visits', $expense->visits))>
+                                                <td style="word-wrap: break-word;text-wrap: wrap;" class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                    <input type="checkbox" value="1" name="visits" @checked(old('visits', $expense->visits))>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -124,7 +115,7 @@
                                         value="{{ old('meal_participants', 1) }}" min="1" />
                                 </div> --}}
                             </div>
-                            <div id="herFields-edit-{{ $expense->id }}" class="hidden">
+                            {{-- <div id="herFields-edit-{{ $expense->id }}" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
 
                                     <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
@@ -132,12 +123,7 @@
                                         <option @selected(old('meal_location', $expense->meal_location) == 'Frais hébergement') value="Frais hébergement">Frais hébergement</option>
                                     </x-select-input>
                                 </div>
-                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
-                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
-                                        value="{{ old('meal_participants', 1) }}" min="1" />
-                                </div> --}}
-                            </div>
+                            </div> --}}
                             <div id="other-edit-{{ $expense->id }}" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-text-input type="text" id="description-edit-{{ $expense->id }}" name="description"
@@ -269,14 +255,16 @@
         const expenseType = document.getElementById('type-edit-' + expenseId).value;
         const transportFields = document.getElementById('transportFields-edit-' + expenseId);
         const mealFields = document.getElementById('mealFields-edit-' + expenseId);
-        const herFields = document.getElementById('herFields-edit-' + expenseId);
+        // const herFields = document.getElementById('herFields-edit-' + expenseId);
         const other = document.getElementById('other-edit-' + expenseId);
+        const reasonsTable = document.getElementById('reasonsTable-'+expenseId);
 
         // Hide all fields first
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
-        herFields.classList.add('hidden');
+        // herFields.classList.add('hidden');
         other.classList.add('hidden');
+        reasonsTable.classList.add('hidden'); // Hide reasons table by default
 
 
         // Show relevant fields based on selected type
@@ -286,18 +274,23 @@
             document.getElementById('transport_type-edit-' + expenseId).required = true;
             document.getElementById('meal_location-edit-' + expenseId).required = false;
             //document.getElementById('meal_participants-edit-' + expenseId).required = false;
+            // Show reasons table only if "car_rental_with_driver" is selected
+            const transportType = document.getElementById('transport_type-edit-'+expenseId).value;
+            if (transportType === 'car_rental_with_driver') {
+                reasonsTable.classList.remove('hidden');
+            }
         } else if (expenseType === 'extra_meal') {
             mealFields.classList.remove('hidden');
             // Set required attributes for meal fields
             document.getElementById('transport_type-edit-' + expenseId).required = false;
             document.getElementById('meal_location-edit-' + expenseId).required = true;
             //document.getElementById('meal_participants-edit-' + expenseId).required = true;
-        } else if (expenseType === 'extra_accomodation') {
-            herFields.classList.remove('hidden');
-            // Set required attributes for meal fields
-            document.getElementById('transport_type-edit-' + expenseId).required = false;
-            document.getElementById('meal_location-edit-' + expenseId).required = true;
-            //document.getElementById('meal_participants').required = true;
+        // } else if (expenseType === 'extra_accomodation') {
+        //     herFields.classList.remove('hidden');
+        //     // Set required attributes for meal fields
+        //     document.getElementById('transport_type-edit-' + expenseId).required = false;
+        //     document.getElementById('meal_location-edit-' + expenseId).required = true;
+        //     //document.getElementById('meal_participants').required = true;
         } else {
                         other.classList.remove('hidden');
             document.getElementById('transport_type-edit-' + expenseId).required = false;
@@ -312,7 +305,15 @@
         if (fileInput) {
             fileInput.addEventListener('change', handleFileSelectEdit_{{ $expense->id }});
         }
-
+document.getElementById('transport_type-edit-{{$expense->id}}').addEventListener('change', function() {
+            const reasonsTable = document.getElementById('reasonsTable-{{$expense->id}}');
+            if (this.value === 'car_rental_with_driver') {
+                reasonsTable.classList.remove('hidden');
+            } else {
+                reasonsTable.classList.add('hidden');
+            }
+            checkRequiredFields();
+        });
         // Initialize fields based on current expense type
         updateExpenseFieldsEdit('{{ $expense->id }}');
     });

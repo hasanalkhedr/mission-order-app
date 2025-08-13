@@ -35,7 +35,7 @@
                                 <x-select-input id="type" name="type" onchange="updateExpenseFields()">
                                     <option value="">--sélectionner le type--</option>
                                     <option value="transport">Transport</option>
-                                    <option value="extra_accomodation">Hébergement</option>
+                                    {{-- <option value="extra_accomodation">Hébergement</option> --}}
                                     <option value="extra_meal">Repas</option>
                                     <option value="other">Autre</option>
                                 </x-select-input>
@@ -62,7 +62,7 @@
                                         placeholder="Numéro de vol, numéro de train, etc."
                                         class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('transport_details') }}</textarea>
                                 </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
+                                <div class="flex flex-wrap -mx-3 mb-0" id="reasonsTable">
                                     <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
                                         (cocher les cases correspondantes)</x-label>
                                     <table>
@@ -115,7 +115,7 @@
                                         value="{{ old('meal_participants', 1) }}" min="1" />
                                 </div> --}}
                             </div>
-                            <div id="herFields" class="hidden">
+                            {{-- <div id="herFields" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
 
                                     <x-select-input id="meal_location" name="meal_location">
@@ -123,12 +123,7 @@
                                         <option value="Frais hébergement">Frais hébergement</option>
                                     </x-select-input>
                                 </div>
-                                {{-- <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Nombre de personnes<span class="text-red-500">*</span></x-label>
-                                    <x-text-input type="number" id="meal_participants" name="meal_participants"
-                                        value="{{ old('meal_participants', 1) }}" min="1" />
-                                </div> --}}
-                            </div>
+                            </div> --}}
                             <div id="other" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-text-input type="text" id="description" name="description"
@@ -296,14 +291,16 @@
         const expenseType = document.getElementById('type').value;
         const transportFields = document.getElementById('transportFields');
         const mealFields = document.getElementById('mealFields');
-        const herFields = document.getElementById('herFields');
+        // const herFields = document.getElementById('herFields');
         const other = document.getElementById('other');
+        const reasonsTable = document.getElementById('reasonsTable');
 
         // Hide all fields first
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
-        herFields.classList.add('hidden');
+        // herFields.classList.add('hidden');
         other.classList.add('hidden');
+        reasonsTable.classList.add('hidden'); // Hide reasons table by default
 
         // Show relevant fields based on selected type
         if (expenseType === 'transport') {
@@ -311,19 +308,23 @@
             // Set required attributes for transport fields
             document.getElementById('transport_type').required = true;
             document.getElementById('meal_location').required = false;
-            //document.getElementById('meal_participants').required = false;
+
+            // Show reasons table only if "car_rental_with_driver" is selected
+            const transportType = document.getElementById('transport_type').value;
+            if (transportType === 'car_rental_with_driver') {
+                reasonsTable.classList.remove('hidden');
+            }
         } else if (expenseType === 'extra_meal') {
             mealFields.classList.remove('hidden');
             // Set required attributes for meal fields
             document.getElementById('transport_type').required = false;
             document.getElementById('meal_location').required = true;
             //document.getElementById('meal_participants').required = true;
-        } else if (expenseType === 'extra_accomodation') {
-            herFields.classList.remove('hidden');
-            // Set required attributes for meal fields
-            document.getElementById('transport_type').required = false;
-            document.getElementById('meal_location').required = true;
-            //document.getElementById('meal_participants').required = true;
+        // } else if (expenseType === 'extra_accomodation') {
+        //     herFields.classList.remove('hidden');
+        //     // Set required attributes for meal fields
+        //     document.getElementById('transport_type').required = false;
+        //     document.getElementById('meal_location').required = true;
         } else {
                         other.classList.remove('hidden');
             document.getElementById('transport_type').required = false;
@@ -354,7 +355,15 @@
                 field.addEventListener('change', checkRequiredFields);
             }
         });
-
+document.getElementById('transport_type').addEventListener('change', function() {
+            const reasonsTable = document.getElementById('reasonsTable');
+            if (this.value === 'car_rental_with_driver') {
+                reasonsTable.classList.remove('hidden');
+            } else {
+                reasonsTable.classList.add('hidden');
+            }
+            checkRequiredFields();
+        });
         // Expense type change handler
         document.getElementById('type').addEventListener('change', updateExpenseFields);
 

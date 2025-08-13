@@ -526,7 +526,7 @@
                                     <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type">
                                     <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                <option value="extra_accomodation">hébergement</option>
+                                                {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="other">autre</option>
                                 </x-select-input>
@@ -539,12 +539,11 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
                                                     x-model="expense.transport_type" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Avion">Avion</option>
-                                                    <option value="Train">Train</option>
-                                                    <option value="Taxi/Uber">Taxi/Uber</option>
-                                                    <option value="Transport public">Transport public</option>
-                                                    <option value="Location de voiture avec chauffeur">Location de voiture
-                                                        avec chauffeur</option>
+                                                    <option value="plane">Avion</option>
+                                                    <option value="train">Train</option>
+                                                    <option value="taxi_uber">Taxi/Uber</option>
+                                                    <option value="public_transport public">Transport public</option>
+                                                    <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
                                                     <option value="autre">autre</option>
                                                 </x-select-input>
                                             </template>
@@ -557,13 +556,13 @@
                                                 </x-select-input>
                                             </template>
 
-                                            <template x-if="expense.type === 'extra_accomodation'">
+                                            {{-- <template x-if="expense.type === 'extra_accomodation'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
                                                     <option value="Frais hébergement">Frais hébergement</option>
                                                 </x-select-input>
-                                            </template>
+                                            </template> --}}
 
                                             <template x-if="expense.type === 'other'">
                                                 <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required
