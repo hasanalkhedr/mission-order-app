@@ -53,7 +53,8 @@ class Tournee extends Model
         'memor_status',
         'memor_date',
         'advance',
-        'reception_fees'
+        'reception_fees',
+        'repas'
     ];
     protected $casts = [
         'order_date' => 'date',

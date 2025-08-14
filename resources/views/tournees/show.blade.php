@@ -118,10 +118,17 @@
                 </div>
                 <div class="w-full px-3 py-1">
                     <x-label class="w-4/5 inline-flex">
-                        Prise en charge des indemnités journalières de tournee<span class="text-red-500">*</span>
+                        Prise en charge frais d'hébergement:<span class="text-red-500">*</span>
                     </x-label>
                     <label
                         class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->ijm == 1 ? 'OUI' : 'NON' }}</label>
+                </div>
+                <div class="w-full px-3 py-1">
+                    <x-label class="w-4/5 inline-flex">
+                        Prise en charge frais de repas:<span class="text-red-500">*</span>
+                    </x-label>
+                    <label
+                        class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->repas == 1 ? 'OUI' : 'NON' }}</label>
                 </div>
                 <div class="w-full px-3 py-1">
                     <label

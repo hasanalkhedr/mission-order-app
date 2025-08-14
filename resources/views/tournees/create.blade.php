@@ -476,6 +476,17 @@
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
+            <div class="w-full px-3 py-1">
+                <x-label class="w-1/3 inline-flex">
+                    Prise en charge frais de repas<span class="text-red-500">*</span>
+                </x-label>
+                <input required @checked(old('repas', 1) == 1) type="radio" value="1" name="repas"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
+                <input required @checked(old('repas', 1) == 0) type="radio" value="0" name="repas"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
+            </div>
         </div>
         {{-- Reception Fees --}}
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -682,7 +693,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Observation
+                    Observation/facultatife
                 </x-label>
                 <textarea name="description" rows="4" id="description"
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ old('description') }}</textarea>

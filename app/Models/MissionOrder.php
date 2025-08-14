@@ -84,7 +84,8 @@ public static function generateOrderNumber()
         'advance',
         'memor_date',
         'return_location',
-        'reception_fees'
+        'reception_fees',
+        'repas'
     ];
     protected $casts = [
         'order_date' => 'date',

@@ -117,6 +117,10 @@
                             <td class="w-2/3">Prise en charge frais d'hébergement:</td>
                             <td class="w-1/3">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
+                        <tr>
+                            <td class="w-2/3">Prise en charge frais de repas:</td>
+                            <td class="w-1/3">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
+                        </tr>
                         {{-- <tr>
                             <td class="w-2/3">Prise en charge d'une assurance voyage :</td>
                             <td class="w-1/3">{{ $missionOrder->assurance == 1 ? 'OUI' : 'NON' }}</td>

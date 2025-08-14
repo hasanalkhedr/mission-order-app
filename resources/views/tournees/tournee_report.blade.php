@@ -128,6 +128,10 @@
                         <td class="w-1/3">{{ $tournee->ijm == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
                     <tr>
+                            <td class="w-2/3">Prise en charge frais de repas:</td>
+                            <td class="w-1/3">{{ $tournee->repas == 1 ? 'OUI' : 'NON' }}</td>
+                        </tr>
+                    <tr>
                             <td class="w-2/3">Frais de réception :</td>
                             <td class="w-1/3">{{ $tournee->reception_fees ? $tournee->reception_fees : 'NON'}}</td>
                         </tr>

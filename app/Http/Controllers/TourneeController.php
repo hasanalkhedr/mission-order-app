@@ -126,6 +126,7 @@ class TourneeController extends Controller
             'expenses' => 'nullable|array',
             'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
+            'repas' => 'required',
         ]);
         $action = $request->input('action');
         $status = '';
@@ -250,6 +251,7 @@ class TourneeController extends Controller
             'expenses' => 'nullable|array',
             'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
+            'repas' => 'required',
         ]);
         $action = $request->input('action');
         $status = '';

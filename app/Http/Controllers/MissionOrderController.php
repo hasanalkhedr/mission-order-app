@@ -128,6 +128,7 @@ class MissionOrderController extends Controller
             'expenses' => 'nullable|array',
             'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
+            'repas' => 'required',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -262,6 +263,7 @@ $expenses = $request->input('expenses') ?? [];
             'expenses' => 'nullable|array',
             'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
+            'repas' => 'required',
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
