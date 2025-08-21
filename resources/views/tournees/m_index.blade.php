@@ -89,7 +89,6 @@
                                 <option value="">All Statuses</option>
                                 <option value="draft">Brouillon</option>
                                 <option value="sup_approve">Validation chef de secteur</option>
-                                <option value="director_approve">Validation directeur</option>
                                 <option value="sg_approve">Validation ordonnateur</option>
                                 <option value="controller_approve">validation gestionnaire</option>
                                 <option value="approved">Valide</option>
@@ -184,7 +183,7 @@
                                             </button>
                                         </td>
                                     @endif
-                                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
+                                    @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
                                             (auth()->user()->employee->hasRole('supervisor') &&
                                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
                                         <td class="text-center px-0 py-1 border-b">
@@ -204,7 +203,7 @@
                                             </button>
                                         </td>
                                     @endif
-                                    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') ||
+                                    @if (auth()->user()->employee->hasRole('controller') ||
                                             auth()->user()->employee->hasRole('sg') ||
                                             (auth()->user()->employee->hasRole('supervisor') &&
                                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -231,7 +230,7 @@
                                             <a href="{{ route('tournees.m_report', $tournee->id) }}"
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                         </td>
-                                    @elseif(auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+                                    @elseif(auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                                         <td class="text-center px-0 py-1 border-b">
                                             <a href="{{ route('tournees.m_report', $tournee->id) }}"
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>

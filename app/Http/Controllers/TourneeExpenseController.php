@@ -14,7 +14,7 @@ class TourneeExpenseController extends Controller
         $tournee = Tournee::findOrFail($request->input('tournee_id'));
         $rules = [
             'tournee_id' => 'required',
-            'type' => 'required|in:transport,extra_meal,extra_accomodation,other',
+            'type' => 'required|in:transport,extra_meal,visa,inscription,other',
             'amount' => 'required|decimal:0,3',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $tournee->firstDestination->start_date . '|before_or_equal:' . $tournee->lastDestination->end_date,
@@ -30,7 +30,7 @@ class TourneeExpenseController extends Controller
         if ($request->type === 'transport') {
             $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver';
             //$rules['transport_details'] = 'nullable|string|max:255';
-        } elseif ($request->type === 'extra_meal' || $request->type === 'extra_accomodation') {
+        } elseif ($request->type === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $rules['meal_location'] = 'required|string|max:255';
             //$rules['meal_participants'] = 'required|integer|min:1';
         }
@@ -70,7 +70,7 @@ class TourneeExpenseController extends Controller
         if ($validatedData['type'] === 'transport') {
             $expenseData['transport_type'] = $validatedData['transport_type'];
             //$expenseData['transport_details'] = $validatedData['transport_details'] ?? null;
-        } elseif ($validatedData['type'] === 'extra_meal' || $validatedData['type'] === 'extra_accomodation') {
+        } elseif ($validatedData['type'] === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $expenseData['meal_location'] = $validatedData['meal_location'];
             //$expenseData['meal_participants'] = $validatedData['meal_participants'];
         }
@@ -93,7 +93,7 @@ class TourneeExpenseController extends Controller
     {
         // Base validation rules
         $rules = [
-            'type' => 'required|in:transport,extra_meal,extra_accomodation,other',
+            'type' => 'required|in:transport,extra_meal,visa,inscription,other',
             'amount' => 'required|numeric',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $tourneeExpense->tournee->firstDestination->start_date . '|before_or_equal:' . $tourneeExpense->tournee->lastDestination->end_date,
@@ -109,7 +109,7 @@ class TourneeExpenseController extends Controller
         if ($request->type === 'transport') {
             $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver';
             //$rules['transport_details'] = 'nullable|string|max:255';
-        } elseif ($request->type === 'extra_meal'|| $request->type === 'extra_accomodation') {
+        } elseif ($request->type === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $rules['meal_location'] = 'required|string|max:255';
             //$rules['meal_participants'] = 'required|integer|min:1';
         }
@@ -152,7 +152,7 @@ class TourneeExpenseController extends Controller
             // Clear meal fields if they exist
             $updateData['meal_location'] = null;
             //$updateData['meal_participants'] = null;
-        } elseif ($validatedData['type'] === 'extra_meal' || $validatedData['type'] === 'extra_accomodation') {
+        } elseif ($validatedData['type'] === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $updateData['meal_location'] = $validatedData['meal_location'];
             //$updateData['meal_participants'] = $validatedData['meal_participants'];
             // Clear transport fields if they exist

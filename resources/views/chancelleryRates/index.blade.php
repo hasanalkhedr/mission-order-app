@@ -34,7 +34,7 @@
                             <span class="sr-only">{{ __('Delete') }}</span>
                         </th>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director'))
+                    @if (auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6 blue-color">
                             <span class="sr-only">{{ __('Approve') }}</span>
                         </th>
@@ -69,7 +69,7 @@
                             </button>
                         </td>
                         @endif
-                        @if($chancelleryRate->status == 'draft' && auth()->user()->employee->hasRole('director'))
+                        @if($chancelleryRate->status == 'draft' && auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">
                                 <button class="font-medium hover:underline blue-color" type="button"
                                     data-modal-toggle="approveRateModal-{{ $chancelleryRate->id }}">

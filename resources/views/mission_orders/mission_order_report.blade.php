@@ -110,7 +110,7 @@
                             <td class="w-1/3">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
                         </tr>
                         <tr>
-                            <td class="w-2/3">Prise en charge des frais de transport:</td>
+                            <td class="w-2/3">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
                             <td class="w-1/3">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
                         <tr>
@@ -178,6 +178,12 @@
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                                                                 @if ($expense->type === 'transport')
                                                                     {{ __('expense.transport_types.' . $expense->transport_type) }}
+                                                                    @if($expense->transport_type === 'car_rental_with_driver')
+                                                                    ({{$expense->passenger == 1 ? __('passenger').',' : ''}}
+                                                                    {{$expense->distance == 1 ? __('distance').',' : ''}}
+                                                                    {{$expense->material == 1 ? __('material').',' : ''}}
+                                                                    {{$expense->visits == 1 ? __('visits') : ''}})
+                                                                    @endif
                                                                 @else
                                                                     {{ $expense->meal_location }}
                                                                     {{ $expense->description }}
@@ -236,7 +242,7 @@
                             <th colspan="2" class="px-4">Signature de l'autorité compétente</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {{-- <tbody>
                         <tr>
                             <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
                                 <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
@@ -260,6 +266,48 @@
                                     </div>
                                 </div>
 
+                            </td>
+                        </tr>
+                    </tbody> --}}
+                </table>
+                <table class="table-auto w-full text-left">
+                    <tbody>
+                        <tr>
+                            <td class="px-2 py-[1px] w-1/3">
+                                <span class="font-bold text-lg text-center">Agent: </span>
+                            </td>
+                            <td class="px-2 py-[1px] w-1/3">
+                                <span class="font-bold text-lg text-center">Chef de Service: </span>
+                            </td>
+                            <td class="px-2 py-[1px] w-1/3">
+                                <span class="font-bold text-lg text-center">Ordonateur: </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">Date de Soumission</span>
+                            </td>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">Date de Validation</span>
+                            </td>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">Date de Validation</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">{{$missionOrder->order_date->format('d/m/Y')}}</span>
+                            </td>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">
+                                    {{$missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->first() ?
+                                        $missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->first()->created_at->format('d/m/Y') : ''}}
+                                </span>
+                            </td>
+                            <td class="w-1/3 px-2 py-[1px]">
+                                <span class="font-light text-md text-center">{{$missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->first() ?
+                                    $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->first()->created_at->format('d/m/Y') : ''}}
+                                </span>
                             </td>
                         </tr>
                     </tbody>

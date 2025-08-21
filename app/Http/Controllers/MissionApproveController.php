@@ -27,7 +27,6 @@ class MissionApproveController extends Controller
             case 'approve':
                 switch ($missionOrder->status) {
                     case 'sup_approve':
-                    case 'director_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -56,15 +55,7 @@ class MissionApproveController extends Controller
             case 'sup_approve':
                 $missionOrder->employee->department->manager->user->notify($notification);
                 break;
-            case 'director_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'director');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
-                break;
-            case 'sg_approve':
+           case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {
                     $query->whereJsonContains('roles', 'sg');
                 })->get();

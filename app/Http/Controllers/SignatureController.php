@@ -19,7 +19,7 @@ class SignatureController extends Controller
 
         $query = Signature::with('employee');
 
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             // Admin/privileged users see all signatures with search
             $query->whereHas('employee', function ($query) use ($search) {
                 $query->where('first_name', 'LIKE', "%{$search}%")
@@ -37,7 +37,7 @@ class SignatureController extends Controller
             });
             $employees = $employee->department->employees;
         } else {
-            // Regular employees/attached see only their own signatures
+            // Regular employees see only their own signatures
             $query->where('employee_id', $employee->id);
             $employees = [$employee];
         }
@@ -49,7 +49,7 @@ class SignatureController extends Controller
     public function show(Signature $signature)
     {
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $employees = Employee::all();
         } elseif ($employee->hasRole('supervisor')) {
             $employees = $employee->department->employees;

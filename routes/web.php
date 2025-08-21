@@ -86,10 +86,10 @@ Route::middleware(['web', 'check.rate'])->group(function () {
     Route::resource('employees', EmployeeController::class)->middleware('auth');
 
     // Departments routes (could be accessible to all roles depending on the policy)
-    Route::resource('departments', DepartmentController::class)->middleware(['auth', 'role:controller,director,sg']);
+    Route::resource('departments', DepartmentController::class)->middleware(['auth', 'role:controller,sg']);
 
     // Baremes routes
-    Route::resource('baremes', BaremeController::class)->middleware(['auth', 'role:controller,director,sg,supervisor']);
+    Route::resource('baremes', BaremeController::class)->middleware(['auth', 'role:controller,sg,supervisor']);
 });
 
 Route::get('/calendar', CalendarController::class)->middleware('auth')->name('calendar');
@@ -105,7 +105,7 @@ Route::get('/chancelleryRates', [ChancelleryRateController::class, 'index'])->mi
 Route::post('/chancelleryRates', [ChancelleryRateController::class, 'store'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.store');
 Route::put('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'update'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.update');
 Route::delete('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'destroy'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.destroy');
-Route::put('/chancelleryRates/{chancelleryRate}/approve', [ChancelleryRateController::class, 'approveChancelleryRate'])->middleware(['auth', 'role:director'])->name('chancelleryRates.approve_chancelleryRate');
+Route::put('/chancelleryRates/{chancelleryRate}/approve', [ChancelleryRateController::class, 'approveChancelleryRate'])->middleware(['auth', 'role:sg'])->name('chancelleryRates.approve_chancelleryRate');
 // Authentication routes (Laravel Breeze)
 require __DIR__ . '/auth.php';
 

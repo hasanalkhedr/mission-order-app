@@ -281,8 +281,7 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -299,8 +298,7 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -319,8 +317,7 @@
                             auth()->user()->employee->department_id == $tournee->employee->department_id)
                         <a href="{{ route('tournees.m_report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @elseif(auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.m_report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>

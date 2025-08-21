@@ -20,7 +20,7 @@ class MissionOrderController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id','desc')->paginate(10);
@@ -54,11 +54,8 @@ class MissionOrderController extends Controller
         if (
             $employee->hasRole('sg') ||
             $employee->hasRole('controller') ||
-            $employee->hasRole('director') ||
             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
-            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
-            ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
-        ) {
+            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ) {
             return view('mission_orders.show', compact('missionOrder'));
         } else {
             abort(404);
@@ -66,7 +63,7 @@ class MissionOrderController extends Controller
     }
     public function showReport(Request $request, MissionOrder $missionOrder)
     {
-        $director = Employee::whereJsonContains('roles', 'director')->first();
+        $director = Employee::whereJsonContains('roles', 'sg')->first();
         return view('mission_orders.mission_order_report', compact('missionOrder', 'director'));
     }
     public function create()
@@ -126,7 +123,7 @@ class MissionOrderController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_meal,visa,inscription,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
         ]);
@@ -146,10 +143,10 @@ class MissionOrderController extends Controller
             $status = 'draft';
         } else if ($action === 'submit') {
             $employee = auth()->user()->employee;
-            if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+            if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
                 $status = 'sg_approve';
-            } else if ($employee->hasRole('attached') || $employee->hasRole('supervisor')) {
-                $status = 'director_approve';
+            } else if ($employee->hasRole('supervisor')) {
+                $status = 'sg_approve';
             } else if ($employee->hasRole('employee')) {
                 $status = 'sup_approve';
             } else {
@@ -177,22 +174,14 @@ $expenses = $request->input('expenses') ?? [];
                 if ($missionOrder->employee->department->manager) {
                     $missionOrder->employee->department->manager->user->notify($notification);
                 } else {
-                    $missionOrder->status = 'director_approve';
+                    $missionOrder->status = 'sg_approve';
                     $missionOrder->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->whereJsonContains('roles', 'director');
+                        $query->whereJsonContains('roles', 'sg');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
                     }
-                }
-                break;
-            case 'director_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'director');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
                 }
                 break;
             case 'sg_approve':
@@ -261,7 +250,7 @@ $expenses = $request->input('expenses') ?? [];
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,extra_accomodation,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,visa,inscription,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
         ]);
@@ -281,10 +270,10 @@ $expenses = $request->input('expenses') ?? [];
             $status = 'draft';
         } else if ($action === 'submit') {
             $employee = auth()->user()->employee;
-            if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+            if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
                 $status = 'sg_approve';
-            } else if ($employee->hasRole('attached') || $employee->hasRole('supervisor')) {
-                $status = 'director_approve';
+            } else if ($employee->hasRole('supervisor')) {
+                $status = 'sg_approve';
             } else if ($employee->hasRole('employee')) {
                 $status = 'sup_approve';
             } else {
@@ -331,22 +320,14 @@ $expenses = $request->input('expenses') ?? [];
                 if ($missionOrder->employee->department->manager) {
                     $missionOrder->employee->department->manager->user->notify($notification);
                 } else {
-                    $missionOrder->status = 'director_approve';
+                    $missionOrder->status = 'sg_approve';
                     $missionOrder->save();
                     $users = User::whereHas('employee', function ($query) {
-                        $query->whereJsonContains('roles', 'director');
+                        $query->whereJsonContains('roles', 'sg');
                     })->get();
                     foreach ($users as $user) {
                         $user->notify($notification);
                     }
-                }
-                break;
-            case 'director_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'director');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
                 }
                 break;
             case 'sg_approve':
@@ -382,7 +363,7 @@ $expenses = $request->input('expenses') ?? [];
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')->orderBy('id','desc')->paginate(10);
@@ -417,11 +398,8 @@ $expenses = $request->input('expenses') ?? [];
         if (
             $employee->hasRole('sg') ||
             $employee->hasRole('controller') ||
-            $employee->hasRole('director') ||
             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
-            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id) ||
-            ($employee->hasRole('attached') && $missionOrder->employee->id == $employee->id)
-        ) {
+            ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id)) {
             $current_rate = ChancelleryRate::currentRate()->rate;
             return view('mission_orders.m_show', compact('missionOrder', 'current_rate'));
         } else {
@@ -465,7 +443,7 @@ $expenses = $request->input('expenses') ?? [];
     }
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
-        $director = Employee::whereJsonContains('roles', 'director')->first();
+        $director = Employee::whereJsonContains('roles', 'sg')->first();
         $current_rate = ChancelleryRate::rateOfDate($missionOrder->order_date)->rate;
         return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
     }

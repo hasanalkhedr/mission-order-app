@@ -31,7 +31,7 @@
     </div>
 
     {{-- @hasanyrole('human_resource|sg|head') --}}
-    @if (auth()->user()->employee->hasRole('director') || auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
+    @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
         <button
             class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg"
             data-modal-toggle="editModal-{{ $department->id }}">

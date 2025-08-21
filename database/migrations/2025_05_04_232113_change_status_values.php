@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('mission_orders', function (Blueprint $table) {
-            $table->enum('status', ['draft', 'sup_approve', 'director_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
+            $table->enum('status', ['draft', 'sup_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
                 ->default('draft')
                 ->change();
 
@@ -17,7 +17,7 @@ return new class extends Migration {
                 ->change();
         });
         Schema::table('mission_approves', function (Blueprint $table) {
-            $table->enum('status', ['draft', 'sup_approve', 'director_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
+            $table->enum('status', ['draft', 'sup_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
                 ->nullable()
                 ->change();
 
@@ -26,7 +26,7 @@ return new class extends Migration {
                 ->change();
         });
         Schema::table('tournees', function (Blueprint $table) {
-            $table->enum('status', ['draft', 'sup_approve', 'director_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
+            $table->enum('status', ['draft', 'sup_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
                 ->default('draft')
                 ->change();
 
@@ -35,7 +35,7 @@ return new class extends Migration {
                 ->change();
         });
         Schema::table('tournee_approves', function (Blueprint $table) {
-            $table->enum('status', ['draft', 'sup_approve', 'director_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
+            $table->enum('status', ['draft', 'sup_approve', 'sg_approve', 'rejected', 'approved', 'paid'])
                 ->nullable()
                 ->change();
 

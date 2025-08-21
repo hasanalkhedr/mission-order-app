@@ -15,7 +15,7 @@ class EmployeeController extends Controller
         $roles = config('globals.roles');
         $departments = Department::all();
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $employees = Employee::when($search, function ($query, $search) {
                 return $query->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%');
@@ -46,7 +46,7 @@ class EmployeeController extends Controller
             'password' => ['required', 'confirmed'],
             'phone' => 'nullable|numeric',
             'roles' => 'nullable|array',
-            'roles.*' => 'in:employee,supervisor,attached,sg,director,controller',
+            'roles.*' => 'in:employee,supervisor,sg,controller',
             'department_id' => 'required',
             /*'position' => 'required',
             'administrativ_residence' => 'required',
@@ -83,7 +83,7 @@ class EmployeeController extends Controller
             'email' => ['required', 'email', 'unique:employees,email,' . $employee->id],
             'phone' => 'nullable|numeric',
             'roles' => 'nullable|array',
-            'roles.*' => 'in:employee,supervisor,attached,sg,director,controller',
+            'roles.*' => 'in:employee,supervisor,sg,controller',
             'department_id' => 'required',
             /*'position' => 'required',
             'administrativ_residence' => 'required',

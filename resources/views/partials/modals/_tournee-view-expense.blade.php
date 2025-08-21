@@ -49,31 +49,7 @@
                                             class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->transport_details }}</textarea>
                                     </div>
                                 @endif
-                            </div>
-                        @endif
-
-                        <!-- Meal Details (shown only for extra_meal type) -->
-                        @if ($expense->type === 'extra_meal')
-                            <div class="meal-details">
                                 <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Lieu du repas</x-label>
-                                    <x-readonly-text-input value="{{ $expense->meal_location }}" />
-                                </div>
-                                <div class="flex flex-wrap -mx-3 mb-0">
-                                    <x-label>Nombre de personnes</x-label>
-                                    <x-readonly-text-input value="{{ $expense->meal_participants }}" />
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- Common Fields -->
-                        <div class="flex flex-wrap -mx-3 mb-0">
-                            <x-label>Nature de dépense<span
-                                    class="text-red-500">*</span></x-label>
-                            <textarea rows="4" disabled
-                                class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->description }}</textarea>
-                        </div>
-<div class="flex flex-wrap -mx-3 mb-0">
     <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher
         les cases correspondantes)</x-label>
     <table>
@@ -101,6 +77,31 @@
         </tbody>
     </table>
 </div>
+                            </div>
+                        @endif
+
+                        <!-- Meal Details (shown only for extra_meal type) -->
+                        @if ($expense->type === 'extra_meal' || $expense->type === 'visa' || $expense->type === 'inscription')
+                            <div class="meal-details">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Lieu du repas</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_location }}" />
+                                </div>
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-label>Nombre de personnes</x-label>
+                                    <x-readonly-text-input value="{{ $expense->meal_participants }}" />
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Common Fields -->
+                        <div class="flex flex-wrap -mx-3 mb-0">
+                            <x-label>Nature de dépense<span
+                                    class="text-red-500">*</span></x-label>
+                            <textarea rows="4" disabled
+                                class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $expense->description }}</textarea>
+                        </div>
+
                         <div class="-mx-3 w-full mb-0">
                             <x-label>Date de dépense<span
                                     class="text-red-500">*</span></x-label>

@@ -111,7 +111,7 @@
             <div class="w-1/2">
                 <div class="w-full px-3 py-1">
                     <x-label class="w-4/5 inline-flex">
-                        Prise en charge des frais de transport<span class="text-red-500">*</span>
+                        Prise en charge des frais de transport<span class="text-red-500">*</span> (Avion, Train, Taxi/Uber, Transport public)
                     </x-label>
                     <label
                         class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->charge == 1 ? 'OUI' : 'NON' }}</label>
@@ -174,31 +174,12 @@
                         hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
                         w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700
                     hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
                     w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @endif
-                @break
-
-                @case('director_approve')
-                    @if (auth()->user()->employee->hasRole('director'))
-                        <button
-                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
-                            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                            {{ __('Approve or Reject') }}
-                        </button>
-                    @endif
-                    @if (auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
-                            auth()->user()->employee->hasRole('sg') ||
-                            (auth()->user()->employee->hasRole('supervisor') &&
-                                auth()->user()->employee->department_id === $tournee->employee->department_id))
-                        <a href="{{ route('tournees.report', $tournee->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
                 @break
 
@@ -210,8 +191,7 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @if (auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg') ||
                             (auth()->user()->employee->hasRole('supervisor') &&
                                 auth()->user()->employee->department_id === $tournee->employee->department_id))
@@ -230,8 +210,7 @@
                             auth()->user()->employee->department_id == $tournee->employee->department_id)
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('director') ||
-                            auth()->user()->employee->hasRole('controller') ||
+                    @elseif(auth()->user()->employee->hasRole('controller') ||
                             auth()->user()->employee->hasRole('sg'))
                         <a href="{{ route('tournees.report', $tournee->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>

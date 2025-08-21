@@ -434,7 +434,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/3 inline-flex">
-                    Prise en charge des frais de transport<span class="text-red-500">*</span>
+                    Prise en charge des frais de transport<span class="text-red-500">*</span> (Avion, Train, Taxi/Uber, Transport public)
                 </x-label>
                 <input required @checked(old('charge', $missionOrder->charge) == 1) type="radio" value="1" name="charge"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -527,59 +527,103 @@
             });
         </script>
 
-{{-- Pre Expenses --}}
-<x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
-<div class="flex flex-col" x-data="expensesManager({{ $missionOrder->expenses->toJson() }})">
-    <div class="-m-1.5 overflow-x-auto">
-        <div class="p-1.5 min-w-full inline-block align-middle">
-            <div class="overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
-                            {{-- <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Détails</th> --}}
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <form></form>
-                        <template x-for="(expense, index) in expenses" :key="index">
-                            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                <!-- Type Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    {{-- <template x-if="expense.type=='transport'">
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
-                                    </template>
-                                    <template x-if="expense.type=='extra-meal'">
-                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Repas</span>
-                                    </template>
-                                    <template x-if="expense.type=='other'">
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
-                                    </template> --}}
-                                    <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type">
-                                    <option value="">--sélectionner le type--</option>
+        {{-- Pre Expenses --}}
+        <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
+        <div class="flex flex-col" x-data="expensesManager({{ $missionOrder->expenses->toJson() }})">
+            <div class="-m-1.5 overflow-x-auto">
+                <div class="p-1.5 min-w-full inline-block align-middle">
+                    <div class="overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <form></form>
+                                <template x-for="(expense, index) in expenses" :key="index">
+                                    <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                        <!-- Type Column -->
+                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type">
+                                                <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
                                                 {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
+                                                <option value="visa">visa</option>
+                                                <option value="inscription">inscription</option>
                                                 <option value="other">autre</option>
-                                </x-select-input>
-                                </td>
+                                            </x-select-input>
+                                        </td>
 
-                                <!-- Nature Column -->
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                        <!-- Nature Column -->
+                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <template x-if="expense.type === 'transport'">
-                                                <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
-                                                    x-model="expense.transport_type" required>
-                                                    <option value="">--sélectionner--</option>
-                                                    <option value="plane">Avion</option>
-                                                    <option value="train">Train</option>
-                                                    <option value="taxi_uber">Taxi/Uber</option>
-                                                    <option value="public_transport public">Transport public</option>
-                                                    <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
-                                                    <option value="autre">autre</option>
-                                                </x-select-input>
+                                                <div>
+                                                    <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
+                                                        x-model="expense.transport_type" required
+                                                        x-on:change="handleTransportTypeChange(index)">
+                                                        <option value="">--sélectionner--</option>
+                                                        <option value="plane">Avion</option>
+                                                        <option value="train">Train</option>
+                                                        <option value="taxi_uber">Taxi/Uber</option>
+                                                        <option value="public_transport">Transport public</option>
+                                                        <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                                        <option value="autre">autre</option>
+                                                    </x-select-input>
+
+                                                    <!-- Reasons Table - Only show for car_rental_with_driver -->
+                                                    <div x-show="expense.transport_type === 'car_rental_with_driver'"
+                                                         x-transition
+                                                         class="mt-4 p-3 border border-blue-200 rounded bg-blue-50">
+                                                        <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
+                                                            (cocher les cases correspondantes)</x-label>
+                                                        <table class="w-full mt-2">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center text-gray-600 border border-blue-600 px-2 py-1 text-xs">
+                                                                        <x-label>{{ __('passenger') }}</x-label>
+                                                                    </th>
+                                                                    <th class="text-center text-gray-600 border border-blue-600 px-2 py-1 text-xs">
+                                                                        <x-label>{{ __('distance') }}</x-label>
+                                                                    </th>
+                                                                    <th class="text-center text-gray-600 border border-blue-600 px-2 py-1 text-xs">
+                                                                        <x-label>{{ __('material') }}</x-label>
+                                                                    </th>
+                                                                    <th class="text-center text-gray-600 border border-blue-600 px-2 py-1 text-xs">
+                                                                        <x-label>{{ __('visits') }}</x-label>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                                        <input type="checkbox" value="1"
+                                                                               x-bind:name="`expenses[${index}][passenger]`"
+                                                                               x-model="expense.passenger">
+                                                                    </td>
+                                                                    <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                                        <input type="checkbox" value="1"
+                                                                               x-bind:name="`expenses[${index}][distance]`"
+                                                                               x-model="expense.distance">
+                                                                    </td>
+                                                                    <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                                        <input type="checkbox" value="1"
+                                                                               x-bind:name="`expenses[${index}][material]`"
+                                                                               x-model="expense.material">
+                                                                    </td>
+                                                                    <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
+                                                                        <input type="checkbox" value="1"
+                                                                               x-bind:name="`expenses[${index}][visits]`"
+                                                                               x-model="expense.visits">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </template>
 
                                             <template x-if="expense.type === 'extra_meal'">
@@ -590,14 +634,20 @@
                                                 </x-select-input>
                                             </template>
 
-                                            {{-- <template x-if="expense.type === 'extra_accomodation'">
+                                            <template x-if="expense.type === 'visa'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Frais hébergement">Frais hébergement</option>
+                                                    <option value="Frais de Visa">Frais de Visa</option>
                                                 </x-select-input>
-                                            </template> --}}
-
+                                            </template>
+                                            <template x-if="expense.type === 'inscription'">
+                                                <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
+                                                    x-model="expense.meal_location" required>
+                                                    <option value="">--sélectionner--</option>
+                                                    <option value="Frais d'inscription">Frais d'inscription</option>
+                                                </x-select-input>
+                                            </template>
                                             <template x-if="expense.type === 'other'">
                                                 <textarea x-bind:name="`expenses[${index}][description]`" x-model="expense.description" rows="2" required
                                                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
@@ -605,76 +655,99 @@
                                             </template>
                                         </td>
 
-                                <!-- Actions Column -->
-                                <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex justify-center space-x-2">
-                                        {{-- <button type="button"
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
-                                            data-modal-toggle="viewExpenseModal-{{ $expense->id }}">{{ __('View') }}</button>
-                                        <button type="button"
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
-                                            data-modal-toggle="editExpenseModal-{{ $expense->id }}">{{ __('Edit') }}</button> --}}
-                                        <button type="button"
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
-                                            x-on:click="removeExpense(index)">{{ __('Delete') }}</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-4">
-                <button
-                    x-on:click="addExpense()"
-                    type="button"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Ajouter depense
-                </button>
+                                        <!-- Actions Column -->
+                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex justify-center space-x-2">
+                                                <button type="button"
+                                                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 text-center"
+                                                    x-on:click="removeExpense(index)">{{ __('Delete') }}</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4">
+                        <button
+                            x-on:click="addExpense()"
+                            type="button"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Ajouter depense
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('expensesManager', (initialExpenses = null) => ({
-            expenses: initialExpenses ?
-                        initialExpenses.map(dest => ({
-                            ...dest,
-                        })) :
-             [{
-                type: '',
-                transport_type: '',
-                meal_location: '',
-                description: ''
-            }],
 
-            addExpense() {
-                this.expenses.push({
-                    type: '',
-                transport_type: '',
-                meal_location: '',
-                description: ''
-                });
-            },
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('expensesManager', (initialExpenses = null) => ({
+                    expenses: initialExpenses ?
+                                initialExpenses.map(dest => ({
+                                    ...dest,
+                                    passenger: dest.passenger == '1' || dest.passenger === true,
+                                    distance: dest.distance == '1' || dest.distance === true,
+                                    material: dest.material == '1' || dest.material === true,
+                                    visits: dest.visits == '1' || dest.visits === true
+                                })) :
+                     [{
+                        type: '',
+                        transport_type: '',
+                        meal_location: '',
+                        description: '',
+                        passenger: false,
+                        distance: false,
+                        material: false,
+                        visits: false
+                    }],
 
-            removeExpense(index) {
-                console.log(index);
-                console.log(this.expenses);
-                if (this.expenses.length > 1) {
-                    this.expenses.splice(index, 1);
-                }
-            },
+                    addExpense() {
+                        this.expenses.push({
+                            type: '',
+                            transport_type: '',
+                            meal_location: '',
+                            description: '',
+                            passenger: false,
+                            distance: false,
+                            material: false,
+                            visits: false
+                        });
+                    },
 
-            init() {
-                // Initialize with old input if available
-                @if(old('expenses'))
-                    this.expenses = @json(old('expenses'));
-                @endif
-            }
-        }));
-    });
-</script>
+                    removeExpense(index) {
+                        console.log(index);
+                        console.log(this.expenses);
+                        if (this.expenses.length > 0) {
+                            this.expenses.splice(index, 1);
+                        }
+                    },
+
+                    handleTransportTypeChange(index) {
+                        // Reset reason checkboxes when transport type changes
+                        if (this.expenses[index].transport_type !== 'car_rental_with_driver') {
+                            this.expenses[index].passenger = false;
+                            this.expenses[index].distance = false;
+                            this.expenses[index].material = false;
+                            this.expenses[index].visits = false;
+                        }
+                    },
+
+                    init() {
+                        // Initialize with old input if available
+                        @if(old('expenses'))
+                            this.expenses = @json(old('expenses')).map(expense => ({
+                                ...expense,
+                                passenger: expense.passenger == '1' || expense.passenger === true,
+                                distance: expense.distance == '1' || expense.distance === true,
+                                material: expense.material == '1' || expense.material === true,
+                                visits: expense.visits == '1' || expense.visits === true
+                            }));
+                        @endif
+                    }
+                }));
+            });
+        </script>
 
         <x-form-divider>Observations</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">

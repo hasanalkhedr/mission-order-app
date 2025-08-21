@@ -14,7 +14,7 @@ class ReportsController extends Controller
     public function index()
     {
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $employees = Employee::all();
         } else if ($employee->hasRole('supervisor')) {
             $employees = $employee->department->employees->with('missionOrders', 'tournees');

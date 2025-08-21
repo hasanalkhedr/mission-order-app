@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 Schedule::command('notifications:send-daily --role=supervisor')->dailyAt('9:00');
 Schedule::command('notifications:send-daily --role=controller')->dailyAt('9:00');
 Schedule::command('notifications:send-daily --role=sg')->dailyAt('10:00');
-Schedule::command('notifications:send-daily --role=director')->dailyAt('11:00');
+//Schedule::command('notifications:send-daily --role=director')->dailyAt('11:00');

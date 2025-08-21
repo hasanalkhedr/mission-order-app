@@ -37,6 +37,8 @@
                                     <option value="transport">Transport</option>
                                     {{-- <option value="extra_accomodation">Hébergement</option> --}}
                                     <option value="extra_meal">Repas</option>
+                                    <option value="visa">Visa</option>
+                                    <option value="inscription">Inscription</option>
                                     <option value="other">Autre</option>
                                 </x-select-input>
                             </div>
@@ -114,6 +116,23 @@
                                     <x-text-input type="number" id="meal_participants" name="meal_participants"
                                         value="{{ old('meal_participants', 1) }}" min="1" />
                                 </div> --}}
+                            </div>
+
+                            <div id="visaFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-select-input id="meal_location" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option value="Frais de Visa">Frais de Visa</option>
+                                    </x-select-input>
+                                </div>
+                            </div>
+                            <div id="inscriptionFields" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-select-input id="meal_location" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option value="Frais d’inscription">Frais d’inscription</option>
+                                    </x-select-input>
+                                </div>
                             </div>
                             {{-- <div id="herFields" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
@@ -269,7 +288,7 @@
             if (!document.getElementById('transport_type').value.trim()) {
                 allFilled = false;
             }
-        } else if (expenseType === 'extra_meal') {
+        } else if (expenseType === 'extra_meal' || expenseType === 'visa' || expenseType === 'inscription') {
             if (!document.getElementById('meal_location').value.trim() ||
                 !document.getElementById('meal_participants').value.trim()) {
                 allFilled = false;
@@ -291,6 +310,8 @@
         const expenseType = document.getElementById('type').value;
         const transportFields = document.getElementById('transportFields');
         const mealFields = document.getElementById('mealFields');
+        const visaFields = document.getElementById('visaFields');
+        const inscriptionFields = document.getElementById('inscriptionFields');
         // const herFields = document.getElementById('herFields');
         const other = document.getElementById('other');
         const reasonsTable = document.getElementById('reasonsTable');
@@ -298,6 +319,8 @@
         // Hide all fields first
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
+        visaFields.classList.add('hidden');
+        inscriptionFields.classList.add('hidden');
         // herFields.classList.add('hidden');
         other.classList.add('hidden');
         reasonsTable.classList.add('hidden'); // Hide reasons table by default
@@ -325,6 +348,16 @@
         //     // Set required attributes for meal fields
         //     document.getElementById('transport_type').required = false;
         //     document.getElementById('meal_location').required = true;
+        } else if (expenseType === 'visa') {
+            visaFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type').required = false;
+            document.getElementById('meal_location').required = true;
+        } else if (expenseType === 'inscription') {
+            inscriptionFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type').required = false;
+            document.getElementById('meal_location').required = true;
         } else {
                         other.classList.remove('hidden');
             document.getElementById('transport_type').required = false;

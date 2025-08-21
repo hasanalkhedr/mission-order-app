@@ -17,7 +17,7 @@ class CalendarController extends Controller
         $missions = collect();
         $tournees = collect();
         $employee = auth()->user()->employee;
-        if($employee->hasRole('sg') || $employee->hasRole('director') || $employee->hasRole('controller')) {
+        if($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $missions = MissionOrder::all();
             $tournees = Tournee::all();
         } else if($employee->hasRole('supervisor')) {

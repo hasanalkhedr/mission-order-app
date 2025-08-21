@@ -38,6 +38,8 @@
                                     <option value="transport" @selected(old('type', $expense->type) == 'transport')>Transport</option>
                                     {{-- <option value="extra_accomodation" @selected(old('type', $expense->type) == 'extra_accomodation')>Hébergement</option> --}}
                                     <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>Repas</option>
+                                    <option value="visa" @selected(old('type', $expense->type) == 'visa')>Visa</option>
+                                    <option value="inscription" @selected(old('type', $expense->type) == 'inscription')>Inscription</option>
                                     <option value="other" @selected(old('type', $expense->type) == 'other')>Autre</option>
                                 </x-select-input>
                             </div>
@@ -114,6 +116,23 @@
                                     <x-text-input type="number" id="meal_participants" name="meal_participants"
                                         value="{{ old('meal_participants', 1) }}" min="1" />
                                 </div> --}}
+                            </div>
+
+                            <div id="visaFields-edit-{{ $expense->id }}" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option @selected(old('meal_location', $expense->meal_location) == 'Frais de Visa') value="Frais de Visa">Frais de Visa</option>
+                                    </x-select-input>
+                                </div>
+                            </div>
+                            <div id="inscriptionFields-edit-{{ $expense->id }}" class="hidden">
+                                <div class="flex flex-wrap -mx-3 mb-0">
+                                    <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
+                                        <option value="">--sélectionner--</option>
+                                        <option @selected(old('meal_location', $expense->meal_location) == 'Frais d’inscription') value="Frais d’inscription">Frais d’inscription</option>
+                                    </x-select-input>
+                                </div>
                             </div>
                             {{-- <div id="herFields-edit-{{ $expense->id }}" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
@@ -255,6 +274,8 @@
         const expenseType = document.getElementById('type-edit-' + expenseId).value;
         const transportFields = document.getElementById('transportFields-edit-' + expenseId);
         const mealFields = document.getElementById('mealFields-edit-' + expenseId);
+        const visaFields = document.getElementById('visaFields-edit-' + expenseId);
+        const inscriptionFields = document.getElementById('inscriptionFields-edit-' + expenseId);
         // const herFields = document.getElementById('herFields-edit-' + expenseId);
         const other = document.getElementById('other-edit-' + expenseId);
         const reasonsTable = document.getElementById('reasonsTable-'+expenseId);
@@ -262,6 +283,8 @@
         // Hide all fields first
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
+        visaFields.classList.add('hidden');
+        inscriptionFields.classList.add('hidden');
         // herFields.classList.add('hidden');
         other.classList.add('hidden');
         reasonsTable.classList.add('hidden'); // Hide reasons table by default
@@ -291,6 +314,18 @@
         //     document.getElementById('transport_type-edit-' + expenseId).required = false;
         //     document.getElementById('meal_location-edit-' + expenseId).required = true;
         //     //document.getElementById('meal_participants').required = true;
+        } else if (expenseType === 'visa') {
+            visaFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type-edit-' + expenseId).required = false;
+            document.getElementById('meal_location-edit-' + expenseId).required = true;
+            //document.getElementById('meal_participants-edit-' + expenseId).required = true;
+        }else if (expenseType === 'inscription') {
+            inscriptionFields.classList.remove('hidden');
+            // Set required attributes for meal fields
+            document.getElementById('transport_type-edit-' + expenseId).required = false;
+            document.getElementById('meal_location-edit-' + expenseId).required = true;
+            //document.getElementById('meal_participants-edit-' + expenseId).required = true;
         } else {
                         other.classList.remove('hidden');
             document.getElementById('transport_type-edit-' + expenseId).required = false;

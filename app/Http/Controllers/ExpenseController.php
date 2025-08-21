@@ -14,7 +14,7 @@ class ExpenseController extends Controller
         $missionOrder = MissionOrder::findOrFail($request->input('mission_order_id'));
         $rules = [
             'mission_order_id' => 'required',
-            'type' => 'required|in:transport,extra_meal,extra_accomodation,other',
+            'type' => 'required|in:transport,extra_meal,visa,inscription,other',
             'amount' => 'required|decimal:0,3',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $missionOrder->start_date . '|before_or_equal:' . $missionOrder->end_date,
@@ -30,7 +30,7 @@ class ExpenseController extends Controller
         if ($request->type === 'transport') {
             $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver,autre';
             $rules['transport_details'] = 'nullable|string|max:255';
-        } elseif ($request->type === 'extra_meal' || $request->type === 'extra_accomodation') {
+        } elseif ($request->type === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $rules['meal_location'] = 'required|string|max:255';
             //$rules['meal_participants'] = 'required|integer|min:1';
         }
@@ -70,7 +70,7 @@ class ExpenseController extends Controller
         if ($validatedData['type'] === 'transport' || $request->type === 'extra_accomodation') {
             $expenseData['transport_type'] = $validatedData['transport_type'];
             //$expenseData['transport_details'] = $validatedData['transport_details'] ?? null;
-        } elseif ($validatedData['type'] === 'extra_meal' || $validatedData['type'] === 'extra_accomodation') {
+        } elseif ($validatedData['type'] === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $expenseData['meal_location'] = $validatedData['meal_location'];
             //$expenseData['meal_participants'] = $validatedData['meal_participants'];
         }
@@ -93,7 +93,7 @@ class ExpenseController extends Controller
     {
         // Base validation rules
         $rules = [
-            'type' => 'required|in:transport,extra_meal,extra_accomodation,other',
+            'type' => 'required|in:transport,extra_meal,visa,inscription,other',
             'amount' => 'required|numeric',
             'currency' => 'required',
             'expense_date' => 'required|date|after_or_equal:' . $expense->missionOrder->start_date . '|before_or_equal:' . $expense->missionOrder->end_date,
@@ -109,7 +109,7 @@ class ExpenseController extends Controller
         if ($request->type === 'transport') {
             $rules['transport_type'] = 'required|in:plane,train,taxi_uber,public_transport,car_rental_with_driver,autre';
             //$rules['transport_details'] = 'nullable|string|max:255';
-        } elseif ($request->type === 'extra_meal' || $request->type === 'extra_accomodation') {
+        } elseif ($request->type === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $rules['meal_location'] = 'required|string|max:255';
            // $rules['meal_participants'] = 'required|integer|min:1';
         }
@@ -152,7 +152,7 @@ class ExpenseController extends Controller
             // Clear meal fields if they exist
             $updateData['meal_location'] = null;
             $updateData['meal_participants'] = null;
-        } elseif ($validatedData['type'] === 'extra_meal'|| $validatedData['type'] === 'extra_accomodation') {
+        } elseif ($validatedData['type'] === 'extra_meal' || $request->type === 'visa' || $request->type === 'inscription') {
             $updateData['meal_location'] = $validatedData['meal_location'];
             //$updateData['meal_participants'] = $validatedData['meal_participants'];
             // Clear transport fields if they exist

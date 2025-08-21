@@ -26,8 +26,10 @@
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Transport</span>
                                     @elseif ($expense->type === 'extra_meal')
                                         <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Repas</span>
-                                    @elseif ($expense->type === 'extra_accomodation')
-                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Hebergement</span>
+                                    @elseif ($expense->type === 'visa')
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Visa</span>
+                                    @elseif ($expense->type === 'inscription')
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Inscription</span>
                                     @else
                                         <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">autre</span>
                                     @endif
@@ -47,10 +49,13 @@
                                                 <p class="text-xs text-gray-500">{{ $expense->transport_details }}</p>
                                             @endif
                                         </div>
-                                    @elseif ($expense->type === 'extra_meal'|| $expense->type === 'extra_accomodation')
+                                    @elseif($expense->type === 'other')
+                                        <div class="text-sm">
+                                            <span class="font-semibold">{{ $expense->description }}</span>
+                                        </div>
+                                    @else
                                         <div class="text-sm">
                                             <span class="font-semibold">{{ $expense->meal_location }}</span>
-                                            {{-- <p class="text-xs text-gray-500">{{ $expense->meal_participants }} personnes</p> --}}
                                         </div>
                                     @endif
                                 </td>

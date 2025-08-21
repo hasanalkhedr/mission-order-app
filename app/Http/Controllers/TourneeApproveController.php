@@ -27,7 +27,6 @@ class TourneeApproveController extends Controller
             case 'approve':
                 switch ($tournee->status) {
                     case 'sup_approve':
-                    case 'director_approve':
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
@@ -56,14 +55,6 @@ class TourneeApproveController extends Controller
         switch ($tournee->status) {
             case 'sup_approve':
                 $tournee->employee->department->manager->user->notify($notification);
-                break;
-            case 'director_approve':
-                $users = User::whereHas('employee', function ($query) {
-                    $query->whereJsonContains('roles', 'director');
-                })->get();
-                foreach ($users as $user) {
-                    $user->notify($notification);
-                }
                 break;
             case 'sg_approve':
                 $users = User::whereHas('employee', function ($query) {

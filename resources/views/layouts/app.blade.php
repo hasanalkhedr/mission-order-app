@@ -153,7 +153,7 @@
                         </li>
                         <hr />
                         <!-- Settings Menu -->
-                        @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
+                        @if (!auth()->user()->employee->hasRole('employee'))
                             <li>
                                 <button type="button"
                                     class="flex items-center mx-2 p-2 w-full text-base font-normal text-white rounded-lg transition duration-75 group hover:bg-blue-500"
@@ -304,7 +304,7 @@
                     </li>
                     <hr />
                     <!-- Settings Menu -->
-                    @if (!auth()->user()->employee->hasRole('employee') && !auth()->user()->employee->hasRole('attached'))
+                    @if (!auth()->user()->employee->hasRole('employee'))
                         <li>
                             <button type="button"
                                 class="flex items-center mx-2 p-2 w-full text-base font-normal text-white rounded-lg transition duration-75 group hover:bg-blue-500"

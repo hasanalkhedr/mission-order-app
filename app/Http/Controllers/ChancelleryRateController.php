@@ -28,7 +28,7 @@ class ChancelleryRateController extends Controller
         ]);
         $notification = new ChancelleryRateNotification($chancelleryRate);
         $users = User::whereHas('employee', function ($query) {
-            $query->whereJsonContains('roles', 'director');
+            $query->whereJsonContains('roles', 'sg');
         })->get();
         foreach ($users as $user) {
             $user->notify($notification);
@@ -49,7 +49,7 @@ class ChancelleryRateController extends Controller
         ]);
         $notification = new ChancelleryRateNotification($chancelleryRate);
         $users = User::whereHas('employee', function ($query) {
-            $query->whereJsonContains('roles', 'director');
+            $query->whereJsonContains('roles', 'sg');
         })->get();
         foreach ($users as $user) {
             $user->notify($notification);
