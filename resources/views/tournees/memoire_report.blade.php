@@ -438,6 +438,13 @@
             </svg>
             {{ __('Save as PDF file') }}
         </button>
+        @if((auth()->user()->employee->hasRole('sg') && $tournee->memor_status === 'sg_approve') || (auth()->user()->employee->hasRole('controller') && $tournee->memor_status === 'controller_approve'))
+            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
+                {{ __('Approve or Reject') }}
+            </button>
+        @endif
+        @include('partials.modals._tournee-approve-memoier')
     </div>
     <style>
         @media print {

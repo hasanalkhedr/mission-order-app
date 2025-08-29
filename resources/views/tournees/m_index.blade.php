@@ -173,7 +173,7 @@
                                     @endif
                                 @break
 
-                                @case('controller_approve')
+                                {{-- @case('controller_approve')
                                     @if (auth()->user()->employee->hasRole('controller'))
                                         <td class="text-center px-0 py-1 border-b">
                                             <button
@@ -181,14 +181,6 @@
                                                 type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
                                                 {{ __('Approve') }}
                                             </button>
-                                        </td>
-                                    @endif
-                                    @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg') ||
-                                            (auth()->user()->employee->hasRole('supervisor') &&
-                                                auth()->user()->employee->department_id === $tournee->employee->department_id))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                                         </td>
                                     @endif
                                 @break
@@ -203,16 +195,7 @@
                                             </button>
                                         </td>
                                     @endif
-                                    @if (auth()->user()->employee->hasRole('controller') ||
-                                            auth()->user()->employee->hasRole('sg') ||
-                                            (auth()->user()->employee->hasRole('supervisor') &&
-                                                auth()->user()->employee->department_id === $tournee->employee->department_id))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
-                                    @endif
-                                @break
+                                @break --}}
 
                                 @case('approved')
                                     @if ($tournee->employee->id == auth()->user()->employee->id)
@@ -220,29 +203,23 @@
                                             <a href="#"
                                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Request to Pay') }}</a>
                                         </td>
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
-                                    @elseif (auth()->user()->employee->hasRole('supervisor') &&
-                                            auth()->user()->employee->department_id == $tournee->employee->department_id)
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
-                                    @elseif(auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <a href="{{ route('tournees.m_report', $tournee->id) }}"
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
-                                        </td>
                                     @endif
                                 @break
 
                                 @case('paid')
                                 @break
                             @endswitch
+                            @if (auth()->user()->employee->id === $tournee->employee_id
+                        || (auth()->user()->employee->hasRole('supervisor') && in_array($tournee->employee->department_id, Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
+                        || auth()->user()->employee->hasRole('controller')
+                        || auth()->user()->employee->hasRole('sg'))
+                            <td class="text-center px-0 py-1 border-b">
+                                <a href="{{ route('tournees.m_report', $tournee->id) }}"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
+                            </td>
+                        @endif
                             @include('partials.modals._tournee-delete-memoier')
-                            @include('partials.modals._tournee-approve-memoier')
+                            {{-- @include('partials.modals._tournee-approve-memoier') --}}
                         </tr>
                     @endforeach
                 @else

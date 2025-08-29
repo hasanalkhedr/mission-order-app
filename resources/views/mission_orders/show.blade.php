@@ -187,17 +187,6 @@
                             type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
                             {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }}
                         </button>
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700
-                        hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
-                        w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @endif
-                    @if (auth()->user()->employee->hasRole('controller') ||
-                            auth()->user()->employee->hasRole('sg'))
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700
-                    hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
-                    w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
                 @break
 
@@ -209,29 +198,12 @@
                             {{ __('Approve or Reject') }}
                         </button>
                     @endif
-                    @if (auth()->user()->employee->hasRole('controller') ||
-                            auth()->user()->employee->hasRole('sg') ||
-                            (auth()->user()->employee->hasRole('supervisor') &&
-                                auth()->user()->employee->department_id === $missionOrder->employee->department_id))
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @endif
                 @break
 
                 @case('approved')
                     @if ($missionOrder->employee->id == auth()->user()->employee->id)
-                        <a href="{{ route('mission_orders.m_index') }}"
+                        <a href="{{ route('mission_orders.m_create', $missionOrder->id) }}"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Mémoire de Frais') }}</a>
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif (auth()->user()->employee->hasRole('supervisor') &&
-                            auth()->user()->employee->department_id == $missionOrder->employee->department_id)
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
-                    @elseif(auth()->user()->employee->hasRole('controller') ||
-                            auth()->user()->employee->hasRole('sg'))
-                        <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
                     @endif
                 @break
 
@@ -239,6 +211,10 @@
                 @break
 
             @endswitch
+            <a href="{{ route('mission_orders.report', $missionOrder->id) }}"
+                            class="text-white bg-blue-700
+                        hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm
+                        w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900">{{ __('Print Order') }}</a>
         </div>
     </div>
     <div class="w-11/12 flex flex-wrap -mx-1 mb-2 border border-gray-200">

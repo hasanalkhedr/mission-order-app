@@ -106,28 +106,24 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="w-2/3">Demande d'avance:</td>
-                            <td class="w-1/3">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
+                            <td class="w-5/6">Demande d'avance:</td>
+                            <td class="w-1/6">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
                         </tr>
                         <tr>
-                            <td class="w-2/3">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
-                            <td class="w-1/3">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
+                            <td class="w-5/6">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
+                            <td class="w-1/6">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
                         <tr>
-                            <td class="w-2/3">Prise en charge frais d'hébergement:</td>
-                            <td class="w-1/3">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
+                            <td class="w-5/6">Prise en charge frais d'hébergement:</td>
+                            <td class="w-1/6">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
                         <tr>
-                            <td class="w-2/3">Prise en charge frais de repas:</td>
-                            <td class="w-1/3">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
+                            <td class="w-5/6">Prise en charge frais de repas:</td>
+                            <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
-                        {{-- <tr>
-                            <td class="w-2/3">Prise en charge d'une assurance voyage :</td>
-                            <td class="w-1/3">{{ $missionOrder->assurance == 1 ? 'OUI' : 'NON' }}</td>
-                        </tr> --}}
                         <tr>
-                            <td class="w-2/3">Frais de réception :</td>
-                            <td class="w-1/3">{{ $missionOrder->reception_fees ? $missionOrder->reception_fees : 'NON'}}</td>
+                            <td class="w-5/6">Frais de réception :</td>
+                            <td class="w-1/6">{{ $missionOrder->reception_fees ? $missionOrder->reception_fees : 'NON'}}</td>
                         </tr>
                         <tr>
                             <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
@@ -333,6 +329,18 @@
             </svg>
             {{ __('Save as PDF file') }}
         </button>
+        @if (auth()->user()->employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id,App\Models\Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()) && $missionOrder->status === 'sup_approve')
+            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
+                {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }}
+            </button>
+        @elseif (auth()->user()->employee->hasRole('sg') && $missionOrder->status === 'sg_approve')
+            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+                type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
+                {{ __('Approve or Reject') }}
+            </button>
+        @endif
+        @include('partials.modals._approve-mission')
     </div>
     <style>
         @media print {

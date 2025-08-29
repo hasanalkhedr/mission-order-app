@@ -272,7 +272,7 @@
         <!-- Add the new advance payment section here -->
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
+                <x-label class="w-1/2 inline-flex">
                     Demande d'avance<span class="text-red-500">*</span>
                 </x-label>
                 <input required @checked(old('advance', $missionOrder->advance) > 0) type="radio" value="1" name="needs_advance"
@@ -433,7 +433,7 @@
 
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
+                <x-label class="w-1/2 inline-flex">
                     Prise en charge des frais de transport<span class="text-red-500">*</span> (Avion, Train, Taxi/Uber, Transport public)
                 </x-label>
                 <input required @checked(old('charge', $missionOrder->charge) == 1) type="radio" value="1" name="charge"
@@ -444,7 +444,7 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
             <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
+                <x-label class="w-1/2 inline-flex">
                     Prise en charge frais d'hébergement<span class="text-red-500">*</span>
                 </x-label>
                 <input required @checked(old('ijm', $missionOrder->ijm) == 1) type="radio" value="1" name="ijm"
@@ -455,7 +455,7 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
             <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
+                <x-label class="w-1/2 inline-flex">
                     Prise en charge frais de repas<span class="text-red-500">*</span>
                 </x-label>
                 <input required @checked(old('repas', $missionOrder->repas) == 1) type="radio" value="1" name="repas"
@@ -465,22 +465,11 @@
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
-            {{-- <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
-                    Prise en charge d'une assurance voyage<span class="text-red-500">*</span>
-                </x-label>
-                <input required @checked(old('assurance', $missionOrder->assurance) == 1) type="radio" value="1" name="assurance"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
-                <input required @checked(old('assurance', $missionOrder->assurance) == 0) type="radio" value="0" name="assurance"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
-            </div> --}}
         </div>
         {{-- Reception Fees --}}
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
-                <x-label class="w-1/3 inline-flex">
+                <x-label class="w-1/2 inline-flex">
                     Frais de réception<span class="text-red-500">*</span>
                 </x-label>
                 <input required @checked(Str::length(old('reception_fees', $missionOrder->reception_fees)) > 0) type="radio" value="1" name="needs_reception_fees" id="needs_reception_fees_yes"
@@ -495,7 +484,7 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
-            <div class="w-1/2">
+            <div class="w-1/2 px-3">
                 <x-text-input name="reception_fees" value="{{ old('reception_fees', $missionOrder->reception_fees) }}" id="reception_fees_input" />
                 <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
             </div>
