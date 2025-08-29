@@ -15,122 +15,170 @@
             </div>
             <!-- Title -->
             <h1 class="text-2xl font-bold text-center mb-2">ORDRE DE MISSION {{ $missionOrder->order_number }}</h1>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Missionary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-1/3">Nom, Prénom :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->first_name }}
+                            {{ $missionOrder->employee->last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Fonction :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->position }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Résidence administrative :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->administrativ_residence }}</td>
+                    </tr>
 
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th colspan="2" class="px-4">Missionary</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="w-1/3">Nom, Prénom :</td>
-                            <td class="w-2/3">{{ $missionOrder->employee->first_name }}
-                                {{ $missionOrder->employee->last_name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Fonction :</td>
-                            <td class="w-2/3">{{ $missionOrder->employee->position }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Résidence administrative :</td>
-                            <td class="w-2/3">{{ $missionOrder->employee->administrativ_residence }}</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th colspan="2" class="px-4">Mission</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="w-1/3">Objet :</td>
-                            <td class="w-2/3">{{ $missionOrder->purpose }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Lieu de départ:</td>
-                            <td class="w-2/3">{{ $missionOrder->departure_location }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Lieu de mission:</td>
-                            <td class="w-2/3">{{ $missionOrder->arrive_location }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Lieu de retour:</td>
-                            <td class="w-2/3">{{ $missionOrder->return_location }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">Débute le :</td>
-                            <td class="w-2/3">{{ $missionOrder->start_date->format('d/m/Y') }} heure
-                                {{ $missionOrder->start_time }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3">S'achève le :</td>
-                            <td class="w-2/3">{{ $missionOrder->end_date->format('d/m/Y') }} heure
-                                {{ $missionOrder->end_time }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th class="px-4">Pays de Mission</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="w-full">
-                                @if (in_array(
-                                        $missionOrder->bareme->id,
-                                        array_column(App\Models\Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id')))
-                                    {{ $missionOrder->bareme->pays }}
-                                    ({{ $missionOrder->bareme->currency }})
-                                @else
-                                    {{ $missionOrder->bareme->pays }}
-                                    (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
-                                    / Repas:{{ $missionOrder->bareme->meal_cost }} /
-                                    Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
-                                @endif
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th colspan="2" class="px-4">Frais de mission</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="w-5/6">Demande d'avance:</td>
-                            <td class="w-1/6">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-5/6">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
-                            <td class="w-1/6">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-5/6">Prise en charge frais d'hébergement:</td>
-                            <td class="w-1/6">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-5/6">Prise en charge frais de repas:</td>
-                            <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-5/6">Frais de réception :</td>
-                            <td class="w-1/6">{{ $missionOrder->reception_fees ? $missionOrder->reception_fees : 'NON'}}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!-- Expense Table -->
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-1/5">Objet/Motfits:</td>
+                        <td class="w-4/5">{{ $missionOrder->purpose }}</td>
+                    </tr>
+                    <tr>
+                        <table class="table-auto w-full text-left border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th colspan="5">Détail du déplacement résidence administrative - lieu de la mission</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-1/5">Lieu de départ</th>
+                                    <th class="w-1/5">Lieu de mission</th>
+                                    <th class="w-1/5">Date de départ</th>
+                                    <th class="w-1/5">Heure de départ</th>
+                                    <th class="w-1/5">Heure d'arrivée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-1/5">{{$missionOrder->departure_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->arrive_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_date->format('d/m/Y')}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_time}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_time2}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/5">{{$missionOrder->endMission_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->return_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_date->format('d/m/Y')}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_time2}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_time}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tr>
+                    {{-- <tr>
+                        <td class="w-1/3">Lieu de départ:</td>
+                        <td class="w-2/3">{{ $missionOrder->departure_location }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Lieu de mission:</td>
+                        <td class="w-2/3">{{ $missionOrder->arrive_location }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Lieu de retour:</td>
+                        <td class="w-2/3">{{ $missionOrder->return_location }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Débute le :</td>
+                        <td class="w-2/3">{{ $missionOrder->start_date->format('d/m/Y') }} heure
+                            {{ $missionOrder->start_time }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">S'achève le :</td>
+                        <td class="w-2/3">{{ $missionOrder->end_date->format('d/m/Y') }} heure
+                            {{ $missionOrder->end_time }}</td>
+                    </tr> --}}
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th class="px-4">Pays de Mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-full">
+                            {{ $missionOrder->bareme->pays }}
+                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
+                            / Repas:{{ $missionOrder->bareme->meal_cost }} /
+                            Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th class="px-4">Pays de Mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-full">
+                            @if (in_array(
+                                    $missionOrder->bareme->id,
+                                    array_column(App\Models\Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id')))
+                                {{ $missionOrder->bareme->pays }}
+                                ({{ $missionOrder->bareme->currency }})
+                            @else
+                                {{ $missionOrder->bareme->pays }}
+                                (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
+                                / Repas:{{ $missionOrder->bareme->meal_cost }} /
+                                Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Frais de mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-5/6">Demande d'avance:</td>
+                        <td class="w-1/6">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
+                        <td class="w-1/6">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge frais d'hébergement:</td>
+                        <td class="w-1/6">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge frais de repas:</td>
+                        <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Frais de réception :</td>
+                        <td class="w-1/6">{{ $missionOrder->reception_fees ? $missionOrder->reception_fees : 'NON'}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Expense Table -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -219,98 +267,98 @@
                     </tr>
                 </tbody>
             </table>
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th colspan="2" class="px-4">Observations</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="2" class="w-full">{{ $missionOrder->description }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table-auto w-full text-left">
-                    <thead>
-                        <tr class="bg-blue-200">
-                            <th colspan="2" class="px-4">Signature de l'autorité compétente</th>
-                        </tr>
-                    </thead>
-                    {{-- <tbody>
-                        <tr>
-                            <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
-                                <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="w-full px-24 pt-0 pb-2 text-right">
-                                <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
-                                <div class="flex">
-                                    <div class="w-2/3"></div>
-                                    <div class="w-1/3">
-                                        <span class="font-light text-md text-right">
-                                            @if ($director && $director->signature && $director->signature->status == 'approved')
-                                                <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
-                                            @endif
-                                        </span>
-                                    </div>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Observations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="w-full">{{ $missionOrder->description }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Signature de l'autorité compétente</th>
+                    </tr>
+                </thead>
+                {{-- <tbody>
+                    <tr>
+                        <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
+                            <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="w-full px-24 pt-0 pb-2 text-right">
+                            <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
+                            <div class="flex">
+                                <div class="w-2/3"></div>
+                                <div class="w-1/3">
+                                    <span class="font-light text-md text-right">
+                                        @if ($director && $director->signature && $director->signature->status == 'approved')
+                                            <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                        @endif
+                                    </span>
                                 </div>
+                            </div>
 
-                            </td>
-                        </tr>
-                    </tbody> --}}
-                </table>
-                <table class="table-auto w-full text-left">
-                    <tbody>
-                        <tr>
-                            <td class="px-2 py-[1px] w-1/3">
-                                <span class="font-bold text-lg text-center">Agent: </span>
-                            </td>
-                            <td class="px-2 py-[1px] w-1/3">
-                                <span class="font-bold text-lg text-center">Chef de Service: </span>
-                            </td>
-                            <td class="px-2 py-[1px] w-1/3">
-                                <span class="font-bold text-lg text-center">Ordonateur: </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">Date de Soumission</span>
-                            </td>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">Date de Validation</span>
-                            </td>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">Date de Validation</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">{{$missionOrder->order_date->format('d/m/Y')}}</span>
-                            </td>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">
-                                    {{$missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->first() ?
-                                        $missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->first()->created_at->format('d/m/Y') : ''}}
-                                </span>
-                            </td>
-                            <td class="w-1/3 px-2 py-[1px]">
-                                <span class="font-light text-md text-center">{{$missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->first() ?
-                                    $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->first()->created_at->format('d/m/Y') : ''}}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </td>
+                    </tr>
+                </tbody> --}}
+            </table>
+            <table class="table-auto w-full text-left">
+                <tbody>
+                    <tr>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Agent: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Chef de Service: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Ordonateur: </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Soumission</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">{{$missionOrder->order_date->format('d/m/Y')}}</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">
+                                {{$missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->last() ?
+                                    $missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->last()->created_at->format('d/m/Y') : ''}}
+                            </span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">{{$missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last() ?
+                                $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last()->created_at->format('d/m/Y') : ''}}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <!-- Action Buttons -->
+    </div>
+    <!-- Action Buttons -->
     <div class="flex justify-center space-x-4 mb-8 no-print">
         <button onclick="window.print()"
             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">

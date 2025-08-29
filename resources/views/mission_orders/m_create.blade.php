@@ -64,13 +64,58 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet
+                    Objet/Motfits
                 </x-label>
                 <textarea rows="2" readonly
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $missionOrder->purpose }}</textarea>
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
+        <x-form-divider>Détail du déplacement résidence administrative - lieu de la mission</x-form-divider>
+        <div class="flex flex-wrap -mx-3 mb-0 w-full">
+            <div class="w-1/4 pr-1 pl-3">
+                <x-label>Lieu de départ</x-label>
+                <x-readonly-text-input value="{{ $missionOrder->departure_location }}" />
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Lieu de mission</x-label>
+                <x-readonly-text-input value="{{ $missionOrder->arrive_location }}"/>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Date de départ</x-label>
+                <x-date-time-input class="w-full h-12" name="start_date" value="{{ $missionOrder->start_date->format('Y-m-d') }}" type="date" disabled></x-date-time-input>
+            </div>
+            <div class="w-1/8 px-1">
+                <x-label>Heure de départ</x-label>
+                <x-date-time-input class="w-full h-12" name="start_time" value="{{ $missionOrder->start_time }}" type="time" disabled></x-date-time-input>
+            </div>
+            <div class="w-1/8 pl-1 pr-3">
+                <x-label>Heure d'arrivée</x-label>
+                <x-date-time-input class="w-full h-12" name="start_time2" value="{{ $missionOrder->start_time2 }}" type="time" disabled></x-date-time-input>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2 w-full">
+            <div class="w-1/4 pr-1 pl-3">
+                <x-label>Lieu de mission</x-label>
+                <x-readonly-text-input value="{{ $missionOrder->endMission_location }}"/>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Lieu de retour</x-label>
+                <x-readonly-text-input value="{{ $missionOrder->return_location }}" />
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Date de départ</x-label>
+                <x-date-time-input class="w-full h-12" name="end_date" value="{{ $missionOrder->end_date->format('Y-m-d') }}" type="date" disabled></x-date-time-input>
+            </div>
+            <div class="w-1/8 px-1">
+                <x-label>Heure de départ</x-label>
+                <x-date-time-input class="w-full h-12" name="end_time2" value="{{ $missionOrder->end_time2 }}" type="time" disabled></x-date-time-input>
+            </div>
+            <div class="w-1/8 pl-1 pr-3">
+                <x-label>Heure d'arrivée</x-label>
+                <x-date-time-input class="w-full h-12" name="end_time" value="{{ $missionOrder->end_time }}" type="time" disabled></x-date-time-input>
+            </div>
+        </div>
+        {{-- <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de départ
@@ -113,7 +158,7 @@
                 <x-date-time-input disabled name="end_time" value="{{ $missionOrder->end_time }}" type="time">
                 </x-date-time-input>
             </div>
-        </div>
+        </div> --}}
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>

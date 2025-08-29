@@ -128,11 +128,11 @@
                                 {{ $missionOrder->bareme->pays }}|{{ $missionOrder->bareme->currency }}
                             </div>
                         </td>
-                        <td class="py-4 px-6 border-b cursor-pointer">
+                        {{-- <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
                                 {{ $missionOrder->arrive_location }}
                             </div>
-                        </td>
+                        </td> --}}
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
                                 {{ $missionOrder->start_date->format('d/m/Y') }} at {{ $missionOrder->start_time }}

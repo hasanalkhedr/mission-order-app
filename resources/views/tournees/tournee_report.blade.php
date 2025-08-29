@@ -45,8 +45,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="w-1/3">Objet :</td>
-                        <td class="w-2/3">{{ $tournee->purpose }}</td>
+                        <td class="w-1/5">Objet/Motfits:</td>
+                        <td class="w-4/5">{{ $tournee->purpose }}</td>
                     </tr>
                     <tr>
                         <td colspan="2" class="w-full">

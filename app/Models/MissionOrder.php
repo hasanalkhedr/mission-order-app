@@ -85,11 +85,14 @@ public static function generateOrderNumber()
         'memor_date',
         'return_location',
         'reception_fees',
-        'repas'
+        'repas',
+        'endMission_location',
+        'start_time2',
+        'end_time2'
     ];
     protected $casts = [
         'order_date' => 'date',
-        'start_date' => 'date',
+        'start_date' => 'date:d/m/Y',
         'end_date' => 'date',
         'start_time' => 'string', // Treat time fields as strings
         'end_time' => 'string',

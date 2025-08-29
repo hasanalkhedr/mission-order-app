@@ -126,6 +126,9 @@ class MissionOrderController extends Controller
             'expenses.*.type' => 'nullable|string|in:transport,extra_meal,visa,inscription,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
+            'endMission_location' => 'nullable',
+            'start_time2' => 'nullable|date_format:H:i',
+            'end_time2' => 'nullable|date_format:H:i'
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');

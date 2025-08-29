@@ -36,7 +36,39 @@
                         <td class="w-1/3">Objet de la mission :</td>
                         <td colspan="3" class="w-2/3">{{ $missionOrder->purpose }}</td>
                     </tr>
-                    <tr>
+                    <tr><td colspan="4">
+                        <table class="table-auto w-full text-left border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th colspan="5">Détail du déplacement résidence administrative - lieu de la mission</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-1/5">Lieu de départ</th>
+                                    <th class="w-1/5">Lieu de mission</th>
+                                    <th class="w-1/5">Date de départ</th>
+                                    <th class="w-1/5">Heure de départ</th>
+                                    <th class="w-1/5">Heure d'arrivée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-1/5">{{$missionOrder->departure_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->arrive_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_date->format('d/m/Y')}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_time}}</td>
+                                    <td class="w-1/5">{{$missionOrder->start_time2}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/5">{{$missionOrder->endMission_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->return_location}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_date->format('d/m/Y')}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_time2}}</td>
+                                    <td class="w-1/5">{{$missionOrder->end_time}}</td>
+                                </tr>
+                            </tbody>
+                        </table></td>
+                    </tr>
+                    {{-- <tr>
                         <td class="w-1/4">Lieu de départ :</td>
                         <td class="w-1/4">{{ $missionOrder->departure_location }}</td>
                         <td class="w-1/4">Lieu de retour:</td>
@@ -59,10 +91,10 @@
                         <td class="w-1/4">{{ $missionOrder->end_date->format('d/m/Y') }}</td>
                         <td class="w-1/4">Heure de départ :</td>
                         <td class="w-1/4">{{ $missionOrder->end_time }}</td>
-                    </tr>
-                    <tr class="bg-gray-200 h-4">
+                    </tr> --}}
+                    {{-- <tr class="bg-gray-200 h-4">
                         <td colspan="4"></td>
-                    </tr>
+                    </tr> --}}
                     <tr>
                         <td class="w-1/4">Nuitées à déduire des IJM :</td>
                         <td class="w-1/4">{{ $missionOrder->no_ded_accomodation }}</td>
@@ -335,7 +367,7 @@
                             <span></span>
                         </td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td class="w-5/12">
                             <span></span>
                         </td>
@@ -375,6 +407,48 @@
                                     @endif
                                 </span>
                             </div>
+                        </td>
+                    </tr> --}}
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <tbody>
+                    <tr>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Agent: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Gestionaire: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Ordonateur: </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Soumission</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">{{$missionOrder->memor_date->format('d/m/Y')}}</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">
+                                {{$missionOrder->getMemoirApproves()->where('approval_role', 'Gestionaire')->last() ?
+                                    $missionOrder->getMemoirApproves()->where('approval_role', 'Gestionaire')->last()->created_at->format('d/m/Y') : ''}}
+                            </span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">{{$missionOrder->getMemoirApproves()->where('approval_role', 'Ordonateur')->last() ?
+                                $missionOrder->getMemoirApproves()->where('approval_role', 'Ordonateur')->last()->created_at->format('d/m/Y') : ''}}
+                            </span>
                         </td>
                     </tr>
                 </tbody>

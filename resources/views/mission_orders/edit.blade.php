@@ -118,7 +118,60 @@
                 });
             </script>
         </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
+        <x-form-divider>Détail du déplacement résidence administrative - lieu de la mission</x-form-divider>
+        <div class="flex flex-wrap -mx-3 mb-0 w-full">
+            <div class="w-1/4 pr-1 pl-3">
+                <x-label>Lieu de départ<span class="text-red-500">*</span></x-label>
+                <x-text-input required name="departure_location" id="departure_location" value="{{ old('departure_location', $missionOrder->departure_location) }}" onblur="returnLocationValue();" />
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Lieu de mission<span class="text-red-500">*</span></x-label>
+                <x-text-input required name="arrive_location" id="arrive_location" value="{{ old('arrive_location', $missionOrder->arrive_location) }}"  onblur="endMissionLocationValue();" />
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Date de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_date" id="start_date" value="{{ old('start_date', $missionOrder->start_date->format('Y-m-d')) }}" type="date" required></x-date-time-input>
+            </div>
+            <div class="w-1/8 px-1">
+                <x-label>Heure de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_time" value="{{ old('start_time', $missionOrder->start_time) }}" type="time" required></x-date-time-input>
+            </div>
+            <div class="w-1/8 pl-1 pr-3">
+                <x-label>Heure d'arrivée<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_time2" value="{{ old('start_time2', $missionOrder->start_time2) }}" type="time" required></x-date-time-input>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2 w-full">
+            <div class="w-1/4 pr-1 pl-3">
+                <x-label>Lieu de mission<span class="text-red-500">*</span></x-label>
+                <x-text-input required name="endMission_location" id="endMission_location" value="{{ old('endMission_location', $missionOrder->endMission_location) }}"/>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Lieu de retour<span class="text-red-500">*</span></x-label>
+                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location', $missionOrder->return_location) }}" />
+                <script>
+                    function returnLocationValue() {
+                        document.getElementById('return_location').value = document.getElementById('departure_location').value;
+                    }
+                    function endMissionLocationValue() {
+                        document.getElementById('endMission_location').value = document.getElementById('arrive_location').value;
+                    }
+                </script>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Date de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_date" id="end_date" value="{{ old('end_date', $missionOrder->end_date->format('Y-m-d')) }}" type="date" required></x-date-time-input>
+            </div>
+            <div class="w-1/8 px-1">
+                <x-label>Heure de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_time2" value="{{ old('end_time2', $missionOrder->end_time2) }}" type="time" required></x-date-time-input>
+            </div>
+            <div class="w-1/8 pl-1 pr-3">
+                <x-label>Heure d'arrivée<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_time" value="{{ old('end_time', $missionOrder->end_time) }}" type="time" required></x-date-time-input>
+            </div>
+        </div>
+        {{-- <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/3 px-3">
                 <x-label>
                     Lieu de départ<span class="text-red-500">*</span>
@@ -175,13 +228,11 @@
                     required>
                 </x-date-time-input>
             </div>
-        </div>
+        </div> --}}
         <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
                 description.</p>
         </div>
-
-
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const startDateInput = document.getElementById('start_date');
