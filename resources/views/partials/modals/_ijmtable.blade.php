@@ -85,7 +85,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$missionOrder->order_date->format('F Y')}}</td>
+                            <td class="px-2 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">ChancelleryRate {{$current_rate->month_year->format('F Y')}}</td>
                             <th scope="col" colspan="3"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                                 Total (avec hébergement)
@@ -107,10 +107,11 @@
                             </th>
                         </tr>
                         <tr>
-                            <td class="px-6 py-1 text-center text-xs font-bold text-red-600 uppercase border border-gray-500 bg-gray-400">
-                                1 EURO = {{$current_rate}}
+                            <td colspan="2" class="px-6 py-1 text-center text-xs font-extrabold text-red-600 uppercase border border-gray-500 bg-gray-400">
+                                1 EURO = {{ number_format($current_rate->eur_rate,2)}} |
+                                1 USD = {{ number_format($current_rate->usd_rate,2)}}
                             </td>
-                            <th scope="col" colspan="3"
+                            <th scope="col" colspan="2"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
                                 Total (Roupie indienne)
                             </th>
@@ -140,18 +141,18 @@
                             /*document.getElementById('no_ded_accomodation').value*/0) * {{ $missionOrder->bareme->accomodation_cost }} + (
                                 {{ $missionOrder->no_meals }} - /*document.getElementById('no_ded_meals').value*/0) *
                             {{ $missionOrder->bareme->meal_cost }};
-                        document.getElementById('total_hidden').value = {{ $current_rate }} * ((
+                        document.getElementById('total_hidden').value = {{ $current_rate->eur_rate }} * ((
                                 {{ $missionOrder->no_accomodation }} - /*document.getElementById('no_ded_accomodation').value*/0) *
                             {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} -
                                 /*document.getElementById('no_ded_meals').value*/0) * {{ $missionOrder->bareme->meal_cost }});
-                        document.getElementById('totalLocal').textContent = {{ $current_rate }} * ((
+                        document.getElementById('totalLocal').textContent = {{ $current_rate->eur_rate }} * ((
                                 {{ $missionOrder->no_accomodation }} - /*document.getElementById('no_ded_accomodation').value*/0) *
                             {{ $missionOrder->bareme->accomodation_cost }} + ({{ $missionOrder->no_meals }} -
                                 /*document.getElementById('no_ded_meals').value*/0) * {{ $missionOrder->bareme->meal_cost }});
                     }
 calculateTotal();
-                    document.getElementById('no_ded_accomodation').addEventListener('input', calculateTotal);
-                    document.getElementById('no_ded_meals').addEventListener('input', calculateTotal);
+                    // document.getElementById('no_ded_accomodation').addEventListener('input', calculateTotal);
+                    // document.getElementById('no_ded_meals').addEventListener('input', calculateTotal);
                 </script>
             </div>
         </div>

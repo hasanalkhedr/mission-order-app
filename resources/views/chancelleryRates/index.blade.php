@@ -9,8 +9,7 @@
         @if (auth()->user()->employee->hasRole('controller') && !App\Models\ChancelleryRate::hasCurrentRate())
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg"
                 data-modal-toggle="createRateModal">
-                {{ __('Add Chancellery Rate') }}
-                1 EURO = ?
+                {{ __('Add Chancellery Rates') }}
             </button>
         @endif
     </div>
@@ -24,7 +23,13 @@
                         {{ __('Month') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Rate: Euro to Indian rupee') }}
+                        {{ __('EUR to INR') }}
+                    </th>
+                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
+                        {{ __('USD to INR') }}
+                    </th>
+                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
+                        {{ __('Status') }}
                     </th>
                     @if (auth()->user()->employee->hasRole('controller'))
                         <th scope="col" class="py-3 px-6 blue-color">
@@ -52,9 +57,23 @@
 
                         <td class="py-4 px-6 border-b">
                             <div class="font-bold text-red-400">
-                                1 EURO = {{$chancelleryRate->rate}} {{__('Indian rupee')}}
+                                1 EUR = {{ $chancelleryRate->eur_rate }} {{ __('INR') }}
                             </div>
                         </td>
+
+                        <td class="py-4 px-6 border-b">
+                            <div class="font-bold text-blue-400">
+                                1 USD = {{ $chancelleryRate->usd_rate }} {{ __('INR') }}
+                            </div>
+                        </td>
+
+                        <td class="py-4 px-6 border-b">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                {{ $chancelleryRate->status == 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                {{ ucfirst($chancelleryRate->status) }}
+                            </span>
+                        </td>
+
                         @if ($chancelleryRate->status == 'draft' && auth()->user()->employee->hasRole('controller'))
                         <td class="py-4 px-6 text-right border-b">
                             <button class="font-medium hover:underline blue-color" type="button"
@@ -78,7 +97,6 @@
                             </td>
                         @endif
 
-                        {{-- @endhasanyrole --}}
                         @include('partials.modals._delete-chancelleryRate')
                         @include('partials.modals._edit-chancelleryRate')
                         @include('partials.modals._approve-chancelleryRate')
@@ -86,7 +104,7 @@
                 @endforeach
             @else
                 <tr class="border-gray-300">
-                    <td colspan="4" class="px-4 py-8 border-t border-gray-300 text-lg">
+                    <td colspan="7" class="px-4 py-8 border-t border-gray-300 text-lg">
                         <p class="text-center">{{ __('No Chancellery Rates Found') }}</p>
                     </td>
                 </tr>

@@ -88,7 +88,10 @@ public static function generateOrderNumber()
         'repas',
         'endMission_location',
         'start_time2',
-        'end_time2'
+        'end_time2',
+        'expense_reimbursement_total',
+        'expense_direct_total',
+        'expense_grand_total'
     ];
     protected $casts = [
         'order_date' => 'date',
@@ -97,6 +100,9 @@ public static function generateOrderNumber()
         'start_time' => 'string', // Treat time fields as strings
         'end_time' => 'string',
         'memor_date' => 'date',
+        'expense_reimbursement_total' => 'decimal:2',
+        'expense_direct_total' => 'decimal:2',
+        'expense_grand_total' => 'decimal:2',
     ];
     public function employee()
     {

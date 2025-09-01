@@ -411,18 +411,44 @@ $expenses = $request->input('expenses') ?? [];
     }
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
-        $current_rate = ChancelleryRate::currentRate()->rate;
+        $current_rate = ChancelleryRate::currentRate();
         return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
     }
     public function m_update(Request $request, MissionOrder $missionOrder)
     {
+       // dd($request->input('expenses'),$request->input('totals'));
         $request->validate([
             //'no_ded_accomodation' => 'required|numeric',
             //'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
             'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',
+
+            'expenses' => 'required|array',
+            'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,inscription,other',
+            'expenses.*.expense_id' => 'nullable|integer|exists:expenses,id',
+            'expenses.*.transport_type' => 'required_if:expenses.*.type,transport|string',
+            'expenses.*.description' => 'nullable|string|max:255',
+            'expenses.*.reimbursement_amount' => 'required|numeric|min:0',
+            'expenses.*.reimbursement_currency' => 'required|string|in:INR,EUR,USD',
+            'expenses.*.direct_amount' => 'required|numeric|min:0',
+            'expenses.*.direct_currency' => 'required|string|in:INR,EUR,USD',
+            'expenses.*.total_inr' => 'sometimes|numeric|min:0',
+
+            'totals' => 'required|array',
+            'totals.reimbursement' => 'required|numeric|min:0',
+            'totals.direct' => 'required|numeric|min:0',
+            'totals.grand_total' => 'required|numeric|min:0',
         ]);
+        $expenses = $request->input('expenses');
+        $totals = $request->input('totals');
+        foreach($expenses as $expense) {
+            if(isset($expense['expense_id'])) {
+                $storedExpense = Expense::find($expense['expense_id']);
+                $storedExpense->update($expense);
+            }
+        }
+
         $action = $request->input('action');
         $memor_status = null;
         if ($action === 'partialSubmit') {
@@ -434,7 +460,11 @@ $expenses = $request->input('expenses') ?? [];
             $memor_status = 'controller_approve';
         }
         $missionOrder->update(array_merge($request->all(), ['memor_status' => $memor_status]));
-
+$missionOrder->update([
+        'expense_reimbursement_total' => $totals['reimbursement'],
+        'expense_direct_total' => $totals['direct'],
+        'expense_grand_total' => $totals['grand_total'],
+    ]);
         $notification = new MemoireMissionOrderLevelNotification($missionOrder);
         $users = User::whereHas('employee', function ($query) {
             $query->whereJsonContains('roles', 'controller');
@@ -447,7 +477,7 @@ $expenses = $request->input('expenses') ?? [];
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
-        $current_rate = ChancelleryRate::rateOfDate($missionOrder->order_date)->rate;
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
         return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
     }
     public function m_destroy(Request $request, MissionOrder $missionOrder)

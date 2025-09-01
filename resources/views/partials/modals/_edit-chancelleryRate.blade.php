@@ -6,7 +6,7 @@
             <!-- Modal header -->
             <div class="flex justify-between items-center p-4 rounded-t border-b">
                 <div class="text-base font-bold mt-3 sm:mt-0 sm:ml-4 sm:text-left blue-color">
-                    {{ __('Edit Chancellery Rate') }}: {{ now()->format('F Y') }}
+                    {{ __('Edit Chancellery Rates') }}: {{ $chancelleryRate->month_year->format('F Y') }}
                 </div>
                 <div>
                     <button type="button"
@@ -28,18 +28,35 @@
                     id="edit_form--{{ $chancelleryRate->id }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                    <div class="flex flex-wrap -mx-3 mb-6">
-                        <div class="w-1/2 px-3">
-                            <h2>{{__('Set Currency Rate for ')}} {{ $chancelleryRate->month_year->format('F Y') }}</h2>
-                        </div>
-                        <div class="form-group">
-                            <label for="rate">{{__('Conversion Rate (1 EURO to Local)')}}</label>
-                            <input type="number" step="0.0001" class="form-control" id="rate" name="rate" value="{{$chancelleryRate->rate}}" required>
-                            <small class="form-text text-muted">
-                                {{__('Enter how much 1 EURO equals in your local currency')}}
-                            </small>
+
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold mb-4">{{ __('Set Currency Rates for ')}}{{ $chancelleryRate->month_year->format('F Y') }}</h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="eur_rate" class="block text-sm font-medium text-gray-700 mb-2">
+                                    {{ __('EUR to INR Rate') }}
+                                </label>
+                                <input type="number" step="0.0001" class="form-control" id="eur_rate" name="eur_rate"
+                                    value="{{ $chancelleryRate->eur_rate }}" required>
+                                <small class="form-text text-muted">
+                                    {{ __('1 EURO = ? INR') }}
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="usd_rate" class="block text-sm font-medium text-gray-700 mb-2">
+                                    {{ __('USD to INR Rate') }}
+                                </label>
+                                <input type="number" step="0.0001" class="form-control" id="usd_rate" name="usd_rate"
+                                    value="{{ $chancelleryRate->usd_rate }}" required>
+                                <small class="form-text text-muted">
+                                    {{ __('1 USD = ? INR') }}
+                                </small>
+                            </div>
                         </div>
                     </div>
+
                     <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                         <div>
                             <button data-modal-toggle="editRateModal-{{ $chancelleryRate->id }}" type="button"
@@ -50,7 +67,7 @@
                         <div>
                             <button
                                 class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg"
-                                data-modal-toggle="editRateModal-{{ $chancelleryRate->id }}">{{ __('Edit') }}
+                                data-modal-toggle="editRateModal-{{ $chancelleryRate->id }}">{{ __('Update') }}
                             </button>
                         </div>
                     </div>
