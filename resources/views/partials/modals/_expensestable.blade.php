@@ -314,9 +314,21 @@
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                        <input type="text" name="expenses[{{ $index }}][description]"
-                                            value="{{ $expense->description }}"
-                                            class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
+                                        @switch($expense->type)
+                                                @case('visa')
+                                                @case('inscription')
+                                                    <input type="text" name="expenses[{{ $index }}][meal_location]"
+                                                        value="{{ $expense->meal_location }}"
+                                                        class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
+                                                @break
+
+                                                @case('other')
+                                                    <input type="text" name="expenses[{{ $index }}][description]"
+                                                        value="{{ $expense->description }}"
+                                                        class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
+                                                @break
+                                            @endswitch
+
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
