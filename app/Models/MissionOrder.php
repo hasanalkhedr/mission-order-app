@@ -91,7 +91,12 @@ public static function generateOrderNumber()
         'end_time2',
         'expense_reimbursement_total',
         'expense_direct_total',
-        'expense_grand_total'
+        'expense_grand_total',
+        'acc_reimbursement_amount',
+        'acc_reimbursement_currency',
+        'acc_direct_amount',
+        'acc_direct_currency',
+        'acc_total_inr',
     ];
     protected $casts = [
         'order_date' => 'date',

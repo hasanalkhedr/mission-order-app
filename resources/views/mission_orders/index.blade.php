@@ -46,7 +46,7 @@
                     </th>
                     <th scope="col" class="py-3 px-6 blue-color">
                         <div class="flex flex-col">
-                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Pays') }}</span>
+                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Lieu de la mission') }}</span>
                             <select x-model="filters.country"
                                 class="mt-1 w-full border-gray-300 rounded-md shadow-sm text-sm">
                                 <option value="">All Countries</option>
@@ -132,7 +132,8 @@
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $missionOrder->bareme->pays }}|{{ $missionOrder->bareme->currency }}
+                                {{-- {{ $missionOrder->bareme->pays }}|{{ $missionOrder->bareme->currency }} --}}
+                                {{ $missionOrder->arrive_location }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">

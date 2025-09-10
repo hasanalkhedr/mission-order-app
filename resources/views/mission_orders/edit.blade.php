@@ -416,7 +416,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate->eur_rate }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 
@@ -424,6 +424,7 @@
                 function updateMaxAdvance() {
                     const maxAdvance = calculateMaxAdvance();
                     maxAdvanceSpan.textContent = maxAdvance + ' Roupie indienne (INR)';
+                    advanceAmountInput.value = maxAdvance ? maxAdvance : 0;
                 }
 
                 // Function to validate advance amount

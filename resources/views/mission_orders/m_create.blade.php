@@ -213,8 +213,8 @@
         </div> --}}
         <x-form-divider>Frais Mission</x-form-divider>
         @include('partials.modals._expensestable')
-        <x-form-divider><!-- Hebergement --></x-form-divider>
-        @include('partials.modals._ijmtable')
+        {{-- <x-form-divider><!-- Hebergement --></x-form-divider>
+        @include('partials.modals._ijmtable') --}}
         <div class="-mx-3 mb-2">
             <div class="w-full px-3 text-end">
                 <x-primary-button data-modal-toggle="draftOrSubmitModal" type="button">Soumettre</x-primary-button>

@@ -102,9 +102,9 @@ Route::put('/signatures/{signature}/approve', [SignatureController::class, 'appr
 
 // Chancellery Rate Routes
 Route::get('/chancelleryRates', [ChancelleryRateController::class, 'index'])->middleware(['auth'])->name('chancelleryRates.index');
-Route::post('/chancelleryRates', [ChancelleryRateController::class, 'store'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.store');
-Route::put('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'update'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.update');
-Route::delete('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'destroy'])->middleware(['auth', 'role:controller'])->name('chancelleryRates.destroy');
+Route::post('/chancelleryRates', [ChancelleryRateController::class, 'store'])->middleware(['auth', 'role:controller,sg'])->name('chancelleryRates.store');
+Route::put('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'update'])->middleware(['auth', 'role:controller,sg'])->name('chancelleryRates.update');
+Route::delete('/chancelleryRates/{chancelleryRate}', [ChancelleryRateController::class, 'destroy'])->middleware(['auth', 'role:controller,sg'])->name('chancelleryRates.destroy');
 Route::put('/chancelleryRates/{chancelleryRate}/approve', [ChancelleryRateController::class, 'approveChancelleryRate'])->middleware(['auth', 'role:sg'])->name('chancelleryRates.approve_chancelleryRate');
 // Authentication routes (Laravel Breeze)
 require __DIR__ . '/auth.php';

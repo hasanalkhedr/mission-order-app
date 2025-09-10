@@ -37,12 +37,17 @@ class MissionOrderController extends Controller
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id','desc')->paginate(10);
         }
-        $countries = MissionOrder::with('bareme')
-            ->get()
-            ->pluck('bareme.pays')
+        $countries = MissionOrder::get()
+            ->pluck('arrive_location')
             ->unique()
             ->filter()
             ->values();
+        // $countries = MissionOrder::with('bareme')
+        //     ->get()
+        //     ->pluck('bareme.pays')
+        //     ->unique()
+        //     ->filter()
+        //     ->values();
         $employees = Employee::select('id', 'first_name', 'last_name')->get();
 
         return view('mission_orders.index', compact('missionOrders', 'search', 'countries', 'employees'));
@@ -71,7 +76,7 @@ class MissionOrderController extends Controller
         if (auth()->user()->employee->allow_order) {
             $baremes = Bareme::where('pays','LIKE',  '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $mission_number = MissionOrder::generateOrderNumber();
-            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            $chancellery_rate = ChancelleryRate::currentRate();
             return view('mission_orders.create', compact('baremes', 'mission_number', 'chancellery_rate'));
         } else {
             return abort(403, 'You are not authorized to do this');
@@ -116,7 +121,7 @@ class MissionOrderController extends Controller
                     }
 
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->eur_rate;
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -202,7 +207,7 @@ $expenses = $request->input('expenses') ?? [];
     {
         if ($missionOrder->employee_id == auth()->user()->employee->id) {
             $baremes = Bareme::all();
-            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            $chancellery_rate = ChancelleryRate::rateOfDate($missionOrder->start_date);
             return view('mission_orders.edit', compact('missionOrder', 'baremes', 'chancellery_rate'));
         } else {
             return abort(403, 'Unauthorized Action, you are not allowed to modify other employees missions');
@@ -231,7 +236,7 @@ $expenses = $request->input('expenses') ?? [];
                 'nullable',
                 'numeric',
                 'min:0',
-                function ($attribute, $value, $fail) use ($request) {
+                function ($attribute, $value, $fail) use ($request, $missionOrder) {
                     $bareme = Bareme::find($request->bareme_id);
                     $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
                     $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
@@ -246,7 +251,7 @@ $expenses = $request->input('expenses') ?? [];
                     }
 
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate;
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -383,12 +388,17 @@ $expenses = $request->input('expenses') ?? [];
                     return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
                 })->orderBy('id','desc')->paginate(10);
         }
-        $countries = MissionOrder::with('bareme')
-            ->get()
-            ->pluck('bareme.pays')
+        $countries = MissionOrder::get()
+            ->pluck('arrive_location')
             ->unique()
             ->filter()
             ->values();
+        // $countries = MissionOrder::with('bareme')
+        //     ->get()
+        //     ->pluck('bareme.pays')
+        //     ->unique()
+        //     ->filter()
+        //     ->values();
         $employees = Employee::select('id', 'first_name', 'last_name')->get();
 
         return view('mission_orders.m_index', compact('missionOrders', 'search', 'countries', 'employees'));
@@ -403,7 +413,7 @@ $expenses = $request->input('expenses') ?? [];
             $employee->hasRole('controller') ||
             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id)) {
-            $current_rate = ChancelleryRate::currentRate()->rate;
+            $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
             return view('mission_orders.m_show', compact('missionOrder', 'current_rate'));
         } else {
             abort(404);
@@ -411,17 +421,17 @@ $expenses = $request->input('expenses') ?? [];
     }
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
-        $current_rate = ChancelleryRate::currentRate();
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
         return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
     }
     public function m_update(Request $request, MissionOrder $missionOrder)
     {
-       // dd($request->input('expenses'),$request->input('totals'));
+        //dd($request->input('expenses'));
         $request->validate([
             //'no_ded_accomodation' => 'required|numeric',
             //'no_ded_meals' => 'required|numeric',
             //'advance' => 'required|numeric',
-            'total_amount' => 'required|decimal:0,4',
+            //'total_amount' => 'required|decimal:0,4',
             'memor_date' => 'required|date|after_or_equal:end_date',
 
             'expenses' => 'required|array',
@@ -441,11 +451,29 @@ $expenses = $request->input('expenses') ?? [];
             'totals.grand_total' => 'required|numeric|min:0',
         ]);
         $expenses = $request->input('expenses');
+        $deletedExpenses = array_diff($missionOrder->expenses->pluck('id')->toArray(),array_column($expenses,'expense_id'));
+        foreach($deletedExpenses as $expenseID) {
+            Expense::find($expenseID)->delete();
+        }
         $totals = $request->input('totals');
-        foreach($expenses as $expense) {
+        foreach($expenses as $index => $expense) {
             if(isset($expense['expense_id'])) {
                 $storedExpense = Expense::find($expense['expense_id']);
                 $storedExpense->update($expense);
+            } else if($expense['type'] === 'accommodation') {
+                $missionOrder->update([
+                    'acc_reimbursement_amount' => $expense['reimbursement_amount'],
+                    'acc_reimbursement_currency' => $expense['reimbursement_currency'],
+                    'acc_direct_amount' => $expense['direct_amount'],
+                    'acc_direct_currency' => $expense['direct_currency'],
+                    'acc_total_inr' => $expense['total_inr'],
+                ]);
+            } else if($index !== 'INDEX'){
+
+                Expense::create(array_merge($expense,
+                ['mission_order_id'=>$missionOrder->id,
+                'expense_date'=>$missionOrder->memor_date,
+                'expense_document'=> '']));
             }
         }
 

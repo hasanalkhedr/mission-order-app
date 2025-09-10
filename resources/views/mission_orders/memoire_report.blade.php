@@ -112,7 +112,7 @@
                 </tbody>
             </table>
 
-            <!-- IJM Table -->
+            {{-- <!-- IJM Table -->
             <table class="table-auto w-full text-left">
                 <thead>
                     <tr class="bg-blue-200">
@@ -126,7 +126,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
 
             <!-- Expense Table -->
             <table class="table-auto w-full text-left">

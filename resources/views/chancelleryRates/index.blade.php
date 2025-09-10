@@ -6,7 +6,7 @@
         {{ __('Chancellery Rates') }}
     </div>
     <div>
-        @if (auth()->user()->employee->hasRole('controller') && !App\Models\ChancelleryRate::hasCurrentRate())
+        @if ((auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg')) && !App\Models\ChancelleryRate::hasCurrentRate())
             <button class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg"
                 data-modal-toggle="createRateModal">
                 {{ __('Add Chancellery Rates') }}
@@ -31,7 +31,7 @@
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Status') }}
                     </th>
-                    @if (auth()->user()->employee->hasRole('controller'))
+                    @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6 blue-color">
                             <span class="sr-only">{{ __('Edit') }}</span>
                         </th>
@@ -74,7 +74,7 @@
                             </span>
                         </td>
 
-                        @if ($chancelleryRate->status == 'draft' && auth()->user()->employee->hasRole('controller'))
+                        @if ($chancelleryRate->status == 'draft' && (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg')))
                         <td class="py-4 px-6 text-right border-b">
                             <button class="font-medium hover:underline blue-color" type="button"
                                 data-modal-toggle="editRateModal-{{ $chancelleryRate->id }}">
