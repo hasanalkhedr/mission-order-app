@@ -222,11 +222,11 @@
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                         <input type="text" name="expenses[{{ $index }}][transport_type]"
-                                            value="{{ $expense->transport_type }}"
+                                            value="{{ __('expense.transport_types.'.$expense->transport_type) }}"
                                             class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
                                             readonly>
-                                        <span
-                                            class="text-xs">{{ $expense->transport_type === 'car_rental_with_driver' ? '(' . ($expense->passenger == 1 ? __('passenger') . ',' : '') . ($expense->distance == 1 ? __('distance') . ',' : '') . ($expense->material == 1 ? __('material') . ',' : '') . ($expense->visits == 1 ? __('visits') : '') . ')' : '' }}</span>
+                                        <p
+                                            class="text-xs">{{ $expense->transport_type === 'car_rental_with_driver' ? '(' . ($expense->passenger == 1 ? __('passenger') . ',' : '') . ($expense->distance == 1 ? __('distance') . ',' : '') . ($expense->material == 1 ? __('material') . ',' : '') . ($expense->visits == 1 ? __('visits') : '') . ')' : '' }}</p>
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
