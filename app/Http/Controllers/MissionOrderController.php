@@ -130,7 +130,7 @@ class MissionOrderController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,extra_meal,visa,inscription,other',
+            'expenses.*.type' => 'nullable|string|in:transport,extra_meal,visa,Receptions,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
             'endMission_location' => 'nullable',
@@ -260,7 +260,7 @@ $expenses = $request->input('expenses') ?? [];
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,visa,inscription,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,visa,Receptions,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
         ]);
@@ -437,7 +437,7 @@ $expenses = $request->input('expenses') ?? [];
 //             'memor_date' => 'required|date|after_or_equal:end_date',
 
 //             'expenses' => 'required|array',
-//             'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,inscription,other',
+//             'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,Receptions,other',
 //             'expenses.*.expense_id' => 'nullable|integer|exists:expenses,id',
 //             'expenses.*.transport_type' => 'required_if:expenses.*.type,transport|string',
 //             'expenses.*.description' => 'nullable|string|max:255',
@@ -520,7 +520,7 @@ $expenses = $request->input('expenses') ?? [];
     $validator = Validator::make($request->all(), [
         'memor_date' => 'required|date|after_or_equal:end_date',
         'expenses' => 'required|array',
-        'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,inscription,other',
+        'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,Receptions,other',
         'expenses.*.expense_id' => 'nullable|integer|exists:expenses,id',
         'expenses.*.transport_type' => 'required_if:expenses.*.type,transport|string',
         'expenses.*.description' => 'nullable|string|max:255',

@@ -49,6 +49,12 @@
                         <td class="w-1/5">Objet/Motfits:</td>
                         <td class="w-4/5">{{ $missionOrder->purpose }}</td>
                     </tr>
+                    @if($missionOrder->conge)
+                    <tr>
+                        <td class="w-1/3">CONGE PENDANT MISSION:</td>
+                        <td class="w-2/3">{{ $missionOrder->conge }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <table class="table-auto w-full text-left border border-gray-300">
                             <thead>
@@ -158,8 +164,12 @@
                         <td class="w-1/6">{{ $missionOrder->advance >0 ? $missionOrder->advance : 'NON' }}</td>
                     </tr>
                     <tr>
-                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
+                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
                         <td class="w-1/6">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge des frais de transport (Taxi/Uber, Transport public, etc..):</td>
+                        <td class="w-1/6">{{ $missionOrder->charge1 == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
                     <tr>
                         <td class="w-5/6">Prise en charge frais d'hébergement:</td>
@@ -169,10 +179,10 @@
                         <td class="w-5/6">Prise en charge frais de repas:</td>
                         <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td class="w-5/6">Frais de réception :</td>
                         <td class="w-1/6">{{ $missionOrder->reception_fees ? $missionOrder->reception_fees : 'NON'}}</td>
-                    </tr>
+                    </tr> --}}
                     <tr>
                         <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
                     </tr>

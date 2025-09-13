@@ -38,7 +38,7 @@
                                     {{-- <option value="extra_accomodation">Hébergement</option> --}}
                                     <option value="extra_meal">Repas</option>
                                     <option value="visa">Visa</option>
-                                    <option value="inscription">Inscription</option>
+                                    <option value="Receptions">Receptions</option>
                                     <option value="other">Autre</option>
                                 </x-select-input>
                             </div>
@@ -126,11 +126,11 @@
                                     </x-select-input>
                                 </div>
                             </div>
-                            <div id="inscriptionFields" class="hidden">
+                            <div id="ReceptionsFields" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-select-input id="meal_location" name="meal_location">
                                         <option value="">--sélectionner--</option>
-                                        <option value="Frais d’inscription">Frais d’inscription</option>
+                                        <option value="Frais d’Receptions">Frais d’Receptions</option>
                                     </x-select-input>
                                 </div>
                             </div>
@@ -288,7 +288,7 @@
             if (!document.getElementById('transport_type').value.trim()) {
                 allFilled = false;
             }
-        } else if (expenseType === 'extra_meal' || expenseType === 'visa' || expenseType === 'inscription') {
+        } else if (expenseType === 'extra_meal' || expenseType === 'visa' || expenseType === 'Receptions') {
             if (!document.getElementById('meal_location').value.trim() ||
                 !document.getElementById('meal_participants').value.trim()) {
                 allFilled = false;
@@ -311,7 +311,7 @@
         const transportFields = document.getElementById('transportFields');
         const mealFields = document.getElementById('mealFields');
         const visaFields = document.getElementById('visaFields');
-        const inscriptionFields = document.getElementById('inscriptionFields');
+        const ReceptionsFields = document.getElementById('ReceptionsFields');
         // const herFields = document.getElementById('herFields');
         const other = document.getElementById('other');
         const reasonsTable = document.getElementById('reasonsTable');
@@ -320,7 +320,7 @@
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
         visaFields.classList.add('hidden');
-        inscriptionFields.classList.add('hidden');
+        ReceptionsFields.classList.add('hidden');
         // herFields.classList.add('hidden');
         other.classList.add('hidden');
         reasonsTable.classList.add('hidden'); // Hide reasons table by default
@@ -353,8 +353,8 @@
             // Set required attributes for meal fields
             document.getElementById('transport_type').required = false;
             document.getElementById('meal_location').required = true;
-        } else if (expenseType === 'inscription') {
-            inscriptionFields.classList.remove('hidden');
+        } else if (expenseType === 'Receptions') {
+            ReceptionsFields.classList.remove('hidden');
             // Set required attributes for meal fields
             document.getElementById('transport_type').required = false;
             document.getElementById('meal_location').required = true;

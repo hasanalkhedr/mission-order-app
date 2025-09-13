@@ -4,42 +4,46 @@
     <div class="-m-1.5 overflow-x-auto">
         <div class="p-1.5 min-w-full inline-block align-middle">
             <div class="overflow-hidden">
+                <!-- Updated Upload Modal -->
                 <div id="photo-upload-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
                     <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-                        <h3 class="text-lg font-semibold mb-4">Upload Expense Receipt</h3>
-                        <!-- Image Preview -->
-                        <div id="image-preview-container" class="mb-4 hidden">
-                            <img id="image-preview" class="w-full h-64 object-contain border rounded-md">
+                        <h3 class="text-lg font-semibold mb-4">Télécharger le justificatif de dépenses</h3>
+                        <!-- File Preview -->
+                        <div id="file-preview-container" class="mb-4 hidden">
+                            <img id="image-preview" class="w-full h-64 object-contain border rounded-md hidden">
+                            <iframe id="pdf-preview" class="w-full h-64 border rounded-md hidden"></iframe>
                         </div>
                         <!-- Upload Controls -->
                         <div class="flex flex-col items-center mb-4">
                             <label for="expense-receipt" class="cursor-pointer bg-blue-100 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-200 mb-2">
-                                <i class="fas fa-camera mr-2"></i>Select Image
+                                <i class="fas fa-file-upload mr-2"></i>Sélectionner le fichier
                             </label>
-                            <input type="file" id="expense-receipt" accept="image/*" class="hidden">
+                            <input type="file" id="expense-receipt" accept="image/*,.pdf" class="hidden">
                             <p id="file-name" class="text-sm text-gray-500 mt-2"></p>
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" id="cancel-upload" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                            <button type="button" id="confirm-upload" class="px-4 py-2 bg-blue-600 text-white rounded">Upload</button>
+                            <button type="button" id="cancel-upload" class="px-4 py-2 bg-gray-300 rounded">Annuler</button>
+                            <button type="button" id="confirm-upload" class="px-4 py-2 bg-blue-600 text-white rounded">Télécharger</button>
                         </div>
                     </div>
                 </div>
-                <!-- Image View Modal -->
-                <div id="image-view-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+
+                <!-- Updated View Modal -->
+                <div id="file-view-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
                     <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
-                        <h3 class="text-lg font-semibold mb-4">Expense Receipt</h3>
+                        <h3 class="text-lg font-semibold mb-4">Reçu de dépenses</h3>
                         <div class="mb-4 flex justify-center">
-                            <img id="viewed-image" class="max-w-full max-h-96 object-contain border rounded-md">
+                            <img id="viewed-image" class="max-w-full max-h-96 object-contain border rounded-md hidden">
+                            <iframe id="viewed-pdf" class="w-full h-96 border rounded-md hidden"></iframe>
                         </div>
                         <div class="flex justify-between">
-                            <button type="button" id="replace-image" class="px-4 py-2 bg-yellow-500 text-white rounded">
-                                <i class="fas fa-sync-alt mr-2"></i>Replace
+                            <button type="button" id="replace-file" class="px-4 py-2 bg-yellow-500 text-white rounded">
+                                <i class="fas fa-sync-alt mr-2"></i>Remplacer
                             </button>
                             <div class="flex space-x-2">
-                                <button type="button" id="close-viewer" class="px-4 py-2 bg-gray-300 rounded">Close</button>
-                                <button type="button" id="download-image" class="px-4 py-2 bg-green-600 text-white rounded">
-                                    <i class="fas fa-download mr-2"></i>Download
+                                <button type="button" id="close-viewer" class="px-4 py-2 bg-gray-300 rounded">Fermer</button>
+                                <button type="button" id="download-file" class="px-4 py-2 bg-green-600 text-white rounded">
+                                    <i class="fas fa-download mr-2"></i>Télécharger
                                 </button>
                             </div>
                         </div>
@@ -274,7 +278,7 @@
                             </tr>
 
                             <!-- Other Expenses -->
-                            @foreach ($missionOrder->expenses->whereIn('type', ['visa', 'inscription', 'other']) as $expense)
+                            @foreach ($missionOrder->expenses->whereIn('type', ['visa', 'Receptions', 'other']) as $expense)
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100 {{ $loop->last ? 'last-row' : '' }}">
                                     <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
                                         <span class="expense-badge bg-purple-100 text-purple-800">
@@ -283,8 +287,8 @@
                                                     Frais de visa
                                                 @break
 
-                                                @case('inscription')
-                                                    Frais d'inscription
+                                                @case('Receptions')
+                                                    Frais d'Receptions
                                                 @break
 
                                                 @case('other')
@@ -298,7 +302,7 @@
                                     <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                         @switch($expense->type)
                                             @case('visa')
-                                            @case('inscription')
+                                            @case('Receptions')
                                                 <input type="text" name="expenses[{{ $index }}][meal_location]" value="{{ $expense->meal_location }}" class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             @break
 
@@ -461,21 +465,23 @@
                         const otherExpensesHeader = document.querySelector('.last-row');
                         const newExpenseTemplate = document.getElementById('new-expense-template');
 
-                        // Photo Upload Modal Elements
+                        // File Upload Modal Elements
                         const photoModal = document.getElementById('photo-upload-modal');
-                        const imagePreviewContainer = document.getElementById('image-preview-container');
+                        const filePreviewContainer = document.getElementById('file-preview-container');
                         const imagePreview = document.getElementById('image-preview');
+                        const pdfPreview = document.getElementById('pdf-preview');
                         const expenseReceiptInput = document.getElementById('expense-receipt');
                         const fileName = document.getElementById('file-name');
                         const cancelUploadBtn = document.getElementById('cancel-upload');
                         const confirmUploadBtn = document.getElementById('confirm-upload');
 
-                        // Image View Modal Elements
-                        const imageViewModal = document.getElementById('image-view-modal');
+                        // File View Modal Elements
+                        const fileViewModal = document.getElementById('file-view-modal');
                         const viewedImage = document.getElementById('viewed-image');
-                        const replaceImageBtn = document.getElementById('replace-image');
+                        const viewedPdf = document.getElementById('viewed-pdf');
+                        const replaceFileBtn = document.getElementById('replace-file');
                         const closeViewerBtn = document.getElementById('close-viewer');
-                        const downloadImageBtn = document.getElementById('download-image');
+                        const downloadFileBtn = document.getElementById('download-file');
 
                         // Buttons
                         const viewReceiptBtns = document.querySelectorAll('.view-receipt-btn');
@@ -485,13 +491,13 @@
                         let currentExpenseIndex = null;
                         let currentFile = null;
 
-                        // Update the image viewer to handle existing receipts
+                        // Update the file viewer to handle existing receipts
                         viewReceiptBtns.forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const hasReceipt = this.getAttribute('data-has-receipt') === 'true';
 
                                 if (hasReceipt) {
-                                    // Show the image viewer modal
+                                    // Show the file viewer modal
                                     currentExpenseType = this.getAttribute('data-expense-type');
                                     currentExpenseId = this.getAttribute('data-expense-id');
                                     currentExpenseIndex = this.getAttribute('data-expense-index');
@@ -502,13 +508,23 @@
                                         const fileInput = document.querySelector(
                                             `input[name="expenses[${currentExpenseIndex}][receipt]"]`);
                                         if (fileInput && fileInput.files && fileInput.files[0]) {
-                                            viewedImage.src = URL.createObjectURL(fileInput.files[0]);
-                                            imageViewModal.classList.remove('hidden');
+                                            const file = fileInput.files[0];
+                                            displayFileInViewer(file);
+                                            fileViewModal.classList.remove('hidden');
                                         }
                                     } else {
                                         // This is an existing file from the server
-                                        viewedImage.src = '/storage/' + receiptPath;
-                                        imageViewModal.classList.remove('hidden');
+                                        // Check if it's a PDF or image
+                                        if (receiptPath.toLowerCase().endsWith('.pdf')) {
+                                            viewedPdf.src = '/storage/' + receiptPath;
+                                            viewedPdf.classList.remove('hidden');
+                                            viewedImage.classList.add('hidden');
+                                        } else {
+                                            viewedImage.src = '/storage/' + receiptPath;
+                                            viewedImage.classList.remove('hidden');
+                                            viewedPdf.classList.add('hidden');
+                                        }
+                                        fileViewModal.classList.remove('hidden');
                                     }
                                 } else {
                                     // Show the upload modal
@@ -528,16 +544,57 @@
                                 currentFile = file;
                                 fileName.textContent = file.name;
 
-                                // Show preview
-                                const reader = new FileReader();
-                                reader.onload = function(e) {
-                                    imagePreview.src = e.target.result;
-                                    imagePreviewContainer.classList.remove('hidden');
-                                };
-                                reader.readAsDataURL(file);
+                                // Show preview based on file type
+                                displayFilePreview(file);
                             }
                         });
 
+                        // Function to display file preview
+                        function displayFilePreview(file) {
+                            const reader = new FileReader();
+
+                            if (file.type === 'application/pdf') {
+                                // Handle PDF preview
+                                reader.onload = function(e) {
+                                    pdfPreview.src = e.target.result;
+                                    pdfPreview.classList.remove('hidden');
+                                    imagePreview.classList.add('hidden');
+                                    filePreviewContainer.classList.remove('hidden');
+                                };
+                                reader.readAsDataURL(file);
+                            } else if (file.type.startsWith('image/')) {
+                                // Handle image preview
+                                reader.onload = function(e) {
+                                    imagePreview.src = e.target.result;
+                                    imagePreview.classList.remove('hidden');
+                                    pdfPreview.classList.add('hidden');
+                                    filePreviewContainer.classList.remove('hidden');
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                // Unsupported file type
+                                alert('Please select an image or PDF file');
+                                this.value = '';
+                                filePreviewContainer.classList.add('hidden');
+                                fileName.textContent = '';
+                                currentFile = null;
+                            }
+                        }
+
+                        // Function to display file in viewer
+                        function displayFileInViewer(file) {
+                            if (file.type === 'application/pdf') {
+                                viewedPdf.src = URL.createObjectURL(file);
+                                viewedPdf.classList.remove('hidden');
+                                viewedImage.classList.add('hidden');
+                            } else {
+                                viewedImage.src = URL.createObjectURL(file);
+                                viewedImage.classList.remove('hidden');
+                                viewedPdf.classList.add('hidden');
+                            }
+                        }
+
+                        // Confirm upload button handler
                         confirmUploadBtn.addEventListener('click', function() {
                             if (!currentFile) {
                                 alert('Please select a file to upload');
@@ -585,16 +642,16 @@
                             viewBtn.classList.add('bg-green-100', 'text-green-600');
                             viewBtn.innerHTML = '<i class="fas fa-receipt"></i>';
 
-                            // Show the uploaded image in the viewer
-                            viewedImage.src = URL.createObjectURL(currentFile);
+                            // Show the uploaded file in the viewer
+                            displayFileInViewer(currentFile);
 
                             // Close upload modal and open viewer
                             photoModal.classList.add('hidden');
-                            imageViewModal.classList.remove('hidden');
+                            fileViewModal.classList.remove('hidden');
 
                             // Reset upload modal
                             expenseReceiptInput.value = '';
-                            imagePreviewContainer.classList.add('hidden');
+                            filePreviewContainer.classList.add('hidden');
                             fileName.textContent = '';
                             currentFile = null;
                         });
@@ -603,28 +660,41 @@
                         cancelUploadBtn.addEventListener('click', function() {
                             photoModal.classList.add('hidden');
                             expenseReceiptInput.value = '';
-                            imagePreviewContainer.classList.add('hidden');
+                            filePreviewContainer.classList.add('hidden');
                             fileName.textContent = '';
                             currentFile = null;
                         });
 
-                        // Replace image button
-                        replaceImageBtn.addEventListener('click', function() {
-                            imageViewModal.classList.add('hidden');
+                        // Replace file button
+                        replaceFileBtn.addEventListener('click', function() {
+                            fileViewModal.classList.add('hidden');
                             photoModal.classList.remove('hidden');
                         });
 
                         // Close viewer button
                         closeViewerBtn.addEventListener('click', function() {
-                            imageViewModal.classList.add('hidden');
+                            fileViewModal.classList.add('hidden');
                         });
 
-                        // Download image button
-                        downloadImageBtn.addEventListener('click', function() {
-                            if (viewedImage.src) {
+                        // Download file button
+                        downloadFileBtn.addEventListener('click', function() {
+                            let downloadUrl;
+                            let fileName;
+
+                            if (viewedImage.classList.contains('hidden') && !viewedPdf.classList.contains('hidden')) {
+                                // PDF is being viewed
+                                downloadUrl = viewedPdf.src;
+                                fileName = `expense-receipt-${currentExpenseType}-${currentExpenseId}.pdf`;
+                            } else {
+                                // Image is being viewed
+                                downloadUrl = viewedImage.src;
+                                fileName = `expense-receipt-${currentExpenseType}-${currentExpenseId}.jpg`;
+                            }
+
+                            if (downloadUrl) {
                                 const link = document.createElement('a');
-                                link.href = viewedImage.src;
-                                link.download = `expense-receipt-${currentExpenseType}-${currentExpenseId}.jpg`;
+                                link.href = downloadUrl;
+                                link.download = fileName;
                                 document.body.appendChild(link);
                                 link.click();
                                 document.body.removeChild(link);
@@ -636,17 +706,17 @@
                             if (event.target === photoModal) {
                                 photoModal.classList.add('hidden');
                                 expenseReceiptInput.value = '';
-                                imagePreviewContainer.classList.add('hidden');
+                                filePreviewContainer.classList.add('hidden');
                                 fileName.textContent = '';
                                 currentFile = null;
                             }
-                            if (event.target === imageViewModal) {
-                                imageViewModal.classList.add('hidden');
+                            if (event.target === fileViewModal) {
+                                fileViewModal.classList.add('hidden');
                             }
                         });
 
                         // Track the current index for new expenses
-                        let currentIndex = {{ $index }};
+                        let currentIndex = 10; // Starting index
 
                         let exchangeRates = {
                             EUR: parseFloat(eurToInrInput.value),
@@ -676,8 +746,8 @@
                             input.addEventListener('input', function() {
                                 const row = this.closest('tr');
                                 const noMeals = parseInt(this.value) || 0;
-                                const mealCost = {{ $missionOrder->bareme->meal_cost }};
-                                const eurRate = {{ $current_rate->eur_rate }};
+                                const mealCost = 25; // Example value
+                                const eurRate = parseFloat(eurToInrInput.value);
 
                                 // Calculate reimbursement amount
                                 const reimbursementAmount = noMeals * mealCost * eurRate;
@@ -734,6 +804,14 @@
                                 }
                             });
 
+                            // Add receipt upload functionality to the new row
+                            newRow.querySelector('.view-receipt-btn').addEventListener('click', function() {
+                                currentExpenseType = this.getAttribute('data-expense-type');
+                                currentExpenseId = this.getAttribute('data-expense-id');
+                                currentExpenseIndex = this.getAttribute('data-expense-index');
+                                photoModal.classList.remove('hidden');
+                            });
+
                             // Insert the new row before the total row
                             otherExpensesHeader.insertAdjacentElement('afterend', newRow);
                             // Increment the index for the next new row
@@ -761,9 +839,8 @@
                             const totalTD = row.querySelector('.total-td');
                             const totalElement = row.querySelector('.total-inr');
                             const totalInput = totalTD.querySelector('input[type="hidden"]');
-                            //console.log(totalInput);
-                            if (!reimbursementInput || !reimbursementCurrency || !directInput || !directCurrency || !
-                                totalElement) return;
+
+                            if (!reimbursementInput || !reimbursementCurrency || !directInput || !directCurrency || !totalElement) return;
 
                             let reimbursementValue = parseFloat(reimbursementInput.value) || 0;
                             let directValue = parseFloat(directInput.value) || 0;
@@ -778,7 +855,7 @@
 
                             const totalINR = reimbursementINR + directINR;
                             totalElement.textContent = totalINR.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                            totalInput.value = totalINR.toFixed(2);
+                            if (totalInput) totalInput.value = totalINR.toFixed(2);
                             updateAllTotals();
                         }
 

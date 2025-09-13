@@ -172,11 +172,60 @@
         </tr>
     </thead>
     <tbody>
+        <!-- Repas Row -->
+        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                <span class="expense-badge bg-green-100 text-green-800">Repas</span>
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{ $missionOrder->no_meals }}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                INR
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                --
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                --
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+            </td>
+        </tr>
+
+        <!-- Hébergement Row -->
+        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{ $missionOrder->no_accomodation }}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{$missionOrder->acc_reimbursement_amount}}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{$missionOrder->acc_reimbursement_currency}}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{$missionOrder->acc_direct_amount}}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{$missionOrder->acc_direct_currency}}
+            </td>
+            <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                {{ $missionOrder->acc_total_inr }}
+            </td>
+        </tr>
+
         @forelse ($missionOrder->expenses as $expense)
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                 <!-- Type -->
-                <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                     {{ __($expense->type) }}
                 </td>
 
@@ -184,12 +233,12 @@
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                     @if ($expense->type === 'transport')
-                        {{ $expense->transport_type }}
+                        {{ __('expense.transport_types.'. $expense->transport_type) }}<br/>
                         @if($expense->transport_type === 'car_rental_with_driver')
-                        ({{$expense->passenger == 1 ? __('passenger').',' : ''}}
-                        {{$expense->distance == 1 ? __('distance').',' : ''}}
-                        {{$expense->material == 1 ? __('material').',' : ''}}
-                        {{$expense->visits == 1 ? __('visits') : ''}})
+                        {{$expense->passenger == 1 ? __('passenger') : ''}}
+                        {{$expense->distance == 1 ? __('distance') : ''}}<br/>
+                        {{$expense->material == 1 ? __('material') : ''}}
+                        {{$expense->visits == 1 ? __('visits') : ''}}
                         @endif
                     @else
                         {{ $expense->meal_location }}

@@ -39,7 +39,7 @@
                                     {{-- <option value="extra_accomodation" @selected(old('type', $expense->type) == 'extra_accomodation')>Hébergement</option> --}}
                                     <option value="extra_meal" @selected(old('type', $expense->type) == 'extra_meal')>Repas</option>
                                     <option value="visa" @selected(old('type', $expense->type) == 'visa')>Visa</option>
-                                    <option value="inscription" @selected(old('type', $expense->type) == 'inscription')>Inscription</option>
+                                    <option value="Receptions" @selected(old('type', $expense->type) == 'Receptions')>Receptions</option>
                                     <option value="other" @selected(old('type', $expense->type) == 'other')>Autre</option>
                                 </x-select-input>
                             </div>
@@ -126,11 +126,11 @@
                                     </x-select-input>
                                 </div>
                             </div>
-                            <div id="inscriptionFields-edit-{{ $expense->id }}" class="hidden">
+                            <div id="ReceptionsFields-edit-{{ $expense->id }}" class="hidden">
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-select-input id="meal_location-edit-{{ $expense->id }}" name="meal_location">
                                         <option value="">--sélectionner--</option>
-                                        <option @selected(old('meal_location', $expense->meal_location) == 'Frais d’inscription') value="Frais d’inscription">Frais d’inscription</option>
+                                        <option @selected(old('meal_location', $expense->meal_location) == 'Frais d’Receptions') value="Frais d’Receptions">Frais d’Receptions</option>
                                     </x-select-input>
                                 </div>
                             </div>
@@ -275,7 +275,7 @@
         const transportFields = document.getElementById('transportFields-edit-' + expenseId);
         const mealFields = document.getElementById('mealFields-edit-' + expenseId);
         const visaFields = document.getElementById('visaFields-edit-' + expenseId);
-        const inscriptionFields = document.getElementById('inscriptionFields-edit-' + expenseId);
+        const ReceptionsFields = document.getElementById('ReceptionsFields-edit-' + expenseId);
         // const herFields = document.getElementById('herFields-edit-' + expenseId);
         const other = document.getElementById('other-edit-' + expenseId);
         const reasonsTable = document.getElementById('reasonsTable-'+expenseId);
@@ -284,7 +284,7 @@
         transportFields.classList.add('hidden');
         mealFields.classList.add('hidden');
         visaFields.classList.add('hidden');
-        inscriptionFields.classList.add('hidden');
+        ReceptionsFields.classList.add('hidden');
         // herFields.classList.add('hidden');
         other.classList.add('hidden');
         reasonsTable.classList.add('hidden'); // Hide reasons table by default
@@ -320,8 +320,8 @@
             document.getElementById('transport_type-edit-' + expenseId).required = false;
             document.getElementById('meal_location-edit-' + expenseId).required = true;
             //document.getElementById('meal_participants-edit-' + expenseId).required = true;
-        }else if (expenseType === 'inscription') {
-            inscriptionFields.classList.remove('hidden');
+        }else if (expenseType === 'Receptions') {
+            ReceptionsFields.classList.remove('hidden');
             // Set required attributes for meal fields
             document.getElementById('transport_type-edit-' + expenseId).required = false;
             document.getElementById('meal_location-edit-' + expenseId).required = true;

@@ -79,7 +79,7 @@
                         @endif
 
                         <!-- Meal Details (shown only for extra_meal type) -->
-                        @if ($expense->type === 'extra_meal' || $expense->type === 'visa' || $expense->type === 'inscription')
+                        @if ($expense->type === 'extra_meal' || $expense->type === 'visa' || $expense->type === 'Receptions')
                             <div class="meal-details">
                                 <div class="flex flex-wrap -mx-3 mb-0">
                                     <x-label>Lieu du repas</x-label>

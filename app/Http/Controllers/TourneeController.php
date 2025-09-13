@@ -121,7 +121,7 @@ class TourneeController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,visa,inscription,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,visa,Receptions,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
         ]);
@@ -238,7 +238,7 @@ class TourneeController extends Controller
                 }
             ],
             'expenses' => 'nullable|array',
-            'expenses.*.type' => 'nullable|string|in:transport,visa,inscription,extra_meal,other',
+            'expenses.*.type' => 'nullable|string|in:transport,visa,Receptions,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
         ]);
@@ -288,7 +288,7 @@ class TourneeController extends Controller
             TourneeDestination::whereIn('id', $toDelete)->delete();
         }
 
-        $expenses = $request->input('expenses');
+        $expenses = $request->input('expenses') ?? [];
         $existingIds = $tournee->expenses()->pluck('id')->toArray();
         $updatedIds = [];
         foreach ($expenses as $expense) {

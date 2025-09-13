@@ -48,6 +48,12 @@
                         <td class="w-1/5">Objet/Motfits:</td>
                         <td class="w-4/5">{{ $tournee->purpose }}</td>
                     </tr>
+                    @if($tournee->conge)
+                    <tr>
+                        <td class="w-1/3">CONGE PENDANT MISSION:</td>
+                        <td class="w-2/3">{{ $missionOrder->conge }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="w-full">
                             <h2 class="text-md text-center justify-center text-blue-500">Destinations du Tournee</h2>
@@ -120,8 +126,12 @@
                             <td class="w-1/6">{{ $tournee->advance >0 ? $tournee->advance : 'NON' }}</td>
                         </tr>
                     <tr>
-                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train, Taxi/Uber, Transport public):</td>
+                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
                         <td class="w-1/6">{{ $tournee->charge == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge des frais de transport (Taxi/Uber, Transport public, etc..):</td>
+                        <td class="w-1/6">{{ $tournee->charge1 == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
                     <tr>
                         <td class="w-5/6">Prise en charge frais d'hébergement:</td>
@@ -131,10 +141,10 @@
                             <td class="w-5/6">Prise en charge frais de repas:</td>
                             <td class="w-1/6">{{ $tournee->repas == 1 ? 'OUI' : 'NON' }}</td>
                         </tr>
-                    <tr>
+                    {{-- <tr>
                             <td class="w-5/6">Frais de réception :</td>
                             <td class="w-1/6">{{ $tournee->reception_fees ? $tournee->reception_fees : 'NON'}}</td>
-                        </tr>
+                        </tr> --}}
                     <tr>
                         <td colspan="2" class="w-full">{{ $tournee->budget_text }}</td>
                     </tr>

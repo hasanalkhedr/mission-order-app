@@ -97,6 +97,8 @@ public static function generateOrderNumber()
         'acc_direct_amount',
         'acc_direct_currency',
         'acc_total_inr',
+        'conge',
+        'charge1',
     ];
     protected $casts = [
         'order_date' => 'date',

@@ -120,6 +120,50 @@
                 });
             </script>
         </div>
+
+        {{-- CONGE PENDANT MISSION --}}
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-full px-3 py-1">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="if_conge" id="if_conge"
+                        value="1" @checked(old('if_conge', $tournee->conge ? 1 : 0) > 0)
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <span class="ms-2 text-sm font-medium text-blue-500 dark:text-gray-300">CONGE PENDANT MISSION</span>
+                </label>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2" id="conge_container" style="display: none;">
+            <div class="w-1/2 px-3">
+                <textarea class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-1 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                        name="conge" id="conge_input" disabled>{{$tournee->conge}}</textarea>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const congeCheckbox = document.getElementById('if_conge');
+                const congeContainer = document.getElementById('conge_container');
+                const congeInput = document.getElementById('conge_input');
+
+                function toggleconge() {
+                    if (congeCheckbox.checked) {
+                        congeContainer.style.display = 'flex';
+                        congeInput.disabled = false;
+                        congeInput.required = true;
+                    } else {
+                        congeContainer.style.display = 'none';
+                        congeInput.disabled = true;
+                        congeInput.required = false;
+                        congeInput.value = '';
+                    }
+                }
+
+                // Set initial state
+                toggleconge();
+
+                congeCheckbox.addEventListener('change', toggleconge);
+            });
+        </script>
+
         <div x-data="destinationManager({{ $tournee->tourneeDestinations->toJson() }})">
             <!-- Destinations container -->
             <div class="border rounded-md p-2 border-gray-300 mb-4">
@@ -421,12 +465,23 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/2 inline-flex">
-                    Prise en charge des frais de transport<span class="text-red-500">*</span> (Avion, Train, Taxi/Uber, Transport public)
+                    Prise en charge des frais de transport<span class="text-red-500">*</span> (Avion, Train)
                 </x-label>
                 <input required @checked(old('charge', $tournee->charge) == 1) type="radio" value="1" name="charge"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
                 <input required @checked(old('charge', $tournee->charge) == 0) type="radio" value="0" name="charge"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
+            </div>
+            <div class="w-full px-3 py-1">
+                <x-label class="w-1/2 inline-flex">
+                    Prise en charge des frais de transport<span class="text-red-500">*</span> (Taxi/Uber, Transport public, etc..)
+                </x-label>
+                <input required @checked(old('charge1', $tournee->charge1) == 1) type="radio" value="1" name="charge1"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
+                <input required @checked(old('charge1', $tournee->charge1) == 0) type="radio" value="0" name="charge1"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
@@ -455,7 +510,7 @@
             </div>
         </div>
         {{-- Reception Fees --}}
-        <div class="flex flex-wrap -mx-3 mb-2">
+        {{-- <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/2 inline-flex">
                     Frais de réception<span class="text-red-500">*</span>
@@ -502,7 +557,7 @@
                     radio.addEventListener('change', togglereception_fees);
                 });
             });
-        </script>
+        </script> --}}
 
 {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
@@ -530,7 +585,7 @@
                                                 {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="visa">visa</option>
-                                                <option value="inscription">inscription</option>
+                                                <option value="Receptions">Receptions</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
                                         </td>
@@ -618,11 +673,11 @@
                                                     <option value="Frais de Visa">Frais de Visa</option>
                                                 </x-select-input>
                                             </template>
-                                            <template x-if="expense.type === 'inscription'">
+                                            <template x-if="expense.type === 'Receptions'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Frais d'inscription">Frais d'inscription</option>
+                                                    <option value="Frais d'Receptions">Frais d'Receptions</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">
