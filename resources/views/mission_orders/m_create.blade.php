@@ -2,7 +2,7 @@
 @section('title', __('Add Memoire'))
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">MÉMOIRE DE FRAIS</h2>
-    <form action="{{ route('mission_orders.m_update', $missionOrder->id) }}" method="POST" class="w-11/12 items-center">
+    <form id="expense-form" action="{{ route('mission_orders.m_update', $missionOrder->id) }}" method="POST" class="w-11/12 items-center" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="flex flex-wrap -mx-3 mb-2">
