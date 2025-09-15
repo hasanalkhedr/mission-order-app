@@ -69,40 +69,13 @@
                         </table></td>
                     </tr>
                     {{-- <tr>
-                        <td class="w-1/4">Lieu de départ :</td>
-                        <td class="w-1/4">{{ $missionOrder->departure_location }}</td>
-                        <td class="w-1/4">Lieu de retour:</td>
-                        <td class="w-1/4">{{ $missionOrder->return_location }}</td>
-                    </tr>
-                    <tr>
-                        <td class="w-1/4">Lieu de la mission :</td>
-                        <td class="w-1/4">{{ $missionOrder->arrive_location }}</td>
-                        <td class="w-1/4">Pays :</td>
-                        <td class="w-1/4">{{ $missionOrder->bareme->pays }}</td>
-                    </tr>
-                    <tr>
-                        <td class="w-1/4">Date d'arrivée :</td>
-                        <td class="w-1/4">{{ $missionOrder->start_date->format('d/m/Y') }}</td>
-                        <td class="w-1/4">Heure d'arrivée :</td>
-                        <td class="w-1/4">{{ $missionOrder->start_time }}</td>
-                    </tr>
-                    <tr>
-                        <td class="w-1/4">Date de départ :</td>
-                        <td class="w-1/4">{{ $missionOrder->end_date->format('d/m/Y') }}</td>
-                        <td class="w-1/4">Heure de départ :</td>
-                        <td class="w-1/4">{{ $missionOrder->end_time }}</td>
-                    </tr> --}}
-                    {{-- <tr class="bg-gray-200 h-4">
-                        <td colspan="4"></td>
-                    </tr> --}}
-                    <tr>
                         <td class="w-1/4">Nuitées à déduire des IJM :</td>
                         <td class="w-1/4">{{ $missionOrder->no_ded_accomodation }}</td>
                         <input type="hidden" id="no_ded_accomodation" value="{{ $missionOrder->no_ded_accomodation }}">
                         <td class="w-1/4">Repas à déduire :</td>
                         <td class="w-1/4">{{ $missionOrder->no_ded_meals }}</td>
                         <input type="hidden" id="no_ded_meals" value="{{ $missionOrder->no_ded_meals }}">
-                    </tr>
+                    </tr> --}}
                     <tr>
                         <td class="w-1/4">Avance (Roupie indienne) :</td>
                         <td class="w-1/4">{{ $missionOrder->advance }}</td>
@@ -111,22 +84,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            {{-- <!-- IJM Table -->
-            <table class="table-auto w-full text-left">
-                <thead>
-                    <tr class="bg-blue-200">
-                        <th colspan="2" class="px-4">Calcul des Indemnités Journalières de Mission</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="w-full px-[2px]">
-                            @include('partials.modals._ijmtable')
-                        </td>
-                    </tr>
-                </tbody>
-            </table> --}}
 
             <!-- Expense Table -->
             <table class="table-auto w-full text-left">
@@ -151,10 +108,7 @@
             <th scope="col"
                 class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                 Libelle des dépenses à prendre en charge</th>
-            {{-- <th scope="col"
-                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
-                Détails</th> --}}
-            <th scope="col"
+           <th scope="col"
                 class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                 A rembourser à l'agent</th>
             <th scope="col"
@@ -235,10 +189,18 @@
                     @if ($expense->type === 'transport')
                         {{ __('expense.transport_types.'. $expense->transport_type) }}<br/>
                         @if($expense->transport_type === 'car_rental_with_driver')
-                        {{$expense->passenger == 1 ? __('passenger') : ''}}
-                        {{$expense->distance == 1 ? __('distance') : ''}}<br/>
-                        {{$expense->material == 1 ? __('material') : ''}}
-                        {{$expense->visits == 1 ? __('visits') : ''}}
+                            @php
+                            $details = [];
+                            if ($expense->passenger == 1) $details[] = __('passenger');
+                            if ($expense->distance == 1) $details[] = __('distance');
+                            if ($expense->material == 1) $details[] = __('material');
+                            if ($expense->visits == 1) $details[] = __('visits');
+                            @endphp
+                            @if(!empty($details))
+                                @foreach($details as $detail)
+                                    &nbsp;&nbsp;{{ $detail }}@if(!$loop->last)<br>@endif
+                                @endforeach
+                            @endif
                         @endif
                     @else
                         {{ $expense->meal_location }}
@@ -246,24 +208,6 @@
                     @endif
                 </td>
 
-                <!-- Details -->
-                {{-- <td
-                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                    @if ($expense->type === 'transport')
-                        {{ __('expense.transport_types.' . $expense->transport_type) }}
-                        @if ($expense->transport_details)
-                            <span
-                                class="text-gray-500 block text-xxs">{{ Str::limit($expense->transport_details, 15) }}</span>
-                        @endif
-                    @else
-                        {{ Str::limit($expense->meal_location, 15) }}
-                        <span
-                            class="text-gray-500 block text-xxs">{{ $expense->meal_participants }}
-                            pers.</span>
-                    @endif
-                </td> --}}
-
-                <!-- Date -->
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                     {{ number_format($expense->reimbursement_amount,2) }}
@@ -327,24 +271,6 @@
  INR
                 </th>
             </tr>
-        {{-- @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
-            <tr>
-                <th colspan="3"></th>
-                <th
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    SOMME
-                </th>
-                <th
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ number_format($currencyAmount, 2) }}
-                </th>
-                <th
-                    class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ $currency }}
-                </th>
-            </tr>
-        @empty
-        @endforelse --}}
     </tfoot>
 </table>
                                         </div>
@@ -377,23 +303,9 @@
                                 <tr>
                                     <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total }}</td>
                                     <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_direct_total }}
-                                        {{-- <ul>
-                                            @forelse ($missionOrder->getExpensesByCurrency() as $currency=>$currencyAmount)
-                                                <li>{{ $currencyAmount }} {{ $currency }}</li>
-                                            @empty
-                                                <li>0.00</li>
-                                            @endforelse
-                                        </ul> --}}
                                     </td>
                                     <td class="border border-gray-500 w-2/12">{{ $missionOrder->advance }}</td>
                                     <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total - $missionOrder->advance }}
-                                        {{-- <ul>
-                                            @forelse ($missionOrder->getMemoireTotals() as $currency=>$currencyAmount)
-                                                <li>{{ $currencyAmount }} {{ $currency }}</li>
-                                            @empty
-                                                <li>0.00</li>
-                                            @endforelse
-                                        </ul> --}}
                                     </td>
                                 </tr>
                             </table>
@@ -405,45 +317,12 @@
             <!-- Net Total Table -->
             <table class="table-auto w-full text-left">
                 <tr>
-                        <td class="w-1/2 py-[1px]">ARRETE ET LIQUIDE LA SOMME DE :</td>
-                            <td class="w-2/2 py-[1px] font-bold text-red-600">{{ $missionOrder->expense_reimbursement_total - $missionOrder->advance }} INR
-                                <span class="font-normal px-5"> arrondi à </span>{{ round($missionOrder->expense_reimbursement_total - $missionOrder->advance) }}
-                                INR
-                            </td>
-                    </tr>
-                {{-- @if (count($missionOrder->getMemoireTotals()) === 1)
-                    <tr>
-                        <td class="w-1/3 py-[1px]">ARRETE ET LIQUIDE LA SOMME DE :</td>
-                        @foreach ($missionOrder->getMemoireTotals() as $currency => $currencyAmount)
-                            <td class="w-2/3 py-[1px] font-bold text-red-600">{{ $currencyAmount }} {{ $currency }}
-                                <span class="font-normal px-5"> arrondi à </span>{{ round($currencyAmount) }}
-                                {{ $currency }}
-                            </td>
-                        @endforeach
-                    </tr>
-                @else
-                    @foreach ($missionOrder->getMemoireTotals() as $currency => $currencyAmount)
-                        @if ($loop->first)
-                            <tr>
-                                <td class="w-1/4 py-[1px]" rowspan="{{ count($missionOrder->getMemoireTotals()) }}">
-                                    ARRETE ET LIQUIDE LA SOMME DE:</td>
-                                <td class="w-1/4 py-[1px]">{{ $currencyAmount }} {{ $currency }}</td>
-                                <td class="w-1/4 py-[1px]"> <span class="font-normal px-5">
-                                        arrondi à </span></td>
-                                <td class="w-1/4 py-[1px]  font-bold text-red-600">{{ round($currencyAmount) }}
-                                    {{ $currency }}</td>
-                            </tr>
-                        @else
-                            <tr>
-                                <td class="w-1/4 py-[1px]">{{ $currencyAmount }} {{ $currency }}</td>
-                                <td class="w-1/4 py-[1px]"> <span class="font-normal px-5">
-                                        arrondi à </span></td>
-                                <td class="w-1/4 py-[1px] font-bold text-red-600">{{ round($currencyAmount) }}
-                                    {{ $currency }}</td>
-                            </tr>
-                        @endif
-                    @endforeach
-                @endif --}}
+                    <td class="w-1/2 py-[1px]">ARRETE ET LIQUIDE LA SOMME DE :</td>
+                        <td class="w-2/2 py-[1px] font-bold text-red-600">{{ $missionOrder->expense_reimbursement_total - $missionOrder->advance }} INR
+                            <span class="font-normal px-5"> arrondi à </span>{{ round($missionOrder->expense_reimbursement_total - $missionOrder->advance) }}
+                            INR
+                        </td>
+                </tr>
             </table>
 
             <!-- Signatures -->

@@ -2,7 +2,7 @@
 @section('title', __('Add Memoire'))
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">MÉMOIRE DE FRAIS / TOURNEE</h2>
-    <form action="{{ route('tournees.m_update', $tournee->id) }}" method="POST" class="w-11/12 items-center">
+    <form action="{{ route('tournees.m_update', $tournee->id) }}" method="POST" class="w-11/12 items-center" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -64,14 +64,14 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet
+                    Objet/Motfits
                 </x-label>
                 <textarea rows="2" readonly
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $tournee->purpose }}</textarea>
             </div>
         </div>
 
-<div x-data="destinationManager({{ $tournee->tourneeDestinations->toJson() }})">
+        <div x-data="destinationManager({{ $tournee->tourneeDestinations->toJson() }})">
             <!-- Destinations container -->
             <div class="border rounded-md p-2 border-gray-300 mb-4">
                 <template x-for="(destination, index) in destinations" :key="index">
@@ -114,7 +114,6 @@
                 </template>
             </div>
         </div>
-
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('destinationManager', (initialDestinations = null) => ({
@@ -160,39 +159,10 @@
                 </x-disabled-select-input>
             </div>
         </div>
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Nuitées à déduire des IJM<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input type="number" name="no_ded_accomodation" id="no_ded_accomodation"
-                    value="{{ old('no_ded_accomodation', $tournee->no_ded_accomodation) }}" />
-            </div>
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Repas à déduire<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input type="number" name="no_ded_meals" id="no_ded_meals"
-                    value="{{ old('no_ded_meals', $tournee->no_ded_meals) }}" />
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Avance sur IJM (EURO ou USD)<span class="text-red-500">*</span>
-                </x-label>
-                <x-readonly-text-input value="{{ $tournee->advance }}" />
-            </div>
-            <div class="w-1/2 px-3">
-                <x-label>{{ __('Submit Values before add expenses') }}</x-label>
-                <x-primary-button name="action" value="partialSubmit" class="h-11">Soumettre des
-                    valeurs</x-primary-button>
-            </div>
-        </div> --}}
         <x-form-divider>Frais Tournee</x-form-divider>
         @include('partials.modals._tournee-expensestable')
-        <x-form-divider><!-- Hebergement --></x-form-divider>
-        @include('partials.modals._tournee-ijmtable')
+        {{-- <x-form-divider><!-- Hebergement --></x-form-divider>
+        @include('partials.modals._tournee-ijmtable') --}}
         <div class="-mx-3 mb-2">
             <div class="w-full px-3 text-end">
                 <x-primary-button data-modal-toggle="draftOrSubmitModal" type="button">Soumettre</x-primary-button>

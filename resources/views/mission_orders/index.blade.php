@@ -2,7 +2,6 @@
     use App\Models\Department;
 @endphp
 @extends('layouts.app')
-
 @section('content')
 @section('title', __('Missions'))
 <nav class="flex justify-between items-center p-2 text-black font-bold">
@@ -11,8 +10,7 @@
     </div>
     @if (auth()->user()->employee->allow_order)
         <div>
-            <a href="{{ route('mission_orders.create') }}"
-                class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg">
+            <a href="{{ route('mission_orders.create') }}" class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg">
                 {{ __('Ordre de Mission') }}
             </a>
         </div>

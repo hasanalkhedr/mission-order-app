@@ -8,14 +8,12 @@
     <div class="text-lg blue-color">
         {{ __('Tournees') }}
     </div>
-    {{-- @hasanyrole('human_resource|sg|head') --}}
     @if (auth()->user()->employee->allow_order)
         <div>
             <a href="{{ route('tournees.create') }}" class="hover:bg-blue-700 text-white py-2 px-4 rounded-full blue-bg">
                 {{ __('Ordre de Tournee') }}
             </a>
         </div>
-        {{-- @endhasanyrole --}}
     @endif
 </nav>
 @include('partials.searches._search-tournees')
@@ -230,12 +228,9 @@
         </tbody>
     </table>
 </div>
-
 <div class="mt-6 p-4">
     {{ $tournees->links() }}
 </div>
-
-
 <script type="text/javascript">
     function data() {
         return {
@@ -348,5 +343,4 @@
         };
     }
 </script>
-
 @endsection

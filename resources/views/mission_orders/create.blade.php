@@ -78,22 +78,16 @@
                 <div id="purpose-error" class="text-red-500 hidden mt-1">Le texte doit contenir au moins 100 caractères.
                 </div>
             </div>
-
             <script>
                 // Initialize counter on page load
                 document.addEventListener('DOMContentLoaded', function() {
                     const textarea = document.querySelector('textarea[name="purpose"]');
                     updateCharCounter(textarea);
                 });
-
                 function updateCharCounter(textarea) {
                     const charCount = textarea.value.length;
                     const counterElement = document.getElementById('char-counter');
-
-                    // Update counter display
                     counterElement.textContent = `${charCount}/100`;
-
-                    // Change color based on count
                     if (charCount < 100) {
                         counterElement.classList.add('text-red-500');
                         counterElement.classList.remove('text-gray-500', 'text-green-500');
@@ -102,7 +96,6 @@
                         counterElement.classList.remove('text-gray-500', 'text-red-500');
                     }
                 }
-
                 // Validate on form submission
                 document.querySelector('#mainForm')?.addEventListener('submit', function(e) {
                     const textarea = document.querySelector('textarea[name="purpose"]');
@@ -119,7 +112,6 @@
                 });
             </script>
         </div>
-
         {{-- CONGE PENDANT MISSION --}}
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
@@ -143,7 +135,6 @@
                 const congeCheckbox = document.getElementById('if_conge');
                 const congeContainer = document.getElementById('conge_container');
                 const congeInput = document.getElementById('conge_input');
-
                 function toggleconge() {
                     if (congeCheckbox.checked) {
                         congeContainer.style.display = 'flex';
@@ -156,10 +147,7 @@
                         congeInput.value = '';
                     }
                 }
-
-                // Set initial state
                 toggleconge();
-
                 congeCheckbox.addEventListener('change', toggleconge);
             });
         </script>
@@ -272,6 +260,7 @@
                 });
             });
         </script>
+
         <x-form-divider>Frais Mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
@@ -281,19 +270,12 @@
                 <div class="select-container">
                     <x-select-input name="bareme_id" required class="select2">
                         @foreach ($baremes as $bareme)
-                            @if (str_contains($bareme->pays, 'France'))
-                                <option {{ old('bareme_id', 94) == $bareme->id ? 'selected' : '' }}
-                                    value="{{ $bareme->id }}">
-                                    {{ $bareme->pays }} ({{ $bareme->currency }})
-                                </option>
-                            @else
-                                <option {{ old('bareme_id', 94) == $bareme->id ? 'selected' : '' }}
-                                    value="{{ $bareme->id }}">
-                                    {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
-                                    Repas:{{ $bareme->meal_cost }} /
-                                    Hebergement:{{ $bareme->accomodation_cost }})
-                                </option>
-                            @endif
+                            <option {{ old('bareme_id', 94) == $bareme->id ? 'selected' : '' }}
+                                value="{{ $bareme->id }}">
+                                {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
+                                Repas:{{ $bareme->meal_cost }} /
+                                Hebergement:{{ $bareme->accomodation_cost }})
+                            </option>
                         @endforeach
                     </x-select-input>
                     <script>
@@ -307,7 +289,7 @@
                 </div>
             </div>
         </div>
-        <!-- Add the new advance payment section here -->
+        <!-- Add the new advance payment section -->
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/2 inline-flex">
@@ -336,7 +318,6 @@
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
             </div>
         </div>
-        <!-- calculate and validate the advance amount -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const advanceRadios = document.querySelectorAll('.advance-radio');
@@ -516,56 +497,6 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
         </div>
-        {{-- Reception Fees --}}
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full px-3 py-1">
-                <x-label class="w-1/2 inline-flex">
-                    Frais de réception<span class="text-red-500">*</span>
-                </x-label>
-                <input required @checked(old('needs_reception_fees', 0) > 0) type="radio" value="1" name="needs_reception_fees"
-                    id="needs_reception_fees_yes"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_yes"
-                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('needs_reception_fees', 0) == 0) type="radio" value="0" name="needs_reception_fees"
-                    id="needs_reception_fees_no"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_no"
-                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
-            <div class="w-1/2 px-3">
-                <x-text-input name="reception_fees" value="{{ old('reception_fees') }}" id="reception_fees_input" />
-                <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const reception_feesRadios = document.querySelectorAll('.reception_fees-radio');
-                const reception_feesContainer = document.getElementById('reception_fees_container');
-                const reception_feesInput = document.getElementById('reception_fees_input');
-
-                function togglereception_fees() {
-                    const needsreception_fees = document.querySelector('input[name="needs_reception_fees"]:checked')
-                        ?.value;
-                    if (needsreception_fees === '1') {
-                        reception_feesContainer.style.display = 'flex';
-                        reception_feesInput.required = true;
-                    } else {
-                        reception_feesContainer.style.display = 'none';
-                        reception_feesInput.required = false;
-                    }
-                }
-
-                // Set initial state
-                togglereception_fees();
-
-                reception_feesRadios.forEach(radio => {
-                    radio.addEventListener('change', togglereception_fees);
-                });
-            });
-        </script> --}}
 
         {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
@@ -576,43 +507,29 @@
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
-                                        la dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions
-                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <form></form>
                                 <template x-for="(expense, index) in expenses" :key="index">
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                        <!-- Type Column -->
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type"
-                                                x-on:change="expense.nature = ''">
+                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                            <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type" x-on:change="expense.nature = ''">
                                                 <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="visa">visa</option>
                                                 <option value="Receptions">Receptions</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
                                         </td>
-
-                                        <!-- Nature Column -->
-                                        <td
-                                            class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
+                                        <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <template x-if="expense.type === 'transport'">
                                                 <div>
-                                                    <x-select-input x-bind:name="`expenses[${index}][transport_type]`"
-                                                        x-model="expense.transport_type" required
-                                                        x-on:change="handleTransportTypeChange(index)">
+                                                    <x-select-input x-bind:name="`expenses[${index}][transport_type]`" x-model="expense.transport_type" required x-on:change="handleTransportTypeChange(index)">
                                                         <option value="">--sélectionner--</option>
                                                         <option value="plane">Avion</option>
                                                         <option value="train">Train</option>
@@ -621,13 +538,8 @@
                                                         <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
                                                         <option value="autre">autre</option>
                                                     </x-select-input>
-
-                                                    <!-- Reasons Table - Only show for car_rental_with_driver -->
-                                                    <div x-show="expense.transport_type === 'car_rental_with_driver'"
-                                                         x-transition
-                                                         class="mt-4 p-3 border border-blue-200 rounded bg-blue-50">
-                                                        <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes:
-                                                            (cocher les cases correspondantes)</x-label>
+                                                    <div x-show="expense.transport_type === 'car_rental_with_driver'" x-transition class="mt-4 p-3 border border-blue-200 rounded bg-blue-50">
+                                                        <x-label class="border border-gray-200 px-5 py-2">Pour les raisons suivantes: (cocher les cases correspondantes)</x-label>
                                                         <table class="w-full mt-2">
                                                             <thead>
                                                                 <tr>
@@ -648,24 +560,16 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                                        <input type="checkbox" value="1"
-                                                                               x-bind:name="`expenses[${index}][passenger]`"
-                                                                               x-model="expense.passenger">
+                                                                        <input type="checkbox" value="1" x-bind:name="`expenses[${index}][passenger]`" x-model="expense.passenger">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                                        <input type="checkbox" value="1"
-                                                                               x-bind:name="`expenses[${index}][distance]`"
-                                                                               x-model="expense.distance">
+                                                                        <input type="checkbox" value="1" x-bind:name="`expenses[${index}][distance]`" x-model="expense.distance">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                                        <input type="checkbox" value="1"
-                                                                               x-bind:name="`expenses[${index}][material]`"
-                                                                               x-model="expense.material">
+                                                                        <input type="checkbox" value="1" x-bind:name="`expenses[${index}][material]`" x-model="expense.material">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
-                                                                        <input type="checkbox" value="1"
-                                                                               x-bind:name="`expenses[${index}][visits]`"
-                                                                               x-model="expense.visits">
+                                                                        <input type="checkbox" value="1" x-bind:name="`expenses[${index}][visits]`" x-model="expense.visits">
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -673,7 +577,6 @@
                                                     </div>
                                                 </div>
                                             </template>
-
                                             <template x-if="expense.type === 'extra_meal'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
@@ -681,7 +584,6 @@
                                                     <option value="temps de transport">temps de transport</option>
                                                 </x-select-input>
                                             </template>
-
                                             <template x-if="expense.type === 'visa'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
@@ -702,8 +604,6 @@
                                                     placeholder="Décrivez la nature de la dépense"></textarea>
                                             </template>
                                         </td>
-
-                                        <!-- Actions Column -->
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex justify-center space-x-2">
@@ -726,7 +626,6 @@
                 </div>
             </div>
         </div>
-
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('expensesManager', () => ({

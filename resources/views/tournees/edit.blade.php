@@ -230,7 +230,6 @@
                 </button>
             </div>
         </div>
-
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('destinationManager', (initialDestinations = null) => ({
@@ -283,21 +282,30 @@
                 }));
             });
         </script>
+
         <x-form-divider>Frais Tournee</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
                     Pays de Tournee<span class="text-red-500">*</span>
                 </x-label>
-                <x-select-input name="bareme_id" required>
+                <x-select-input name="bareme_id" required  class="select2">
                     @foreach ($baremes as $b)
-                        <option selected value="{{ $b->id }}">
+                        <option {{ old('bareme_id', $tournee->bareme_id) == $b->id ? 'selected' : '' }} value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
                             Hebergement:{{ $b->accomodation_cost }})
                         </option>
                     @endforeach
                 </x-select-input>
+                <script>
+                        $(document).ready(function() {
+                            $('.select2').select2({
+                                placeholder: "Select an option", // Optional placeholder
+                                allowClear: true // Optional clear button
+                            });
+                        });
+                    </script>
             </div>
         </div>
         <!-- Add the new advance payment section here -->
@@ -509,57 +517,8 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
         </div>
-        {{-- Reception Fees --}}
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full px-3 py-1">
-                <x-label class="w-1/2 inline-flex">
-                    Frais de réception<span class="text-red-500">*</span>
-                </x-label>
-                <input required @checked(Str::length(old('needs_reception_fees', $tournee->reception_fees)) > 0) type="radio" value="1" name="needs_reception_fees" id="needs_reception_fees_yes"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_yes"
-                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(Str::length(old('needs_reception_fees', $tournee->reception_fees)) == 0) type="radio" value="0" name="needs_reception_fees"
-                    id="needs_reception_fees_no"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_no"
-                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
-            <div class="w-1/2 px-3">
-                <x-text-input name="reception_fees" value="{{ old('needs_reception_fees', $tournee->reception_fees) }}" id="reception_fees_input" />
-                <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const reception_feesRadios = document.querySelectorAll('.reception_fees-radio');
-                const reception_feesContainer = document.getElementById('reception_fees_container');
-                const reception_feesInput = document.getElementById('reception_fees_input');
 
-                function togglereception_fees() {
-                    const needsreception_fees = document.querySelector('input[name="needs_reception_fees"]:checked')
-                        ?.value;
-                    if (needsreception_fees === '1') {
-                        reception_feesContainer.style.display = 'flex';
-                        reception_feesInput.required = true;
-                    } else {
-                        reception_feesContainer.style.display = 'none';
-                        reception_feesInput.required = false;
-                    }
-                }
-
-                // Set initial state
-                togglereception_fees();
-
-                reception_feesRadios.forEach(radio => {
-                    radio.addEventListener('change', togglereception_fees);
-                });
-            });
-        </script> --}}
-
-{{-- Pre Expenses --}}
+        {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
         <div class="flex flex-col" x-data="expensesManager({{ $tournee->expenses->toJson() }})">
             <div class="-m-1.5 overflow-x-auto">

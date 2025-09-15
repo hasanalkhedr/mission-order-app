@@ -15,6 +15,8 @@ use App\Notifications\TourneeLevelNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Storage;
+use Validator;
 class TourneeController extends Controller
 {
     public function index(Request $request)
@@ -57,7 +59,8 @@ class TourneeController extends Controller
             $employee->hasRole('sg') ||
             $employee->hasRole('controller') ||
             ($employee->hasRole('supervisor') && in_array($tournee->employee->department_id, $dep_ids)) ||
-            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id)         ) {
+            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id)
+        ) {
             return view('tournees.show', compact('tournee'));
         } else {
             abort(404);
@@ -72,10 +75,9 @@ class TourneeController extends Controller
     public function create()
     {
         if (auth()->user()->employee->allow_order) {
-            //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
             $baremes = Bareme::where('pays', 'LIKE', '%INDE%')->orWhere('pays', 'like', '%France%')->get();
             $tour_number = Tournee::generateOrderNumber();
-            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            $chancellery_rate = ChancelleryRate::currentRate();
             return view('tournees.create', compact('baremes', 'tour_number', 'chancellery_rate'));
         } else {
             return abort(403, 'You are not authorized to do this');
@@ -84,7 +86,6 @@ class TourneeController extends Controller
     public function store(Request $request, Tournee $tournee)
     {
         $request->validate([
-            //'order_date' => 'required|date|before_or_equal:start_date',
             'employee_id' => 'required',
             'purpose' => 'required',
             'bareme_id' => 'required',
@@ -150,14 +151,16 @@ class TourneeController extends Controller
         }
         $expenses = $request->input('expenses') ?? [];
         foreach ($expenses as $expense) {
-            TourneeExpense::create(array_merge($expense,
+            TourneeExpense::create(array_merge(
+                $expense,
                 [
                     'amount' => 0,
                     'currency' => 'EURO',
                     'expense_date' => $tournee->firstDestination->start_date,
                     'expense_document' => '',
                     'tournee_id' => $tournee->id
-                ]));
+                ]
+            ));
         }
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
@@ -189,9 +192,8 @@ class TourneeController extends Controller
     public function edit(Tournee $tournee)
     {
         if ($tournee->employee_id == auth()->user()->employee->id) {
-            //$bareme = Bareme::where('pays', '=', 'LIBAN')->limit(1)->get();
             $baremes = Bareme::where('pays', 'LIKE', '%INDE%')->orWhere('pays', 'like', '%France%')->get();
-            $chancellery_rate = ChancelleryRate::currentRate()->rate;
+            $chancellery_rate = ChancelleryRate::rateOfDate($tournee->firstDestination->start_date);
             return view('tournees.edit', compact('tournee', 'baremes', 'chancellery_rate'));
         } else {
             return abort(403, 'Unauthorized Action, you are not allowed to modify other employees tournees');
@@ -200,7 +202,6 @@ class TourneeController extends Controller
     public function update(Request $request, Tournee $tournee)
     {
         $request->validate([
-            //'order_date' => 'required|date|before_or_equal:start_date',
             'employee_id' => 'required',
             'purpose' => 'required',
             'bareme_id' => 'required',
@@ -229,7 +230,6 @@ class TourneeController extends Controller
                     if ($start->hour < 5) {
                         $totalDays += 1;
                     }
-
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
                     if ($value > $maxAdvanceInLocal) {
@@ -301,14 +301,16 @@ class TourneeController extends Controller
                 }
             } else {
                 // Create new destination
-                $newExpense = $tournee->expenses()->create(array_merge($expense,
-                [
-                    'amount' => 0,
-                    'currency' => 'EURO',
-                    'expense_date' => $tournee->firstDestination->start_date,
-                    'expense_document' => '',
-                    'tournee_id' => $tournee->id
-                ]));
+                $newExpense = $tournee->expenses()->create(array_merge(
+                    $expense,
+                    [
+                        'amount' => 0,
+                        'currency' => 'EURO',
+                        'expense_date' => $tournee->firstDestination->start_date,
+                        'expense_document' => '',
+                        'tournee_id' => $tournee->id
+                    ]
+                ));
                 $updatedIds[] = $newExpense->id;
             }
         }
@@ -356,7 +358,7 @@ class TourneeController extends Controller
 
         ]);
         $tournee->update($request->all());
-        return redirect()->route('mission_orders.show', $tournee->id);
+        return redirect()->route('tournees.show', $tournee->id);
     }
     public function destroy(Tournee $tournee)
     {
@@ -403,7 +405,8 @@ class TourneeController extends Controller
             $employee->hasRole('sg') ||
             $employee->hasRole('controller') ||
             ($employee->hasRole('supervisor') && in_array($tournee->employee->department_id, $dep_ids)) ||
-            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id)        ) {
+            ($employee->hasRole('employee') && $tournee->employee->id == $employee->id)
+        ) {
             $current_rate = ChancelleryRate::currentRate()->rate;
             return view('tournees.m_show', compact('tournee', 'current_rate'));
         } else {
@@ -412,21 +415,122 @@ class TourneeController extends Controller
     }
     public function m_create(Request $request, Tournee $tournee)
     {
-        $current_rate = ChancelleryRate::currentRate()->rate;
+        $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? now());
         return view('tournees.m_create', compact('tournee', 'current_rate'));
     }
     public function m_update(Request $request, Tournee $tournee)
     {
-        $request->validate([
-            //'no_ded_accomodation' => 'required|numeric',
-            //'no_ded_meals' => 'required|numeric',
-            //'advance' => 'required|numeric',
-            'total_amount' => 'required|decimal:0,4',
+        // dd($request->input('expenses')[2], $request->input('expenses')[3]);
+        // Custom validation rules
+        $validator = Validator::make($request->all(), [
             'memor_date' => 'required|date|after_or_equal:end_date',
-
+            'expenses' => 'required|array',
+            'expenses.*.type' => 'required|string|in:meal,accommodation,extra_meal,accommodation_extra,transport,visa,Receptions,other',
+            'expenses.*.expense_id' => 'nullable|integer|exists:tournee_expenses,id',
+            'expenses.*.transport_type' => 'required_if:expenses.*.type,transport|string',
+            'expenses.*.description' => 'nullable|string|max:255',
+            'expenses.*.reimbursement_amount' => 'required|numeric|min:0',
+            'expenses.*.reimbursement_currency' => 'required|string|in:INR,EUR,USD',
+            'expenses.*.direct_amount' => 'required|numeric|min:0',
+            'expenses.*.direct_currency' => 'required|string|in:INR,EUR,USD',
+            'expenses.*.total_inr' => 'sometimes|numeric|min:0',
+            'expenses.*.receipt' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'expenses.*.existing_receipt' => 'nullable|string',
+            'totals' => 'required|array',
+            'totals.reimbursement' => 'required|numeric|min:0',
+            'totals.direct' => 'required|numeric|min:0',
+            'totals.grand_total' => 'required|numeric|min:0',
         ]);
+
+        // Manually handle file validation for each expense
+        $expenses = $request->input('expenses', []);
+        foreach ($expenses as $index => $expense) {
+            if ($request->hasFile("expenses.$index.receipt")) {
+                $file = $request->file("expenses.$index.receipt");
+                $validator->after(function ($validator) use ($file, $index) {
+                    if (!$file->isValid()) {
+                        $validator->errors()->add("expenses.$index.receipt", "The receipt file is invalid.");
+                    }
+
+                    $allowedMimes = ['jpeg', 'png', 'jpg', 'gif', 'pdf'];
+                    if (!in_array($file->getClientOriginalExtension(), $allowedMimes)) {
+                        $validator->errors()->add("expenses.$index.receipt", "The receipt must be a file of type: jpeg, png, jpg, gif, pdf.");
+                    }
+
+                    if ($file->getSize() > 2048 * 1024) { // 2MB in bytes
+                        $validator->errors()->add("expenses.$index.receipt", "The receipt may not be greater than 2MB.");
+                    }
+                });
+            }
+        }
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $deletedExpenses = array_diff($tournee->expenses->pluck('id')->toArray(), array_column($expenses, 'expense_id'));
+
+        foreach ($deletedExpenses as $expenseID) {
+            $expense = TourneeExpense::find($expenseID);
+            // Delete the associated file if it exists
+            if ($expense->expense_document) {
+                Storage::disk('public')->delete($expense->expense_document);
+            }
+            $expense->delete();
+        }
+
+        $totals = $request->input('totals');
+
+        foreach ($expenses as $index => $expenseData) {
+            $receiptPath = null;
+
+            // Handle file upload if present
+            if ($request->hasFile("expenses.$index.receipt")) {
+                $file = $request->file("expenses.$index.receipt");
+                $receiptPath = $file->store('expense-receipts', 'public');
+            }
+            // Use existing receipt if no new file was uploaded
+            elseif (!empty($expenseData['existing_receipt'])) {
+                $receiptPath = $expenseData['existing_receipt'];
+            }
+
+            if (isset($expenseData['expense_id'])) {
+                $storedExpense = TourneeExpense::find($expenseData['expense_id']);
+
+                // Delete old file if it's being replaced
+                if ($receiptPath && $receiptPath !== $storedExpense->expense_document && $storedExpense->expense_document) {
+                    Storage::disk('public')->delete($storedExpense->expense_document);
+                }
+
+                $updateData = $expenseData;
+                if ($receiptPath) {
+                    $updateData['expense_document'] = $receiptPath;
+                }
+
+                $storedExpense->update($updateData);
+            } else if ($expenseData['type'] === 'accommodation') {
+                $tournee->update([
+                    'acc_reimbursement_amount' => $expenseData['reimbursement_amount'],
+                    'acc_reimbursement_currency' => $expenseData['reimbursement_currency'],
+                    'acc_direct_amount' => $expenseData['direct_amount'],
+                    'acc_direct_currency' => $expenseData['direct_currency'],
+                    'acc_total_inr' => $expenseData['total_inr'],
+                ]);
+            } else if ($index !== 'INDEX') {
+                TourneeExpense::create(array_merge($expenseData, [
+                    'tournee_id' => $tournee->id,
+                    'expense_date' => $tournee->memor_date ?? $tournee->firstDestination->start_date,
+                    'expense_document' => $receiptPath ?: '',
+                ]));
+            }
+        }
+
+        // Rest of your controller method remains the same...
         $action = $request->input('action');
         $memor_status = null;
+
         if ($action === 'partialSubmit') {
             $tournee->update($request->all());
             return redirect()->route('tournees.m_create', $tournee);
@@ -435,20 +539,30 @@ class TourneeController extends Controller
         } else if ($action === 'submit') {
             $memor_status = 'controller_approve';
         }
+
         $tournee->update(array_merge($request->all(), ['memor_status' => $memor_status]));
+
+        $tournee->update([
+            'expense_reimbursement_total' => $totals['reimbursement'],
+            'expense_direct_total' => $totals['direct'],
+            'expense_grand_total' => $totals['grand_total'],
+        ]);
+
         $notification = new MemoireTourneeLevelNotification($tournee);
         $users = User::whereHas('employee', function ($query) {
             $query->whereJsonContains('roles', 'controller');
         })->get();
+
         foreach ($users as $user) {
             $user->notify($notification);
         }
+
         return redirect()->route('tournees.m_index');
     }
     public function m_report(Request $request, Tournee $tournee)
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
-        $current_rate = ChancelleryRate::currentRate()->rate;
+        $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date);
         return view('tournees.memoire_report', compact('tournee', 'director', 'current_rate'));
     }
     public function m_destroy(Request $request, Tournee $tournee)
@@ -461,6 +575,6 @@ class TourneeController extends Controller
             'total_amount' => 0,
             'memor_status' => null,
         ]);
-        return redirect()->route('mission_orders.m_index');
+        return redirect()->route('tournees.m_index');
     }
 }

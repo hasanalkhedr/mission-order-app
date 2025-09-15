@@ -50,15 +50,6 @@
                         </div>
                     </th>
                     <th scope="col" class="py-3 px-6 blue-color">
-                        {{-- <div class="flex flex-col">
-                            <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
-                            <div class="flex space-x-1 mt-1">
-                                <input type="date" x-model="filters.start_date_from" placeholder="From"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <input type="date" x-model="filters.start_date_to" placeholder="To"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                            </div>
-                        </div> --}}
                         <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Début le') }}</span>
                             <div class="mt-1 space-y-1">
@@ -142,7 +133,6 @@
                                     {{ __($tournee->memor_status) }}
                                 </div>
                             </td>
-                            {{-- @hasanyrole('human_resource|sg|head') --}}
                             @switch($tournee->memor_status)
                                 @case(null)
                                     @if (auth()->user()->employee->id === $tournee->employee_id)
@@ -173,30 +163,6 @@
                                     @endif
                                 @break
 
-                                {{-- @case('controller_approve')
-                                    @if (auth()->user()->employee->hasRole('controller'))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <button
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                                                {{ __('Approve') }}
-                                            </button>
-                                        </td>
-                                    @endif
-                                @break
-
-                                @case('sg_approve')
-                                    @if (auth()->user()->employee->hasRole('sg'))
-                                        <td class="text-center px-0 py-1 border-b">
-                                            <button
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                                                {{ __('Approve') }}
-                                            </button>
-                                        </td>
-                                    @endif
-                                @break --}}
-
                                 @case('approved')
                                     @if ($tournee->employee->id == auth()->user()->employee->id)
                                         <td class="text-center px-0 py-1 border-b">
@@ -219,7 +185,6 @@
                             </td>
                         @endif
                             @include('partials.modals._tournee-delete-memoier')
-                            {{-- @include('partials.modals._tournee-approve-memoier') --}}
                         </tr>
                     @endforeach
                 @else

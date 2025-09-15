@@ -115,102 +115,22 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ $missionOrder->end_time }}" type="time" disabled></x-date-time-input>
             </div>
         </div>
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de départ
-                </x-label>
-                <x-readonly-text-input value="{{ $missionOrder->departure_location }}" />
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de la Mission
-                </x-label>
-                <x-readonly-text-input value="{{ $missionOrder->arrive_location }}" />
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de retour
-                </x-label>
-                <x-readonly-text-input value="{{ $missionOrder->return_location }}" />
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input disabled name="start_date" value="{{ $missionOrder->start_date->format('Y-m-d') }}"
-                    type="date">
-                </x-date-time-input>
-                <x-date-time-input disabled name="start_time" value="{{ $missionOrder->start_time }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input readonly name="end_date" value="{{ $missionOrder->end_date->format('Y-m-d') }}"
-                    type="date">
-                </x-date-time-input>
-                <x-date-time-input disabled name="end_time" value="{{ $missionOrder->end_time }}" type="time">
-                </x-date-time-input>
-            </div>
-        </div> --}}
+
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
                     Pays de Mission<span class="text-red-500">*</span>
                 </x-label>
                 <x-disabled-select-input>
-                    @if (in_array(
-                            $missionOrder->bareme->id,
-                            array_column(App\Models\Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id')))
-                        <option value="{{ $missionOrder->bareme->id }}">
-                            {{ $missionOrder->bareme->pays }}
-                            ({{ $missionOrder->bareme->currency }})
-                        </option>
-                    @else
-                        <option value="{{ $missionOrder->bareme->id }}">
-                            {{ $missionOrder->bareme->pays }}
-                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }} /
-                            Repas:{{ $missionOrder->bareme->meal_cost }} /
-                            Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
-                        </option>
-                    @endif
+                    <option value="{{ $missionOrder->bareme->id }}">
+                        {{ $missionOrder->bareme->pays }}
+                        (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }} /
+                        Repas:{{ $missionOrder->bareme->meal_cost }} /
+                        Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                    </option>
                 </x-disabled-select-input>
             </div>
         </div>
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Nuitées à déduire des IJM<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input type="number" name="no_ded_accomodation" id="no_ded_accomodation"
-                    value="{{old('no_ded_accomodation',  $missionOrder->no_ded_accomodation) }}" />
-            </div>
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Repas à déduire<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input type="number" name="no_ded_meals" id="no_ded_meals"
-                    value="{{old('no_ded_meals', $missionOrder->no_ded_meals) }}" />
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/2 px-3">
-                <x-label>
-                    Avance sur IJM (EURO ou USD)<span class="text-red-500">*</span>
-                </x-label>
-                <x-readonly-text-input value="{{ $missionOrder->advance }}" />
-            </div>
-            <div class="w-1/2 px-3">
-                <x-label>{{__('Submit Values before add expenses')}}</x-label>
-                <x-primary-button name="action" value="partialSubmit" class="h-11">Soumettre des valeurs</x-primary-button>
-            </div>
-        </div> --}}
         <x-form-divider>Frais Mission</x-form-divider>
         @include('partials.modals._expensestable')
         {{-- <x-form-divider><!-- Hebergement --></x-form-divider>

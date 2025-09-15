@@ -84,15 +84,10 @@
                     const textarea = document.querySelector('textarea[name="purpose"]');
                     updateCharCounter(textarea);
                 });
-
                 function updateCharCounter(textarea) {
                     const charCount = textarea.value.length;
                     const counterElement = document.getElementById('char-counter');
-
-                    // Update counter display
                     counterElement.textContent = `${charCount}/100`;
-
-                    // Change color based on count
                     if (charCount < 100) {
                         counterElement.classList.add('text-red-500');
                         counterElement.classList.remove('text-gray-500', 'text-green-500');
@@ -101,7 +96,6 @@
                         counterElement.classList.remove('text-gray-500', 'text-red-500');
                     }
                 }
-
                 // Validate on form submission
                 document.querySelector('#mainForm')?.addEventListener('submit', function(e) {
                     const textarea = document.querySelector('textarea[name="purpose"]');
@@ -118,7 +112,6 @@
                 });
             </script>
         </div>
-
         {{-- CONGE PENDANT MISSION --}}
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
@@ -142,7 +135,6 @@
                 const congeCheckbox = document.getElementById('if_conge');
                 const congeContainer = document.getElementById('conge_container');
                 const congeInput = document.getElementById('conge_input');
-
                 function toggleconge() {
                     if (congeCheckbox.checked) {
                         congeContainer.style.display = 'flex';
@@ -155,10 +147,7 @@
                         congeInput.value = '';
                     }
                 }
-
-                // Set initial state
                 toggleconge();
-
                 congeCheckbox.addEventListener('change', toggleconge);
             });
         </script>
@@ -282,7 +271,6 @@
                 </button>
             </div>
         </div>
-
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('destinationManager', () => ({
@@ -329,17 +317,26 @@
                 <x-label>
                     Pays de Mission<span class="text-red-500">*</span>
                 </x-label>
-                <x-select-input required name="bareme_id" required>
+                <x-select-input required name="bareme_id" required class="select2">
                     @foreach ($baremes as $b)
-                        <option selected value="{{ $b->id }}">
+                        <option {{ old('bareme_id', 94) == $b->id ? 'selected' : '' }} value="{{ $b->id }}">
                             {{ $b->pays }} (Montant:{{ $b->pays_per_day . ' ' . $b->currency }} /
                             Repas:{{ $b->meal_cost }} /
                             Hebergement:{{ $b->accomodation_cost }})
                         </option>
                     @endforeach
                 </x-select-input>
+                <script>
+                        $(document).ready(function() {
+                            $('.select2').select2({
+                                placeholder: "Select an option", // Optional placeholder
+                                allowClear: true // Optional clear button
+                            });
+                        });
+                    </script>
             </div>
         </div>
+        <!-- Add the new advance payment section -->
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/2 inline-flex">
@@ -357,7 +354,6 @@
                     class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
             </div>
         </div>
-
         <div class="flex flex-wrap -mx-3 mb-2" id="advance_amount_container" style="display: none;">
             <div class="w-1/2 px-3">
                 <x-label>
@@ -369,12 +365,11 @@
                 <p id="advance_error" class="text-red-500 hidden">Le montant demandé dépasse 75% du total hébergement.</p>
             </div>
         </div>
-
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const advanceRadios = document.querySelectorAll('.advance-radio');
                 const advanceAmountContainer = document.getElementById('advance_amount_container');
-                const advanceAmountInput = document.getElementById('advance_amount_input');
+               /* const advanceAmountInput = document.getElementById('advance_amount_input');
                 const maxAdvanceSpan = document.getElementById('max_advance');
                 const advanceError = document.getElementById('advance_error');
                 const baremeSelect = document.querySelector('select[name="bareme_id"]');
@@ -455,7 +450,7 @@
                         return true;
                     }
                 }
-
+*/
                 // Toggle advance amount visibility
                 function toggleAdvanceAmount() {
                     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
@@ -477,26 +472,27 @@
                     radio.addEventListener('change', toggleAdvanceAmount);
                 });
 
-                baremeSelect.addEventListener('change', updateMaxAdvance);
-                startDateInput.addEventListener('change', updateMaxAdvance);
-                endDateInput.addEventListener('change', updateMaxAdvance);
-                startTimeInput.addEventListener('change', updateMaxAdvance);
-                endTimeInput.addEventListener('change', updateMaxAdvance);
-                advanceAmountInput.addEventListener('input', validateAdvanceAmount);
+                // baremeSelect.addEventListener('change', updateMaxAdvance);
+                // startDateInput.addEventListener('change', updateMaxAdvance);
+                // endDateInput.addEventListener('change', updateMaxAdvance);
+                // startTimeInput.addEventListener('change', updateMaxAdvance);
+                // endTimeInput.addEventListener('change', updateMaxAdvance);
+                // advanceAmountInput.addEventListener('input', validateAdvanceAmount);
 
-                //Also validate before form submission
-                document.querySelector('form').addEventListener('submit', function(e) {
-                    const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
+                // //Also validate before form submission
+                // document.querySelector('form').addEventListener('submit', function(e) {
+                //     const needsAdvance = document.querySelector('input[name="needs_advance"]:checked')?.value;
 
-                    if (needsAdvance === '1' && !validateAdvanceAmount()) {
-                        e.preventDefault();
-                        alert(
-                            'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
-                            );
-                    }
-                });
+                //     if (needsAdvance === '1' && !validateAdvanceAmount()) {
+                //         e.preventDefault();
+                //         alert(
+                //             'Le montant demandé dépasse 75% du total hébergement. Veuillez ajuster votre demande.'
+                //             );
+                //     }
+                // });
             });
         </script>
+
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3 py-1">
                 <x-label class="w-1/2 inline-flex">
@@ -543,56 +539,6 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
         </div>
-        {{-- Reception Fees --}}
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full px-3 py-1">
-                <x-label class="w-1/2 inline-flex">
-                    Frais de réception<span class="text-red-500">*</span>
-                </x-label>
-                <input required @checked(old('needs_reception_fees', 0) > 0) type="radio" value="1" name="needs_reception_fees"
-                    id="needs_reception_fees_yes"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_yes"
-                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(old('needs_reception_fees', 0) == 0) type="radio" value="0" name="needs_reception_fees"
-                    id="needs_reception_fees_no"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_no"
-                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
-            <div class="w-1/2 px-3">
-                <x-text-input name="reception_fees" value="{{ old('needs_reception_fees') }}" id="reception_fees_input" />
-                <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const reception_feesRadios = document.querySelectorAll('.reception_fees-radio');
-                const reception_feesContainer = document.getElementById('reception_fees_container');
-                const reception_feesInput = document.getElementById('reception_fees_input');
-
-                function togglereception_fees() {
-                    const needsreception_fees = document.querySelector('input[name="needs_reception_fees"]:checked')
-                        ?.value;
-                    if (needsreception_fees === '1') {
-                        reception_feesContainer.style.display = 'flex';
-                        reception_feesInput.required = true;
-                    } else {
-                        reception_feesContainer.style.display = 'none';
-                        reception_feesInput.required = false;
-                    }
-                }
-
-                // Set initial state
-                togglereception_fees();
-
-                reception_feesRadios.forEach(radio => {
-                    radio.addEventListener('change', togglereception_fees);
-                });
-            });
-        </script> --}}
 
         {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
@@ -603,36 +549,27 @@
                         <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de
-                                        la dépense</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions
-                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Type</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Nature de la dépense</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <form></form>
                                 <template x-for="(expense, index) in expenses" :key="index">
                                     <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
-                                        <!-- Type Column -->
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                                             <x-select-input x-bind:name="`expenses[${index}][type]`" x-model="expense.type"
                                                 x-on:change="expense.nature = ''">
                                                 <option value="">--sélectionner le type--</option>
                                                 <option value="transport">transport</option>
-                                                {{-- <option value="extra_accomodation">hébergement</option> --}}
                                                 <option value="extra_meal">repas</option>
                                                 <option value="visa">visa</option>
                                                 <option value="Receptions">Receptions</option>
                                                 <option value="other">autre</option>
                                             </x-select-input>
                                         </td>
-
-                                        <!-- Nature Column -->
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
                                             <template x-if="expense.type === 'transport'">
@@ -700,7 +637,6 @@
                                                     </div>
                                                 </div>
                                             </template>
-
                                             <template x-if="expense.type === 'extra_meal'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
@@ -708,7 +644,6 @@
                                                     <option value="temps de transport">temps de transport</option>
                                                 </x-select-input>
                                             </template>
-
                                             <template x-if="expense.type === 'visa'">
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
@@ -729,8 +664,6 @@
                                                     placeholder="Décrivez la nature de la dépense"></textarea>
                                             </template>
                                         </td>
-
-                                        <!-- Actions Column -->
                                         <td
                                             class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex justify-center space-x-2">
@@ -753,7 +686,6 @@
                 </div>
             </div>
         </div>
-
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('expensesManager', () => ({

@@ -215,64 +215,6 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ old('end_time', $missionOrder->end_time) }}" type="time" required></x-date-time-input>
             </div>
         </div>
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de départ<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="departure_location" id="departure_location"  onblur="returnLocationValue('{{old('departure_location', $missionOrder->departure_location)}}');"
-                    value="{{ old('departure_location', $missionOrder->departure_location) }}" />
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu d'arrivée<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="arrive_location"
-                    value="{{ old('arrive_location', $missionOrder->arrive_location) }}" />
-            </div>
-            <div class="w-1/3 px-3">
-                <x-label>
-                    Lieu de retour<span class="text-red-500">*</span>
-                </x-label>
-                <x-text-input required name="return_location" id="return_location" value="{{ old('return_location', $missionOrder->return_location) }}" />
-            </div>
-
-                <script>
-                    function returnLocationValue(oldValue) {
-                        returnLocation = document.getElementById('return_location').value;
-                        departLocation = document.getElementById('departure_location').value;
-                        if(returnLocation === oldValue) {
-                            document.getElementById('return_location').value = document.getElementById('departure_location').value;
-                        }
-                    }
-                </script>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input name="start_date" id="start_date" value="{{ old('start_date', $missionOrder->start_date->format('Y-m-d')) }}"
-                    type="date" required>
-                </x-date-time-input>
-                <x-date-time-input name="start_time" value="{{ old('start_time', $missionOrder->start_time) }}"
-                    type="time" required>
-                </x-date-time-input>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-2/3 px-3">
-                <x-label>
-                    Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
-                </x-label>
-                <x-date-time-input name="end_date" id="end_date" value="{{ old('end_date', $missionOrder->end_date->format('Y-m-d')) }}" type="date"
-                    required>
-                </x-date-time-input>
-                <x-date-time-input name="end_time" value="{{ old('end_time', $missionOrder->end_time) }}" type="time"
-                    required>
-                </x-date-time-input>
-            </div>
-        </div> --}}
         <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
                 description.</p>
@@ -328,6 +270,7 @@
                 });
             });
         </script>
+
         <x-form-divider>Frais Mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
@@ -337,19 +280,12 @@
                 <div class="select-container">
                     <x-select-input name="bareme_id" required class="select2">
                         @foreach ($baremes as $bareme)
-                            @if (str_contains($bareme->pays, 'France'))
-                                <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
-                                    value="{{ $bareme->id }}">
-                                    {{ $bareme->pays }} ({{ $bareme->currency }})
-                                </option>
-                            @else
-                                <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
-                                    value="{{ $bareme->id }}">
-                                    {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
-                                    Repas:{{ $bareme->meal_cost }} /
-                                    Hebergement:{{ $bareme->accomodation_cost }})
-                                </option>
-                            @endif
+                            <option {{ old('bareme_id', $missionOrder->bareme_id) == $bareme->id ? 'selected' : '' }}
+                                value="{{ $bareme->id }}">
+                                {{ $bareme->pays }} (Montant:{{ $bareme->pays_per_day . ' ' . $bareme->currency }} /
+                                Repas:{{ $bareme->meal_cost }} /
+                                Hebergement:{{ $bareme->accomodation_cost }})
+                            </option>
                         @endforeach
                     </x-select-input>
                     <script>
@@ -576,55 +512,6 @@
                 <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-5">NON</label>
             </div>
         </div>
-        {{-- Reception Fees --}}
-        {{-- <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full px-3 py-1">
-                <x-label class="w-1/2 inline-flex">
-                    Frais de réception<span class="text-red-500">*</span>
-                </x-label>
-                <input required @checked(Str::length(old('reception_fees', $missionOrder->reception_fees)) > 0) type="radio" value="1" name="needs_reception_fees" id="needs_reception_fees_yes"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_yes"
-                    class="ms-1 text-sm font-medium text-blue-500 dark:text-gray-500 mr-5">OUI</label>
-                <input required @checked(Str::length(old('reception_fees', $missionOrder->reception_fees)) == 0) type="radio" value="0" name="needs_reception_fees"
-                    id="needs_reception_fees_no"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 reception_fees-radio">
-                <label for="needs_reception_fees_no"
-                    class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
-            </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-2" id="reception_fees_container" style="display: none;">
-            <div class="w-1/2 px-3">
-                <x-text-input name="reception_fees" value="{{ old('reception_fees', $missionOrder->reception_fees) }}" id="reception_fees_input" />
-                <small class="text-gray-500">Si coché: (nombre de personnes et motifs)</small>
-            </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const reception_feesRadios = document.querySelectorAll('.reception_fees-radio');
-                const reception_feesContainer = document.getElementById('reception_fees_container');
-                const reception_feesInput = document.getElementById('reception_fees_input');
-
-                function togglereception_fees() {
-                    const needsreception_fees = document.querySelector('input[name="needs_reception_fees"]:checked')
-                        ?.value;
-                    if (needsreception_fees === '1') {
-                        reception_feesContainer.style.display = 'flex';
-                        reception_feesInput.required = true;
-                    } else {
-                        reception_feesContainer.style.display = 'none';
-                        reception_feesInput.required = false;
-                    }
-                }
-
-                // Set initial state
-                togglereception_fees();
-
-                reception_feesRadios.forEach(radio => {
-                    radio.addEventListener('change', togglereception_fees);
-                });
-            });
-        </script> --}}
 
         {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>

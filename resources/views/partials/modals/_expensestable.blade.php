@@ -216,7 +216,20 @@
                                         <input type="text" name="expenses[{{ $index }}][transport_type]" value="{{ __('expense.transport_types.' . $expense->transport_type) }}"
                                             class="w-full px-2 py-1 border border-gray-300 rounded-md text-sm" disabled>
                                         <p class="text-xs">
-                                            {{ $expense->transport_type === 'car_rental_with_driver' ? '(' . ($expense->passenger == 1 ? __('passenger') . ',' : '') . ($expense->distance == 1 ? __('distance') . ',' : '') . ($expense->material == 1 ? __('material') . ',' : '') . ($expense->visits == 1 ? __('visits') : '') . ')' : '' }}
+                                            @if($expense->transport_type === 'car_rental_with_driver')
+                                                @php
+                                                $details = [];
+                                                if ($expense->passenger == 1) $details[] = __('passenger');
+                                                if ($expense->distance == 1) $details[] = __('distance');
+                                                if ($expense->material == 1) $details[] = __('material');
+                                                if ($expense->visits == 1) $details[] = __('visits');
+                                                @endphp
+                                                @if(!empty($details))
+                                                    @foreach($details as $detail)
+                                                        &nbsp;&nbsp;{{ $detail }}@if(!$loop->last)<br>@endif
+                                                    @endforeach
+                                                @endif
+                                            @endif
                                         </p>
                                     </td>
                                     <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -746,7 +759,7 @@
                             input.addEventListener('input', function() {
                                 const row = this.closest('tr');
                                 const noMeals = parseInt(this.value) || 0;
-                                const mealCost = 25; // Example value
+                                const mealCost = {{$missionOrder->bareme->meal_cost}};
                                 const eurRate = parseFloat(eurToInrInput.value);
 
                                 // Calculate reimbursement amount
@@ -783,6 +796,9 @@
                             newRow.querySelectorAll('input, select').forEach(element => {
                                 if (element.name) {
                                     element.name = element.name.replace('INDEX', currentIndex);
+                                } else {
+                                    element.setAttribute('data-expense-id', currentIndex);
+                                    element.setAttribute('data-expense-index', currentIndex);
                                 }
                             });
 

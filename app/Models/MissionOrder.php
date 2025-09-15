@@ -36,26 +36,26 @@ class MissionOrder extends Model
             }
         });
     }
-// Method to generate the next order number
-public static function generateOrderNumber()
-{
-    // Get the latest mission order by order_number
-    $latestOrder = MissionOrder::orderBy('order_number', 'desc')->first();
+    // Method to generate the next order number
+    public static function generateOrderNumber()
+    {
+        // Get the latest mission order by order_number
+        $latestOrder = MissionOrder::orderBy('order_number', 'desc')->first();
 
-    // Check if there is any existing order number
-    if ($latestOrder) {
-        // Extract the numeric part from the latest order number (e.g., '0001')
-        $lastOrderNumber = intval(substr($latestOrder->order_number, -4));
-        // Increment the numeric part
-        $newOrderNumber = $lastOrderNumber + 1;
-    } else {
-        // If no previous order exists, start with 1
-        $newOrderNumber = 1;
+        // Check if there is any existing order number
+        if ($latestOrder) {
+            // Extract the numeric part from the latest order number (e.g., '0001')
+            $lastOrderNumber = intval(substr($latestOrder->order_number, -4));
+            // Increment the numeric part
+            $newOrderNumber = $lastOrderNumber + 1;
+        } else {
+            // If no previous order exists, start with 1
+            $newOrderNumber = 1;
+        }
+
+        // Format the new order number as MIS-24-XXXX
+        return 'MIS-' . (new \DateTime())->format('y') . '-' . str_pad($newOrderNumber, 4, '0', STR_PAD_LEFT);
     }
-
-    // Format the new order number as MIS-24-XXXX
-    return 'MIS-' . (new \DateTime())->format('y') . '-'  . str_pad($newOrderNumber, 4, '0', STR_PAD_LEFT);
-}
     protected $fillable = [
         'order_date',
         'order_number',
@@ -146,9 +146,9 @@ public static function generateOrderNumber()
         //$ex = $expensesTotals[$this->bareme->currency] ?? 0;
         $ex = $expensesTotals['Roupie indienne'] ?? 0;
         //$expensesTotals[$this->bareme->currency] = $ex + $this->total_amount-$this->advance;
-        $expensesTotals['Roupie indienne'] = $ex + $this->total_amount-$this->advance;
+        $expensesTotals['Roupie indienne'] = $ex + $this->total_amount - $this->advance;
         return $expensesTotals;
-       // return array_merge($expensesTotals, [$this->bareme->currency => $this->total_amount-$this->advance]);
+        // return array_merge($expensesTotals, [$this->bareme->currency => $this->total_amount-$this->advance]);
     }
 
     public function getMissionAprroves()

@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Tournee extends Model
 {
     use HasFactory;
-    protected static function booted(){
+    protected static function booted()
+    {
         static::creating(function ($tournee) {
             $tournee->order_number = Tournee::generateOrderNumber();
         });
@@ -23,7 +24,8 @@ class Tournee extends Model
             }
         });
     }
-    public static function generateOrderNumber(){
+    public static function generateOrderNumber()
+    {
         $latestOrder = Tournee::orderBy('order_number', 'desc')->first();
         if ($latestOrder) {
             $lastOrderNumber = intval(substr($latestOrder->order_number, -4));
@@ -55,13 +57,23 @@ class Tournee extends Model
         'advance',
         'reception_fees',
         'repas',
-
+        'expense_reimbursement_total',
+        'expense_direct_total',
+        'expense_grand_total',
+        'acc_reimbursement_amount',
+        'acc_reimbursement_currency',
+        'acc_direct_amount',
+        'acc_direct_currency',
+        'acc_total_inr',
         'conge',
         'charge1'
     ];
     protected $casts = [
         'order_date' => 'date',
         'memor_date' => 'date',
+        'expense_reimbursement_total' => 'decimal:2',
+        'expense_direct_total' => 'decimal:2',
+        'expense_grand_total' => 'decimal:2',
     ];
     public function tourneeDestinations()
     {
