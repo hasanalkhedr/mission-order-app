@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mission_orders', function (Blueprint $table) {
-            $table->string('acc_expense_document');
+            $table->string('acc_expense_document')->nullable();
         });
         Schema::table('tournees', function (Blueprint $table) {
-            $table->string('acc_expense_document');
+            $table->string('acc_expense_document')->nullable();
         });
     }
 
