@@ -66,7 +66,8 @@ class Tournee extends Model
         'acc_direct_currency',
         'acc_total_inr',
         'conge',
-        'charge1'
+        'charge1',
+        'acc_expense_document',
     ];
     protected $casts = [
         'order_date' => 'date',

@@ -197,13 +197,12 @@
                                 </x-date-time-input>
                             </div>
                         </div>
-                        <div id="weekend-warning"
+
+                        {{-- <div id="weekend-warning"
                             class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
                             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une
                                 justification dans la description.</p>
                         </div>
-
-
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 const startDateInput = document.getElementById('start_date');
@@ -254,7 +253,8 @@
                                     }
                                 });
                             });
-                        </script>
+                        </script> --}}
+
                         <button x-show="destinations.length > 1" x-on:click="removeDestination(index)" type="button"
                             class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                             Supprimer cette destination

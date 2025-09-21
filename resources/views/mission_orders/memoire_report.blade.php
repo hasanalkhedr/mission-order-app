@@ -132,10 +132,10 @@
                 <span class="expense-badge bg-green-100 text-green-800">Repas</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $missionOrder->no_meals }}
+                {{ $missionOrder->no_meals }} <span class="text-red-600"> - {{$missionOrder->no_ded_meals}} = {{$missionOrder->no_meals - $missionOrder->no_ded_meals}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 INR
@@ -147,7 +147,7 @@
                 --
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
             </td>
         </tr>
 
@@ -157,7 +157,7 @@
                 <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $missionOrder->no_accomodation }}
+                {{ $missionOrder->no_accomodation }}<span class="text-red-600"> - {{$missionOrder->no_ded_accomodation}} = {{$missionOrder->no_accomodation - $missionOrder->no_ded_accomodation}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 {{$missionOrder->acc_reimbursement_amount}}
@@ -438,6 +438,21 @@
             </table>
         </div>
         <!-- Documents - each will be on separate pages -->
+        @if($missionOrder->acc_expense_document)
+            <div class="document-page" style="page-break-before: always; width: 210mm;">
+                <h4 class="text-center font-bold mb-1">Document: Hébergement </h4>
+                <div class="flex justify-center">
+                    @if (pathinfo($missionOrder->acc_expense_document, PATHINFO_EXTENSION) === 'pdf')
+                        <div id="pdf-viewer-{{ $missionOrder->id }}" class="pdf-container"
+                            style="width: 100%; height: 240mm;"></div>
+                    @else
+                        <img src="{{ asset('storage/' . $missionOrder->acc_expense_document) }}"
+                            style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
+                    @endif
+                </div>
+            </div>
+        @endif
+
         @foreach ($missionOrder->expenses as $expense)
         @if($expense->expense_document)
             <div class="document-page" style="page-break-before: always; width: 210mm;">

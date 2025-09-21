@@ -150,10 +150,10 @@
                 <span class="expense-badge bg-green-100 text-green-800">Repas</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $tournee->no_meals }}
+                {{ $tournee->no_meals }} <span class="text-red-600"> - {{$tournee->no_ded_meals}} = {{$tournee->no_meals - $tournee->no_ded_meals}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($tournee->no_meals - $tournee->no_ded_meals) * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 INR
@@ -165,7 +165,7 @@
                 --
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($tournee->no_meals - $tournee->no_ded_meals) * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
             </td>
         </tr>
 
@@ -175,7 +175,7 @@
                 <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $tournee->no_accomodation }}
+                {{ $tournee->no_accomodation }}<span class="text-red-600"> - {{$tournee->no_ded_accomodation}} = {{$tournee->no_accomodation - $tournee->no_ded_accomodation}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 {{$tournee->acc_reimbursement_amount}}
@@ -455,6 +455,21 @@
     </div>
 
     <!-- Documents - each will be on separate pages -->
+    @if($tournee->acc_expense_document)
+        <div class="document-page" style="page-break-before: always; width: 210mm;">
+            <h4 class="text-center font-bold mb-1">Document: Hébergement </h4>
+            <div class="flex justify-center">
+                @if (pathinfo($tournee->acc_expense_document, PATHINFO_EXTENSION) === 'pdf')
+                    <div id="pdf-viewer-{{ $tournee->id }}" class="pdf-container"
+                        style="width: 100%; height: 240mm;"></div>
+                @else
+                    <img src="{{ asset('storage/' . $tournee->acc_expense_document) }}"
+                        style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
+                @endif
+            </div>
+        </div>
+    @endif
+
     @foreach ($tournee->expenses as $expense)
         <div class="document-page" style="page-break-before: always; width: 210mm;">
             <h4 class="text-center font-bold mb-1">Document: {{ $expense->description }}</h4>

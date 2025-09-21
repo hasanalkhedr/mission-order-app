@@ -514,6 +514,7 @@ class MissionOrderController extends Controller
                     'acc_direct_amount' => $expenseData['direct_amount'],
                     'acc_direct_currency' => $expenseData['direct_currency'],
                     'acc_total_inr' => $expenseData['total_inr'],
+                    'acc_expense_document' => $receiptPath ?? '',
                 ]);
             } else if ($index !== 'INDEX') {
                 Expense::create(array_merge($expenseData, [

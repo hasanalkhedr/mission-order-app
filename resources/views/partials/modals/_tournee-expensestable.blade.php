@@ -78,7 +78,124 @@
                             </tr>
                         </thead>
                         <tbody>
+
                             <!-- Repas Row -->
+<tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
+        <span class="expense-badge bg-green-100 text-green-800">Repas</span>
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <div class="flex flex-col items-center">
+            <span class="text-xs text-gray-500 mb-1">Réduire le nombre</span>
+            <div class="flex items-center justify-center">
+                <span class="mr-2 font-medium">{{ $tournee->no_meals }}</span>
+                <span class="mr-1">-</span>
+                <input type="number" name="no_ded_meals" value="{{$tournee->no_ded_meals}}" min="0" max="{{ $tournee->no_meals }}"
+                       class="reduced-meals-input w-16 px-2 py-1 border border-gray-300 rounded-md text-sm">
+                <span class="ml-2 font-medium">= <span class="actual-meals">{{ $tournee->no_meals }}</span></span>
+            </div>
+        </div>
+        <input type="hidden" id="max-meals" value="{{ $tournee->no_meals }}">
+        <input type="hidden" id="meal-cost" value="{{ $tournee->bareme->meal_cost }}">
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 reimbursement-amount"
+        data-currency="INR" data-amount="{{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}">
+        {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        INR
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 direct-amount"
+        data-currency="INR" data-amount="0">--
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        --
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-inr">
+        {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
+    </td>
+</tr>
+
+<!-- Hébergement Row -->
+<tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
+        <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
+        <input type="hidden" name="expenses[1][type]" value="accommodation">
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <div class="flex flex-col items-center">
+            <span class="text-xs text-gray-500 mb-1">Réduire le nombre</span>
+            <div class="flex items-center justify-center">
+                <span class="mr-2 font-medium">{{ $tournee->no_accomodation }}</span>
+                <span class="mr-1">-</span>
+                <input type="number" name="no_ded_accomodation" value="{{$tournee->no_ded_accomodation}}" min="0"
+                       class="reduced-accommodation-input w-16 px-2 py-1 border border-gray-300 rounded-md text-sm">
+                <span class="ml-2 font-medium">= <span class="actual-accommodation">{{ $tournee->no_accomodation }}</span></span>
+            </div>
+        </div>
+        <input type="hidden" id="max-accommodation" value="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
+        <input type="hidden" id="max-accommodation-eur" value="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost }}">
+        <input type="hidden" id="accommodation-cost" value="{{ $tournee->bareme->accomodation_cost }}">
+        <input type="hidden" id="original-accommodation" value="{{ $tournee->no_accomodation }}">
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <input type="number" name="expenses[1][reimbursement_amount]"
+               value="{{ $tournee->acc_reimbursement_amount }}"
+               step="0.01" min="0"
+               class="reimbursement-input accommodation-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+               data-currency="{{ $tournee->acc_reimbursement_currency ?? 'INR' }}"
+               data-max="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <select name="expenses[1][reimbursement_currency]"
+                class="reimbursement-currency accommodation-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
+            <option value="INR" @selected($tournee->acc_reimbursement_currency === 'INR')>INR</option>
+            <option value="EUR" @selected($tournee->acc_reimbursement_currency === 'EUR')>EUR</option>
+            <option value="USD" @selected($tournee->acc_reimbursement_currency === 'USD')>USD</option>
+        </select>
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <input type="number" name="expenses[1][direct_amount]"
+               value="{{ $tournee->acc_direct_amount }}"
+               step="0.01" min="0"
+               class="direct-input accommodation-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+               data-currency="{{ $tournee->acc_direct_currency ?? 'INR' }}"
+               data-max="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <select name="expenses[1][direct_currency]"
+                class="direct-currency accommodation-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
+            <option value="INR" @selected($tournee->acc_direct_currency === 'INR')>INR</option>
+            <option value="EUR" @selected($tournee->acc_direct_currency === 'EUR')>EUR</option>
+            <option value="USD" @selected($tournee->acc_direct_currency === 'USD')>USD</option>
+        </select>
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
+        <input type="hidden" name="expenses[1][total_inr]" value="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
+        <span class="total-inr">{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}</span>
+    </td>
+    <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+        <div class="flex flex-col space-y-1">
+            @if ($tournee->acc_expense_document)
+                <button type="button" class="view-receipt-btn px-2 py-1 bg-green-100 text-green-600 rounded-md hover:bg-blue-200 text-xs"
+                    data-expense-type="accommodation" data-expense-id="1" data-expense-index="1" data-has-receipt="true"
+                    data-receipt-path="{{ $tournee->acc_expense_document }}">
+                    <i class="fas fa-receipt"></i>
+                </button>
+                <!-- Hidden field for existing receipt path -->
+                <input type="hidden" name="expenses[1][existing_receipt]" value="{{ $tournee->acc_expense_document }}">
+            @else
+                <button type="button" class="view-receipt-btn px-2 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 text-xs"
+                    data-expense-type="accommodation" data-expense-id="1" data-expense-index="1" data-has-receipt="false">
+                    <i class="fas fa-camera"></i>
+                </button>
+            @endif
+            <!-- This will be dynamically added when a new file is uploaded -->
+            <div class="file-input-container"></div>
+        </div>
+    </td>
+</tr>
+                            {{-- <!-- Repas Row -->
                             <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
                                 <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
                                     <span class="expense-badge bg-green-100 text-green-800">Repas</span>
@@ -139,7 +256,7 @@
                                     <input type="hidden" name="expenses[1][total_inr]" value="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
                                     <span class="total-inr">{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}</span>
                                 </td>
-                            </tr>
+                            </tr> --}}
 
                             <!-- Repas #2 Row -->
                             @php $index = 2; @endphp
@@ -379,7 +496,7 @@
                             @endforeach
 
                             <!-- New Expense Template (Hidden) -->
-                            <tr id="new-expense-template" class="hidden odd:bg-white even:bg-gray-50 hover:bg-gray-100">
+                            {{-- <tr id="new-expense-template" class="hidden odd:bg-white even:bg-gray-50 hover:bg-gray-100">
                                 <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
                                     <span class="expense-badge bg-purple-100 text-purple-800">Nouvelle Dépense</span>
                                     <input type="hidden" name="expenses[INDEX][type]" value="other">
@@ -426,19 +543,19 @@
                                         </button>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> --}}
 
                             <!-- Total Row -->
                             <tr class="bg-gray-200 font-bold">
-                                <td class="px-3 py-3 text-right border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+                                {{-- <td class="px-3 py-3 text-right border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                     <!-- Add New Expense Button -->
                                     <div class="mb-4 flex justify-end">
                                         <button type="button" id="add-expense-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                                             <i class="fas fa-plus mr-2"></i>Ajouter une dépense
                                         </button>
                                     </div>
-                                </td>
-                                <td class="px-3 py-3 text-right border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+                                </td> --}}
+                                <td colspan="2" class="px-3 py-3 text-right border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                     SUBTOTALS (INR)
                                 </td>
                                 <td id="reimbursement-total" class="px-3 py-3 text-center border border-gray-200 whitespace-nowrap text-sm text-blue-800">
@@ -474,9 +591,9 @@
                         const grandTotalElement = document.getElementById('grand-total');
                         const reimbursementTotalElement = document.getElementById('reimbursement-total');
                         const directTotalElement = document.getElementById('direct-total');
-                        const addExpenseBtn = document.getElementById('add-expense-btn');
+                        //const addExpenseBtn = document.getElementById('add-expense-btn');
                         const otherExpensesHeader = document.querySelector('.last-row');
-                        const newExpenseTemplate = document.getElementById('new-expense-template');
+                        //const newExpenseTemplate = document.getElementById('new-expense-template');
 
                         // File Upload Modal Elements
                         const photoModal = document.getElementById('photo-upload-modal');
@@ -786,56 +903,56 @@
                         });
 
                         // Add new expense functionality
-                        addExpenseBtn.addEventListener('click', function() {
-                            // Clone the template
-                            const newRow = newExpenseTemplate.cloneNode(true);
-                            newRow.classList.remove('hidden');
-                            newRow.removeAttribute('id');
+                        // addExpenseBtn.addEventListener('click', function() {
+                        //     // Clone the template
+                        //     const newRow = newExpenseTemplate.cloneNode(true);
+                        //     newRow.classList.remove('hidden');
+                        //     newRow.removeAttribute('id');
 
-                            // Update all the INDEX placeholders with the current index
-                            newRow.querySelectorAll('input, select, .view-receipt-btn').forEach(element => {
-                                if (element.name) {
-                                    element.name = element.name.replace('INDEX', currentIndex);
-                                } else {
-                                    element.setAttribute('data-expense-id', currentIndex);
-                                    element.setAttribute('data-expense-index', currentIndex);
-                                }
-                            });
+                        //     // Update all the INDEX placeholders with the current index
+                        //     newRow.querySelectorAll('input, select, .view-receipt-btn').forEach(element => {
+                        //         if (element.name) {
+                        //             element.name = element.name.replace('INDEX', currentIndex);
+                        //         } else {
+                        //             element.setAttribute('data-expense-id', currentIndex);
+                        //             element.setAttribute('data-expense-index', currentIndex);
+                        //         }
+                        //     });
 
-                            // Add event listeners to the new inputs
-                            newRow.querySelectorAll(
-                                    '.reimbursement-input, .direct-input, .reimbursement-currency, .direct-currency')
-                                .forEach(
-                                    element => {
-                                        element.addEventListener('input', updateRowCalculation);
-                                        element.addEventListener('change', updateRowCalculation);
-                                    }
-                                );
+                        //     // Add event listeners to the new inputs
+                        //     newRow.querySelectorAll(
+                        //             '.reimbursement-input, .direct-input, .reimbursement-currency, .direct-currency')
+                        //         .forEach(
+                        //             element => {
+                        //                 element.addEventListener('input', updateRowCalculation);
+                        //                 element.addEventListener('change', updateRowCalculation);
+                        //             }
+                        //         );
 
-                            // Add delete functionality to the new row
-                            newRow.querySelector('.delete-row').addEventListener('click', function() {
-                                if (confirm('Are you sure you want to delete this expense?')) {
-                                    newRow.remove();
-                                    updateAllTotals();
-                                }
-                            });
+                        //     // Add delete functionality to the new row
+                        //     newRow.querySelector('.delete-row').addEventListener('click', function() {
+                        //         if (confirm('Are you sure you want to delete this expense?')) {
+                        //             newRow.remove();
+                        //             updateAllTotals();
+                        //         }
+                        //     });
 
-                            // Add receipt upload functionality to the new row
-                            newRow.querySelector('.view-receipt-btn').addEventListener('click', function() {
-                                currentExpenseType = this.getAttribute('data-expense-type');
-                                currentExpenseId = this.getAttribute('data-expense-id');
-                                currentExpenseIndex = this.getAttribute('data-expense-index');
-                                photoModal.classList.remove('hidden');
-                            });
+                        //     // Add receipt upload functionality to the new row
+                        //     newRow.querySelector('.view-receipt-btn').addEventListener('click', function() {
+                        //         currentExpenseType = this.getAttribute('data-expense-type');
+                        //         currentExpenseId = this.getAttribute('data-expense-id');
+                        //         currentExpenseIndex = this.getAttribute('data-expense-index');
+                        //         photoModal.classList.remove('hidden');
+                        //     });
 
-                            // Insert the new row before the total row
-                            otherExpensesHeader.insertAdjacentElement('afterend', newRow);
-                            // Increment the index for the next new row
-                            currentIndex++;
+                        //     // Insert the new row before the total row
+                        //     otherExpensesHeader.insertAdjacentElement('afterend', newRow);
+                        //     // Increment the index for the next new row
+                        //     currentIndex++;
 
-                            // Update totals
-                            updateAllTotals();
-                        });
+                        //     // Update totals
+                        //     updateAllTotals();
+                        // });
 
                         // Function to convert amount from one currency to INR
                         function convertToINR(amount, fromCurrency) {
@@ -937,6 +1054,274 @@
                             document.getElementById('grand-total-input').value = grandTotal.toFixed(2);
                         }
 
+                        // Function to validate accommodation amounts with currency conversion
+function validateAccommodationAmounts() {
+    const accommodationInputs = document.querySelectorAll('.accommodation-input');
+    const accommodationCurrencies = document.querySelectorAll('.accommodation-currency');
+    const maxAmountINR = parseFloat(document.getElementById('max-accommodation').value);
+    const maxAmountEUR = parseFloat(document.getElementById('max-accommodation-eur').value);
+
+    // Add event listeners to inputs
+    accommodationInputs.forEach(input => {
+        input.addEventListener('input', validateAccommodationTotal);
+    });
+
+    // Add event listeners to currency selects
+    accommodationCurrencies.forEach(select => {
+        select.addEventListener('change', function() {
+            // Update the data-currency attribute on the corresponding input
+            const inputName = this.name.replace('_currency', '_amount');
+            const correspondingInput = document.querySelector(`input[name="${inputName}"]`);
+            if (correspondingInput) {
+                correspondingInput.setAttribute('data-currency', this.value);
+            }
+            validateAccommodationTotal();
+        });
+    });
+
+    function validateAccommodationTotal() {
+        const reimbursementInput = document.querySelector('input[name="expenses[1][reimbursement_amount]"]');
+        const directInput = document.querySelector('input[name="expenses[1][direct_amount]"]');
+        const reimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
+        const directCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
+
+        const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
+        const directValue = parseFloat(directInput.value) || 0;
+
+        // Convert both amounts to INR for comparison with the total
+        const reimbursementINR = convertToINR(reimbursementValue, reimbursementCurrency);
+        const directINR = convertToINR(directValue, directCurrency);
+        const totalINR = reimbursementINR + directINR;
+
+        if (totalINR > maxAmountINR) {
+            // Calculate how much to reduce from the current input
+            const excess = totalINR - maxAmountINR;
+
+            // Determine which input was just changed
+            const activeElement = document.activeElement;
+            if (activeElement === reimbursementInput) {
+                // Reduce reimbursement amount
+                const reductionINR = excess;
+                const reductionOriginal = reimbursementCurrency === 'INR'
+                    ? reductionINR
+                    : reductionINR / exchangeRates[reimbursementCurrency];
+
+                const newValue = Math.max(0, reimbursementValue - reductionOriginal);
+                reimbursementInput.value = newValue.toFixed(2);
+            } else if (activeElement === directInput) {
+                // Reduce direct amount
+                const reductionINR = excess;
+                const reductionOriginal = directCurrency === 'INR'
+                    ? reductionINR
+                    : reductionINR / exchangeRates[directCurrency];
+
+                const newValue = Math.max(0, directValue - reductionOriginal);
+                directInput.value = newValue.toFixed(2);
+            } else {
+                // If neither input is focused (e.g., currency changed), reduce both proportionally
+                const reimbursementRatio = reimbursementINR / totalINR;
+                const directRatio = directINR / totalINR;
+
+                const reimbursementReduction = reimbursementCurrency === 'INR'
+                    ? excess * reimbursementRatio
+                    : (excess * reimbursementRatio) / exchangeRates[reimbursementCurrency];
+
+                const directReduction = directCurrency === 'INR'
+                    ? excess * directRatio
+                    : (excess * directRatio) / exchangeRates[directCurrency];
+
+                reimbursementInput.value = Math.max(0, reimbursementValue - reimbursementReduction).toFixed(2);
+                directInput.value = Math.max(0, directValue - directReduction).toFixed(2);
+            }
+
+            // Show a warning
+            alert(`Le total des montants ne peut pas dépasser ${maxAmountEUR.toFixed(2)} EUR (${maxAmountINR.toFixed(2)} INR).`);
+
+            // Update the row calculation
+            updateRowCalculation.call(reimbursementInput);
+        }
+    }
+}
+
+// Function to handle meal quantity changes
+function handleMealQuantityChanges() {
+    const mealInput = document.querySelector('.reduced-meals-input');
+    const mealCost = parseFloat(document.getElementById('meal-cost').value);
+    const maxMeals = parseInt(document.getElementById('max-meals').value);
+    const actualMealsElement = document.querySelector('.actual-meals');
+
+    // Calculate initial values from database
+    const initialReducedMeals = parseInt(mealInput.value) || 0;
+    const initialActualMeals = Math.max(0, maxMeals - initialReducedMeals);
+    const eurRate = parseFloat(eurToInrInput.value);
+
+    // Update the actual meals display
+    actualMealsElement.textContent = initialActualMeals;
+
+    // Calculate initial reimbursement amount
+    const initialReimbursementAmount = initialActualMeals * mealCost * eurRate;
+
+    // Update reimbursement amount cell
+    const reimbursementCell = document.querySelector('.reimbursement-amount');
+    reimbursementCell.textContent = initialReimbursementAmount.toFixed(2);
+    reimbursementCell.setAttribute('data-amount', initialReimbursementAmount);
+
+    // Update total INR
+    const totalCell = document.querySelector('.total-inr');
+    totalCell.textContent = initialReimbursementAmount.toFixed(2);
+
+    // Add event listener for input changes
+    mealInput.addEventListener('input', function() {
+        const reducedMeals = parseInt(this.value) || 0;
+
+        // Calculate actual number of meals (total - reduced)
+        const actualMeals = Math.max(0, maxMeals - reducedMeals);
+
+        // Update the actual meals display
+        actualMealsElement.textContent = actualMeals;
+
+        // Calculate reimbursement amount
+        const reimbursementAmount = actualMeals * mealCost * eurRate;
+
+        // Update reimbursement amount cell
+        reimbursementCell.textContent = reimbursementAmount.toFixed(2);
+        reimbursementCell.setAttribute('data-amount', reimbursementAmount);
+
+        // Update total INR
+        totalCell.textContent = reimbursementAmount.toFixed(2);
+
+        // Update all totals
+        updateAllTotals();
+    });
+}
+
+// Function to handle accommodation quantity changes
+function handleAccommodationQuantityChanges() {
+    const accommodationInput = document.querySelector('.reduced-accommodation-input');
+    const accommodationCost = parseFloat(document.getElementById('accommodation-cost').value);
+    const originalAccommodation = parseInt(document.getElementById('original-accommodation').value);
+    const actualAccommodationElement = document.querySelector('.actual-accommodation');
+    const eurRate = parseFloat(eurToInrInput.value);
+
+    // Calculate initial values from database
+    const initialReducedAccommodation = parseInt(accommodationInput.value) || 0;
+    const initialActualAccommodation = Math.max(0, originalAccommodation - initialReducedAccommodation);
+
+    // Update the actual accommodation display
+    actualAccommodationElement.textContent = initialActualAccommodation;
+
+    // Update the maximum values for the accommodation inputs
+    const initialMaxAmountINR = initialActualAccommodation * accommodationCost * eurRate;
+    const initialMaxAmountEUR = initialActualAccommodation * accommodationCost;
+
+    document.getElementById('max-accommodation').value = initialMaxAmountINR;
+    document.getElementById('max-accommodation-eur').value = initialMaxAmountEUR;
+
+    // Update the max attributes on the input fields
+    const reimbursementInput = document.querySelector('input[name="expenses[1][reimbursement_amount]"]');
+    const directInput = document.querySelector('input[name="expenses[1][direct_amount]"]');
+
+    reimbursementInput.setAttribute('data-max', initialMaxAmountINR);
+    directInput.setAttribute('data-max', initialMaxAmountINR);
+
+    // Get current values from inputs
+    const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
+    const directValue = parseFloat(directInput.value) || 0;
+    const reimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
+    const directCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
+
+    // Convert both amounts to INR for comparison
+    const reimbursementINR = convertToINR(reimbursementValue, reimbursementCurrency);
+    const directINR = convertToINR(directValue, directCurrency);
+    const totalINR = reimbursementINR + directINR;
+
+    // If the current total exceeds the new maximum, adjust the values
+    if (totalINR > initialMaxAmountINR) {
+        const excess = totalINR - initialMaxAmountINR;
+
+        // Reduce both amounts proportionally
+        const reimbursementRatio = reimbursementINR / totalINR;
+        const directRatio = directINR / totalINR;
+
+        const reimbursementReduction = reimbursementCurrency === 'INR'
+            ? excess * reimbursementRatio
+            : (excess * reimbursementRatio) / exchangeRates[reimbursementCurrency];
+
+        const directReduction = directCurrency === 'INR'
+            ? excess * directRatio
+            : (excess * directRatio) / exchangeRates[directCurrency];
+
+        reimbursementInput.value = Math.max(0, reimbursementValue - reimbursementReduction).toFixed(2);
+        directInput.value = Math.max(0, directValue - directReduction).toFixed(2);
+    }
+
+    // Update the row calculation
+    updateRowCalculation.call(reimbursementInput);
+
+    // Add event listener for input changes
+    accommodationInput.addEventListener('input', function() {
+        const reducedAccommodation = parseInt(this.value) || 0;
+
+        // Calculate actual number of accommodation nights (total - reduced)
+        // Allow negative values (user can enter more than original)
+        const actualAccommodation = Math.max(0, originalAccommodation - reducedAccommodation);
+
+        // Update the actual accommodation display
+        actualAccommodationElement.textContent = actualAccommodation;
+
+        // Update the maximum values for the accommodation inputs
+        const maxAmountINR = actualAccommodation * accommodationCost * eurRate;
+        const maxAmountEUR = actualAccommodation * accommodationCost;
+
+        document.getElementById('max-accommodation').value = maxAmountINR;
+        document.getElementById('max-accommodation-eur').value = maxAmountEUR;
+
+        // Update the max attributes on the input fields
+        reimbursementInput.setAttribute('data-max', maxAmountINR);
+        directInput.setAttribute('data-max', maxAmountINR);
+
+        // Update the total for the accommodation row
+        const currentReimbursementValue = parseFloat(reimbursementInput.value) || 0;
+        const currentDirectValue = parseFloat(directInput.value) || 0;
+        const currentReimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
+        const currentDirectCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
+
+        // Convert both amounts to INR for comparison
+        const currentReimbursementINR = convertToINR(currentReimbursementValue, currentReimbursementCurrency);
+        const currentDirectINR = convertToINR(currentDirectValue, currentDirectCurrency);
+        const currentTotalINR = currentReimbursementINR + currentDirectINR;
+
+        // If the current total exceeds the new maximum, adjust the values
+        if (currentTotalINR > maxAmountINR) {
+            const excess = currentTotalINR - maxAmountINR;
+
+            // Reduce both amounts proportionally
+            const reimbursementRatio = currentReimbursementINR / currentTotalINR;
+            const directRatio = currentDirectINR / currentTotalINR;
+
+            const reimbursementReduction = currentReimbursementCurrency === 'INR'
+                ? excess * reimbursementRatio
+                : (excess * reimbursementRatio) / exchangeRates[currentReimbursementCurrency];
+
+            const directReduction = currentDirectCurrency === 'INR'
+                ? excess * directRatio
+                : (excess * directRatio) / exchangeRates[currentDirectCurrency];
+
+            reimbursementInput.value = Math.max(0, currentReimbursementValue - reimbursementReduction).toFixed(2);
+            directInput.value = Math.max(0, currentDirectValue - directReduction).toFixed(2);
+
+            // Show a warning
+            alert(`Le nombre de nuits a été réduit à ${actualAccommodation}. Les montants ont été ajustés en conséquence.`);
+        }
+
+        // Update the row calculation
+        updateRowCalculation.call(reimbursementInput);
+    });
+}
+
+handleMealQuantityChanges();
+handleAccommodationQuantityChanges();
+validateAccommodationAmounts();
                         // Initialize calculations
                         updateAllCalculations();
                     });

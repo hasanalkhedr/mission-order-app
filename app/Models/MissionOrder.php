@@ -99,6 +99,7 @@ class MissionOrder extends Model
         'acc_total_inr',
         'conge',
         'charge1',
+        'acc_expense_document',
     ];
     protected $casts = [
         'order_date' => 'date',
