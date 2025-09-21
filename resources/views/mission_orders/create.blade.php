@@ -119,7 +119,7 @@
                     <input type="checkbox" name="if_conge" id="if_conge"
                         value="1" @checked(old('if_conge', 0) > 0)
                         class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <span class="ms-2 text-sm font-medium text-blue-500 dark:text-gray-300">CONGE PENDANT MISSION</span>
+                    <span class="ms-2 text-sm font-medium text-blue-500 dark:text-gray-300">Conge pendant mission</span>
                 </label>
             </div>
         </div>
@@ -328,8 +328,8 @@
                 const baremeSelect = document.querySelector('select[name="bareme_id"]');
                 const startDateInput = document.querySelector('input[name="start_date"]');
                 const endDateInput = document.querySelector('input[name="end_date"]');
-                const startTimeInput = document.querySelector('input[name="start_time"]');
-                const endTimeInput = document.querySelector('input[name="end_time"]');
+                const startTimeInput = document.querySelector('input[name="start_time2"]');
+                const endTimeInput = document.querySelector('input[name="end_time2"]');
 
                 // Store bareme data for calculation
                 const baremes = {!! json_encode(

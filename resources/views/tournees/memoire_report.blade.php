@@ -94,12 +94,12 @@
                     <td class="w-1/4">{{ $tournee->no_ded_meals }}</td>
                     <input type="hidden" id="no_ded_meals" value="{{ $tournee->no_ded_meals }}">
                 </tr> --}}
-                <tr>
+                {{-- <tr>
                     <td class="w-1/4">Avance (Roupie indienne) :</td>
                     <td class="w-1/4">{{ $tournee->advance }}</td>
                     <td class="w-1/4">Restau adm. :</td>
                     <td class="w-1/4">0</td>
-                </tr>
+                </tr> --}}
             </tbody>
         </table>
 

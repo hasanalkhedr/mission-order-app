@@ -106,8 +106,8 @@ class MissionOrderController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2);
                     $diffDays = abs($end->diffInDays($start));
                     $totalDays = $diffDays;
                     // Add extra day if start time is before 5 AM
@@ -228,8 +228,8 @@ class MissionOrderController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request, $missionOrder) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time);
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2);
                     // Calculate full calendar days difference
                     $diffDays = abs($end->diffInDays($start));
                     $totalDays = $diffDays;

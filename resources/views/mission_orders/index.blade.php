@@ -136,12 +136,12 @@
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $missionOrder->start_date->format('d/m/Y') }} at {{ $missionOrder->start_time }}
+                                {{ $missionOrder->start_date->format('d/m/Y') }} at {{ $missionOrder->start_time2 }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $missionOrder->end_date->format('d/m/Y') }} at {{ $missionOrder->end_time }}
+                                {{ $missionOrder->end_date->format('d/m/Y') }} at {{ $missionOrder->end_time2 }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">

@@ -17,20 +17,20 @@ class MissionOrder extends Model
                 //claculate accomodation
                 $missionOrder->no_accomodation = $missionOrder->start_date->diffInDays($missionOrder->end_date);
 
-                if (strtotime($missionOrder->start_time) <= strtotime('05:00 AM')) {
+                if (strtotime($missionOrder->start_time2) <= strtotime('05:00 AM')) {
                     $missionOrder->no_accomodation = $missionOrder->no_accomodation + 1;
                 }
 
                 //calculate meals
                 $missionOrder->no_meals = 2 * ($missionOrder->start_date->diffInDays($missionOrder->end_date) - 1);
-                if (strtotime($missionOrder->start_time) <= strtotime('12:00 PM')) {
+                if (strtotime($missionOrder->start_time2) <= strtotime('12:00 PM')) {
                     $missionOrder->no_meals = $missionOrder->no_meals + 2;
-                } else if (strtotime($missionOrder->start_time) <= strtotime('07:00 PM')) {
+                } else if (strtotime($missionOrder->start_time2) <= strtotime('07:00 PM')) {
                     $missionOrder->no_meals = $missionOrder->no_meals + 1;
                 }
-                if (strtotime($missionOrder->end_time) >= strtotime('09:00 PM')) {
+                if (strtotime($missionOrder->end_time2) >= strtotime('09:00 PM')) {
                     $missionOrder->no_meals = $missionOrder->no_meals + 2;
-                } else if (strtotime($missionOrder->end_time) >= strtotime('02:00 PM')) {
+                } else if (strtotime($missionOrder->end_time2) >= strtotime('02:00 PM')) {
                     $missionOrder->no_meals = $missionOrder->no_meals + 1;
                 }
             }

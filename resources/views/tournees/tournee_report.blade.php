@@ -47,7 +47,7 @@
                 </tr>
                 @if($tournee->conge)
                 <tr>
-                    <td class="w-1/3">CONGE PENDANT MISSION:</td>
+                    <td class="w-1/3">Conge pendant mission:</td>
                     <td class="w-2/3">{{ $tournee->conge }}</td>
                 </tr>
                 @endif
@@ -209,6 +209,7 @@
                 </tr>
             </tbody>
         </table>
+        @if($tournee->description && $tournee->description != '')
         <table class="table-auto w-full text-left">
             <thead>
                 <tr class="bg-blue-200">
@@ -222,6 +223,7 @@
                 </tr>
             </tbody>
         </table>
+        @endif
         <table class="table-auto w-full text-left">
             <thead>
                 <tr class="bg-blue-200">

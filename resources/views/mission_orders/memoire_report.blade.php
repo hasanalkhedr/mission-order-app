@@ -76,12 +76,12 @@
                         <td class="w-1/4">{{ $missionOrder->no_ded_meals }}</td>
                         <input type="hidden" id="no_ded_meals" value="{{ $missionOrder->no_ded_meals }}">
                     </tr> --}}
-                    <tr>
+                    {{-- <tr>
                         <td class="w-1/4">Avance (Roupie indienne) :</td>
                         <td class="w-1/4">{{ $missionOrder->advance }}</td>
                         <td class="w-1/4">Restau adm. :</td>
                         <td class="w-1/4">0</td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
 
