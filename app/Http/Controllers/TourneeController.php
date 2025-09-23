@@ -415,8 +415,16 @@ class TourneeController extends Controller
     }
     public function m_create(Request $request, Tournee $tournee)
     {
-        $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? now());
-        return view('tournees.m_create', compact('tournee', 'current_rate'));
+        //if($missionOrder->end_date <= now()) {
+            $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? now());
+            if($current_rate) {
+                return view('tournees.m_create', compact('tournee', 'current_rate'));
+            } else {
+                abort(505);
+            }
+        /*} else {
+            return back()->withErrors(['error' => 'vous ne pouvez pas ajouter de mémoire avant la fin de la mission']);
+        }*/
     }
     public function m_update(Request $request, Tournee $tournee)
     {
@@ -564,7 +572,11 @@ class TourneeController extends Controller
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
         $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date);
-        return view('tournees.memoire_report', compact('tournee', 'director', 'current_rate'));
+        if($current_rate) {
+            return view('tournees.memoire_report', compact('tournee', 'director', 'current_rate'));
+        } else {
+            abort(505);
+        }
     }
     public function m_destroy(Request $request, Tournee $tournee)
     {

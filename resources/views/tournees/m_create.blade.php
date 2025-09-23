@@ -2,6 +2,11 @@
 @section('title', __('Add Memoire'))
 @section('content')
     <h2 class="text-2xl font-bold mb-2 text-blue-700">MÉMOIRE DE FRAIS / TOURNEE</h2>
+    @if($errors->has('error'))
+    <div class="alert alert-danger">
+        {{ $errors->first('error') }}
+    </div>
+@endif
     <form action="{{ route('tournees.m_update', $tournee->id) }}" method="POST" class="w-11/12 items-center" enctype="multipart/form-data">
         @csrf
         @method('PUT')

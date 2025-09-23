@@ -205,7 +205,7 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ old('end_time') }}" type="time" required></x-date-time-input>
             </div>
         </div>
-        {{-- <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+        <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
                 description.</p>
         </div>
@@ -213,7 +213,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const startDateInput = document.getElementById('start_date');
                 const endDateInput = document.getElementById('end_date');
-                const descriptionTextarea = document.getElementById('description');
+                //const descriptionTextarea = document.getElementById('description');
                 const weekendWarning = document.getElementById('weekend-warning');
 
                 function checkForWeekend() {
@@ -237,12 +237,12 @@
 
                     if (hasWeekend) {
                         weekendWarning.classList.remove('hidden');
-                        descriptionTextarea.setAttribute('required', 'required');
-                        descriptionTextarea.classList.add('border-red-500');
+                        //descriptionTextarea.setAttribute('required', 'required');
+                        //descriptionTextarea.classList.add('border-red-500');
                     } else {
                         weekendWarning.classList.add('hidden');
-                        descriptionTextarea.removeAttribute('required');
-                        descriptionTextarea.classList.remove('border-red-500');
+                        //descriptionTextarea.removeAttribute('required');
+                        //descriptionTextarea.classList.remove('border-red-500');
                     }
                 }
 
@@ -250,16 +250,16 @@
                 endDateInput.addEventListener('change', checkForWeekend);
 
                 // Also check on form submission
-                document.querySelector('form').addEventListener('submit', function(e) {
-                    checkForWeekend();
-                    if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
-                        .trim()) {
-                        e.preventDefault();
-                        descriptionTextarea.focus();
-                    }
-                });
+                // document.querySelector('form').addEventListener('submit', function(e) {
+                //     checkForWeekend();
+                //     if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
+                //         .trim()) {
+                //         e.preventDefault();
+                //         descriptionTextarea.focus();
+                //     }
+                // });
             });
-        </script> --}}
+        </script>
 
         <x-form-divider>Frais Mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-2">

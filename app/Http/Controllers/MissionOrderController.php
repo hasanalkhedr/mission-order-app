@@ -413,8 +413,16 @@ class MissionOrderController extends Controller
     }
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
-        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? now());
-        return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
+        //if($missionOrder->end_date <= now()) {
+            $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? now());
+            if($current_rate) {
+                return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
+            } else {
+                abort(505);
+            }
+        /*} else {
+            return back()->withErrors(['error' => 'vous ne pouvez pas ajouter de mémoire avant la fin de la mission']);
+        }*/
     }
     public function m_update(Request $request, MissionOrder $missionOrder)
     {
@@ -561,7 +569,11 @@ class MissionOrderController extends Controller
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
         $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
-        return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
+        if($current_rate) {
+            return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
+        } else {
+            abort(505);
+        }
     }
     public function m_destroy(Request $request, MissionOrder $missionOrder)
     {

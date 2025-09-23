@@ -214,6 +214,64 @@
                                 </x-date-time-input>
                             </div>
                         </div>
+
+                        <div id="weekend-warning"
+                            class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+                            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une
+                                justification dans la description.</p>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const startDateInput = document.getElementById('start_date');
+                                const endDateInput = document.getElementById('end_date');
+                                //const descriptionTextarea = document.getElementById('description');
+                                const weekendWarning = document.getElementById('weekend-warning');
+
+                                function checkForWeekend() {
+                                    const startDate = new Date(startDateInput.value);
+                                    const endDate = new Date(endDateInput.value);
+
+                                    if (!startDateInput.value || !endDateInput.value) return;
+
+                                    // Check if any day in the range is Saturday (6) or Sunday (0)
+                                    let hasWeekend = false;
+                                    const currentDate = new Date(startDate);
+
+                                    while (currentDate <= endDate) {
+                                        const day = currentDate.getDay();
+                                        if (day === 0 || day === 6) {
+                                            hasWeekend = true;
+                                            break;
+                                        }
+                                        currentDate.setDate(currentDate.getDate() + 1);
+                                    }
+
+                                    if (hasWeekend) {
+                                        weekendWarning.classList.remove('hidden');
+                                        // descriptionTextarea.setAttribute('required', 'required');
+                                        // descriptionTextarea.classList.add('border-red-500');
+                                    } else {
+                                        weekendWarning.classList.add('hidden');
+                                        // descriptionTextarea.removeAttribute('required');
+                                        // descriptionTextarea.classList.remove('border-red-500');
+                                    }
+                                }
+
+                                startDateInput.addEventListener('change', checkForWeekend);
+                                endDateInput.addEventListener('change', checkForWeekend);
+
+                                // Also check on form submission
+                                // document.querySelector('form').addEventListener('submit', function(e) {
+                                //     checkForWeekend();
+                                //     if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
+                                //         .trim()) {
+                                //         e.preventDefault();
+                                //         descriptionTextarea.focus();
+                                //     }
+                                // });
+                            });
+                        </script>
+
                         <button x-show="destinations.length > 1" x-on:click="removeDestination(index)" type="button"
                             class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
                             Supprimer cette destination
