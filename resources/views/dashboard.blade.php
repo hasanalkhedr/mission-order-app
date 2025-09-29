@@ -21,7 +21,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </span>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900">Mission Orders</h3>
+                        <h3 class="mt-4 text-lg font-medium text-gray-900">Ordre de mission</h3>
                         <p class="mt-1 text-sm text-gray-500">les ordres de mission nécessitent votre attention</p>
                     </div>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-lg font-extrabold bg-blue-100 text-blue-800">

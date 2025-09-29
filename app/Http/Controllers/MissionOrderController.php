@@ -97,7 +97,7 @@ class MissionOrderController extends Controller
             'arrive_location' => 'required',
             'departure_location' => 'required',
             'bareme_id' => 'required',
-            'start_date' => 'required|date',
+            'start_date' => 'required|date|after:'.now()->addDays(2),
             'end_date' => 'required|date|after_or_equal:start_date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
@@ -523,44 +523,64 @@ class MissionOrderController extends Controller
         foreach ($expenses as $index => $expenseData) {
             $receiptPath = null;
 
+            // Check if document was deleted (no existing_receipt and no new file)
+            $documentDeleted = empty($expenseData['existing_receipt']) && !$request->hasFile("expenses.$index.receipt");
+
             // Handle file upload if present
             if ($request->hasFile("expenses.$index.receipt")) {
                 $file = $request->file("expenses.$index.receipt");
                 $receiptPath = $file->store('expense-receipts', 'public');
             }
-            // Use existing receipt if no new file was uploaded
-            elseif (!empty($expenseData['existing_receipt'])) {
+            // Use existing receipt if no new file was uploaded and document wasn't deleted
+            elseif (!empty($expenseData['existing_receipt']) && !$documentDeleted) {
                 $receiptPath = $expenseData['existing_receipt'];
             }
 
             if (isset($expenseData['expense_id'])) {
                 $storedExpense = Expense::find($expenseData['expense_id']);
 
-                // Delete old file if it's being replaced
-                if ($receiptPath && $receiptPath !== $storedExpense->expense_document && $storedExpense->expense_document) {
+                // Delete old file if it's being replaced or document was deleted
+                if (($receiptPath && $receiptPath !== $storedExpense->expense_document && $storedExpense->expense_document) ||
+                    ($documentDeleted && $storedExpense->expense_document)) {
                     Storage::disk('public')->delete($storedExpense->expense_document);
                 }
 
                 $updateData = $expenseData;
                 if ($receiptPath) {
                     $updateData['expense_document'] = $receiptPath;
+                } elseif ($documentDeleted) {
+                    $updateData['expense_document'] = ''; // Clear the document path
                 }
 
                 $storedExpense->update($updateData);
             } else if ($expenseData['type'] === 'accommodation') {
-                $missionOrder->update([
+                // Handle accommodation expense document deletion
+                $currentAccDocument = $missionOrder->acc_expense_document;
+
+                // Delete old file if it's being replaced or document was deleted
+                if (($receiptPath && $receiptPath !== $currentAccDocument && $currentAccDocument) ||
+                    ($documentDeleted && $currentAccDocument)) {
+                    Storage::disk('public')->delete($currentAccDocument);
+                }
+
+                $updateData = [
                     'acc_reimbursement_amount' => $expenseData['reimbursement_amount'],
                     'acc_reimbursement_currency' => $expenseData['reimbursement_currency'],
                     'acc_direct_amount' => $expenseData['direct_amount'],
                     'acc_direct_currency' => $expenseData['direct_currency'],
                     'acc_total_inr' => $expenseData['total_inr'],
-                    'acc_expense_document' => $receiptPath ?? '',
-                ]);
+                    'acc_expense_document' => $receiptPath ?? ($documentDeleted ? null : $currentAccDocument),
+                ];
+
+                $missionOrder->update($updateData);
             } else if ($index !== 'INDEX') {
+                // For new expenses, only set document if not deleted
+                $expenseDocument = $documentDeleted ? '' : ($receiptPath ?: '');
+
                 Expense::create(array_merge($expenseData, [
                     'mission_order_id' => $missionOrder->id,
                     'expense_date' => $missionOrder->memor_date ?? $missionOrder->start_date,
-                    'expense_document' => $receiptPath ?: '',
+                    'expense_document' => $expenseDocument,
                 ]));
             }
         }
