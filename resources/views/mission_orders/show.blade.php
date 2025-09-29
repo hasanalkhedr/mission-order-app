@@ -81,13 +81,13 @@
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->start_date->format('d/m/Y') }}
-                    at {{ $missionOrder->start_time2 }}</label>
+                    at {{ \Carbon\Carbon::parse($missionOrder->start_time2)->format('H:i') }}</label>
                 <x-label class="inline">
                     Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->end_date->format('d/m/Y') }}
-                    at {{ $missionOrder->end_time2 }}</label>
+                    at {{ \Carbon\Carbon::parse($missionOrder->end_time2)->format('H:i') }}</label>
 
             </div>
             <div class="w-1/4">

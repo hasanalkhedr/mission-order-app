@@ -26,7 +26,9 @@ class TourneeController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id', 'desc')->paginate(10);
+            })
+                ->orderByRaw("FIELD(status, 'sg_approve','draft', 'sup_approve', 'director_approve', 'approved', 'paid', 'rejected')")
+                ->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
@@ -34,7 +36,8 @@ class TourneeController extends Controller
             })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id', 'desc')->paginate(10);
+            })->orderByRaw("FIELD(status, 'sup_approve','draft',  'director_approve', 'sg_approve', 'approved', 'paid', 'rejected')")
+                ->orderBy('id', 'desc')->paginate(10);
         } else {
             $tournees = Tournee::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
@@ -370,11 +373,39 @@ class TourneeController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') ) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')->orderBy('id', 'desc')->paginate(10);
-        } else if ($employee->hasRole('supervisor')) {
+            })->where('status', 'like', 'approved')
+            ->orderByRaw("
+                    CASE
+                        WHEN memor_status = 'sg_approve' THEN 1
+                        WHEN memor_status = 'controller_approve' THEN 2
+                        WHEN memor_status = 'draft' THEN 3
+                        WHEN memor_status IS NULL THEN 4
+                        WHEN memor_status = 'approved' THEN 5
+                        WHEN memor_status = 'paid' THEN 6
+                        WHEN memor_status = 'rejected' THEN 7
+                        ELSE 8
+                    END
+                ")->orderBy('id', 'desc')->paginate(10);
+        } else if ($employee->hasRole('sg') ) {
+            $tournees = Tournee::when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->where('status', 'like', 'approved')
+            ->orderByRaw("
+                    CASE
+                        WHEN memor_status = 'controller_approve' THEN 1
+                        WHEN memor_status = 'sg_approve' THEN 2
+                        WHEN memor_status = 'draft' THEN 3
+                        WHEN memor_status IS NULL THEN 4
+                        WHEN memor_status = 'approved' THEN 5
+                        WHEN memor_status = 'paid' THEN 6
+                        WHEN memor_status = 'rejected' THEN 7
+                        ELSE 8
+                    END
+                ")->orderBy('id', 'desc')->paginate(10);
+        }else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
 
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {

@@ -70,6 +70,28 @@
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $missionOrder->purpose }}</textarea>
             </div>
         </div>
+
+        {{-- CONGE PENDANT MISSION --}}
+        @if($missionOrder->conge)
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-full px-3 py-1">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" name="if_conge" id="if_conge" disabled
+                        value="1" checked
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <span class="ms-2 text-sm font-medium text-blue-500 dark:text-gray-300">Conge pendant mission</span>
+                </label>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2" id="conge_container">
+            <div class="w-1/2 px-3">
+                <textarea class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-1 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                        name="conge"
+                        id="conge_input" disabled>{{$missionOrder->conge}}</textarea>
+            </div>
+        </div>
+        @endif
+
         <x-form-divider>Détail du déplacement résidence administrative - lieu de la mission</x-form-divider>
         <div class="flex flex-wrap -mx-3 mb-0 w-full">
             <div class="w-1/4 pr-1 pl-3">
@@ -115,7 +137,12 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ $missionOrder->end_time }}" type="time" disabled></x-date-time-input>
             </div>
         </div>
-
+@if($missionOrder->has_weekend)
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
+            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
+                description.</p>
+        </div>
+        @endif
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
@@ -184,6 +211,14 @@
                                             data-modal-toggle="draftOrSubmitModal">{{ __('Submit Memoire') }}
                                         </button>
                                     </div>
+                                    <div>
+                                        <button
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                                            type="button" data-modal-toggle="deleteModal-{{ $missionOrder->id }}">
+                                            {{ __('Delete') }}
+                                        </button>
+                                    </div>
+                                    @include('partials.modals._delete-memoier')
                                 </div>
                             </div>
                         </div>

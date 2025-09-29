@@ -68,6 +68,7 @@ class Tournee extends Model
         'conge',
         'charge1',
         'acc_expense_document',
+        'has_weekend'
     ];
     protected $casts = [
         'order_date' => 'date',

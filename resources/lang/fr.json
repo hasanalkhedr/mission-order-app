@@ -23,17 +23,17 @@
     "paid": "payé",
     "controller_approve": "validation gestionnaire",
 
-    "Save Mission as Draft or Submit it": "Enregistrer la mission comme brouillon ou la soumettre",
+    "Save Mission as Draft or Submit it": "Enregistrer la mission en brouillon ou la soumettre",
     "When save the mission as draft, you can edit or delete it later.": "Lorsque vous enregistrez la mission en tant que brouillon, vous pouvez la modifier ou la supprimer ultérieurement.",
     "When submit the mission, you can not edit or delete it, and the mission will go to the approve process.": "Lorsque vous soumettez la mission, vous ne pouvez pas la modifier ou la supprimer, et la mission passera au processus d'approbation.",
-    "Save as Draft": "Enregistrer comme brouillon",
-    "Submit Mission": "Soumettre une mission",
-    "Submit Memoire": "Soumettre une Mémoire",
+    "Save as Draft": "Enregistrer en brouillon",
+    "Submit Mission": "Soumettre",
+    "Submit Memoire": "Soumettre",
 
-    "Save Tournee as Draft or Submit it": "Enregistrer la tournee comme brouillon ou la soumettre",
+    "Save Tournee as Draft or Submit it": "Enregistrer la tournee en brouillon ou la soumettre",
     "When save the tournee as draft, you can edit or delete it later.": "Lorsque vous enregistrez la tournee en tant que brouillon, vous pouvez la modifier ou la supprimer ultérieurement.",
     "When submit the tournee, you can not edit or delete it, and the tournee will go to the approve process.": "Lorsque vous soumettez la tournee, vous ne pouvez pas la modifier ou la supprimer, et la tournee passera au processus d'approbation.",
-    "Submit Tournee": "Soumettre une tournee",
+    "Submit Tournee": "Soumettre",
 
     "No Missions Found": "Aucune mission trouvée",
     "No Tournees Found": "Aucune tournee trouvée",
@@ -67,7 +67,7 @@
     "Print Report": "Imprimer/Visualiser le rapport",
     "Change Dates": "Changer les dates",
 
-    "Save as PDF file": "Télécharger en fichier PDF",
+    "Save as PDF file": "Visualiser PDF",
     "Create Mission": "Créer une mission",
     "Edit Mission": "Modifier une mission",
     "Create Tournee": "Créer une tournée",

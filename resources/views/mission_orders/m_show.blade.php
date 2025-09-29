@@ -73,7 +73,7 @@
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->start_date->format('d/m/Y') }}
-                    at {{ $missionOrder->start_time2 }}</label>
+                    at {{ \Carbon\Carbon::parse($missionOrder->start_time2)->format('H:i') }}</label>
             </div>
             <div class="w-1/2 px-3">
                 <x-label>
@@ -81,7 +81,7 @@
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $missionOrder->end_date->format('d/m/Y') }}
-                    at {{ $missionOrder->end_time2 }}</label>
+                    at {{ \Carbon\Carbon::parse($missionOrder->end_time2)->format('H:i') }}</label>
             </div>
         </div>
         <div class="flex flex-wrap -mx-1 mb-2">

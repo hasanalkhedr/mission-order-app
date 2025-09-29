@@ -100,17 +100,20 @@ class MissionOrder extends Model
         'conge',
         'charge1',
         'acc_expense_document',
+        'has_weekend'
     ];
     protected $casts = [
         'order_date' => 'date',
         'start_date' => 'date:d/m/Y',
         'end_date' => 'date',
-        'start_time' => 'string', // Treat time fields as strings
+        'start_time' => 'string',
         'end_time' => 'string',
         'memor_date' => 'date',
         'expense_reimbursement_total' => 'decimal:2',
         'expense_direct_total' => 'decimal:2',
         'expense_grand_total' => 'decimal:2',
+        'start_time2' => 'string',
+        'end_time2' => 'string',
     ];
     public function employee()
     {

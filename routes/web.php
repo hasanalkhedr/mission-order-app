@@ -3,6 +3,7 @@
 use App\Http\Controllers\BaremeController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ChancelleryRateController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\SignatureController;
@@ -18,9 +19,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
 use Livewire\Livewire;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -31,7 +30,7 @@ Route::middleware('auth')->group(function () {
 // Home route
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect()->route('mission_orders.index');
+        return redirect()->route('dashboard');
     } else {
         return redirect()->route('login');
     }

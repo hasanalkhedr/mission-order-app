@@ -25,7 +25,9 @@ class MissionOrderController extends Controller
         if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id', 'desc')->paginate(10);
+            })
+                ->orderByRaw("FIELD(status, 'sg_approve','draft', 'sup_approve', 'director_approve', 'approved', 'paid', 'rejected')")
+                ->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
@@ -33,7 +35,9 @@ class MissionOrderController extends Controller
             })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
-            })->orderBy('id', 'desc')->paginate(10);
+            })
+                ->orderByRaw("FIELD(status, 'sup_approve','draft',  'director_approve', 'sg_approve', 'approved', 'paid', 'rejected')")
+                ->orderBy('id', 'desc')->paginate(10);
         } else {
             $missionOrders = MissionOrder::where('employee_id', '=', auth()->user()->employee->id)->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
@@ -362,10 +366,38 @@ class MissionOrderController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')->orderBy('id', 'desc')->paginate(10);
+            })->where('status', 'like', 'approved')
+                ->orderByRaw("
+                    CASE
+                        WHEN memor_status = 'sg_approve' THEN 1
+                        WHEN memor_status = 'controller_approve' THEN 2
+                        WHEN memor_status = 'draft' THEN 3
+                        WHEN memor_status IS NULL THEN 4
+                        WHEN memor_status = 'approved' THEN 5
+                        WHEN memor_status = 'paid' THEN 6
+                        WHEN memor_status = 'rejected' THEN 7
+                        ELSE 8
+                    END
+                ")->orderBy('id', 'desc')->paginate(10);
+        } else if ($employee->hasRole('controller')) {
+            $missionOrders = MissionOrder::when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
+            })->where('status', 'like', 'approved')
+                ->orderByRaw("
+                    CASE
+                        WHEN memor_status = 'controller_approve' THEN 1
+                        WHEN memor_status = 'sg_approve' THEN 2
+                        WHEN memor_status = 'draft' THEN 3
+                        WHEN memor_status IS NULL THEN 4
+                        WHEN memor_status = 'approved' THEN 5
+                        WHEN memor_status = 'paid' THEN 6
+                        WHEN memor_status = 'rejected' THEN 7
+                        ELSE 8
+                    END
+                ")->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
@@ -414,12 +446,12 @@ class MissionOrderController extends Controller
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
         //if($missionOrder->end_date <= now()) {
-            $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? now());
-            if($current_rate) {
-                return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
-            } else {
-                abort(505);
-            }
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? now());
+        if ($current_rate) {
+            return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
+        } else {
+            abort(505);
+        }
         /*} else {
             return back()->withErrors(['error' => 'vous ne pouvez pas ajouter de mémoire avant la fin de la mission']);
         }*/
@@ -569,7 +601,7 @@ class MissionOrderController extends Controller
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
         $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
-        if($current_rate) {
+        if ($current_rate) {
             return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
         } else {
             abort(505);

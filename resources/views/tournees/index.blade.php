@@ -69,8 +69,8 @@
                             <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.start_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <input type="date" x-model="filters.start_date_to" placeholder="To"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                {{-- <input type="date" x-model="filters.start_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm"> --}}
                             </div>
                         </div>
                     </th>
@@ -81,8 +81,8 @@
                             <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.end_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <input type="date" x-model="filters.end_date_to" placeholder="To"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                {{-- <input type="date" x-model="filters.end_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm"> --}}
                             </div>
                         </div>
                     </th>
@@ -134,12 +134,12 @@
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $tournee->firstDestination->start_date->format('d/m/Y') }} at {{ $tournee->firstDestination->start_time }}
+                                {{ $tournee->firstDestination->start_date->format('d/m/Y') }} at {{ \Carbon\Carbon::parse($tournee->firstDestination->start_time)->format('H:i') }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $tournee->lastDestination->end_date->format('d/m/Y') }} at {{ $tournee->lastDestination->end_time }}
+                                {{ $tournee->lastDestination->end_date->format('d/m/Y') }} at {{ \Carbon\Carbon::parse($tournee->lastDestination->end_time)->format('H:i') }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
@@ -156,42 +156,8 @@
                                             {{ __('Edit') }}
                                         </a>
                                     </td>
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="deleteModal-{{ $tournee->id }}">
-                                            {{ __('Delete') }}
-                                        </button>
-                                    </td>
                                 @endif
                             @break
-
-                            {{-- @case('sup_approve')
-                                @if ((auth()->user()->employee->hasRole('supervisor')) &&
-                                        in_array(
-                                            $tournee->employee->department_id,
-                                            Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                                            {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }}
-                                        </button>
-                                    </td>
-                                @endif
-                            @break
-
-                            @case('sg_approve')
-                                @if (auth()->user()->employee->hasRole('sg'))
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-                                            {{ __('Approve') }}
-                                        </button>
-                                    </td>
-                                @endif
-                            @break --}}
 
                             @case('approved')
                                 @if ($tournee->employee->id == auth()->user()->employee->id  && $tournee->memor_status == null)
@@ -214,7 +180,6 @@
                                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                             </td>
                         @endif
-                        @include('partials.modals._delete-tournee')
                         {{-- @include('partials.modals._approve-tournee') --}}
                     </tr>
                 @endforeach
@@ -241,9 +206,9 @@
                 employee_id: '',
                 country: '',
                 start_date_from: '',
-                start_date_to: '',
+                // start_date_to: '',
                 end_date_from: '',
-                end_date_to: '',
+                // end_date_to: '',
                 status: ''
             },
             filterRow(mission) {
@@ -269,10 +234,10 @@
                     const fromDate = new Date(this.filters.start_date_from);
                     if (startDate < fromDate) return false;
                 }
-                if (this.filters.start_date_to) {
-                    const toDate = new Date(this.filters.start_date_to);
-                    if (startDate > toDate) return false;
-                }
+                // if (this.filters.start_date_to) {
+                //     const toDate = new Date(this.filters.start_date_to);
+                //     if (startDate > toDate) return false;
+                // }
 
                 // Filter by end date range
                 const endDate = new Date(mission.end_date);
@@ -280,10 +245,10 @@
                     const fromDate = new Date(this.filters.end_date_from);
                     if (endDate < fromDate) return false;
                 }
-                if (this.filters.end_date_to) {
-                    const toDate = new Date(this.filters.end_date_to);
-                    if (endDate > toDate) return false;
-                }
+                // if (this.filters.end_date_to) {
+                //     const toDate = new Date(this.filters.end_date_to);
+                //     if (endDate > toDate) return false;
+                // }
 
                 // Filter by status
                 if (this.filters.status && mission.status !== this.filters.status) {

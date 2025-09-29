@@ -178,8 +178,9 @@
                                 <x-label>
                                     Date et Heure d'arrivée lieu de mission:<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-date-time-input id="start_date-${index}" x-model="destination.start_date"
-                                    x-bind:name="`destinations[${index}][start_date]`" required type="date">
+                                <x-date-time-input x-model="destination.start_date"
+                                    x-bind:name="`destinations[${index}][start_date]`"
+                                    x-on:change="checkForWeekend()" required type="date">
                                 </x-date-time-input>
                                 <x-date-time-input x-model="destination.start_time"
                                     x-bind:name="`destinations[${index}][start_time]`" required type="time">
@@ -189,71 +190,15 @@
                                 <x-label>
                                     Date et Heure de départ lieu de mission:<span class="text-red-500">*</span>
                                 </x-label>
-                                <x-date-time-input id="end_date-${index}" x-model="destination.end_date"
-                                    x-bind:name="`destinations[${index}][end_date]`" required type="date">
+                                <x-date-time-input x-model="destination.end_date"
+                                    x-bind:name="`destinations[${index}][end_date]`"
+                                    x-on:change="checkForWeekend()" required type="date">
                                 </x-date-time-input>
                                 <x-date-time-input x-model="destination.end_time"
                                     x-bind:name="`destinations[${index}][end_time]`" required type="time">
                                 </x-date-time-input>
                             </div>
                         </div>
-
-                        <div id="weekend-warning"
-                            class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
-                            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une
-                                justification dans la description.</p>
-                        </div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const startDateInput = document.getElementById('start_date');
-                                const endDateInput = document.getElementById('end_date');
-                                //const descriptionTextarea = document.getElementById('description');
-                                const weekendWarning = document.getElementById('weekend-warning');
-
-                                function checkForWeekend() {
-                                    const startDate = new Date(startDateInput.value);
-                                    const endDate = new Date(endDateInput.value);
-
-                                    if (!startDateInput.value || !endDateInput.value) return;
-
-                                    // Check if any day in the range is Saturday (6) or Sunday (0)
-                                    let hasWeekend = false;
-                                    const currentDate = new Date(startDate);
-
-                                    while (currentDate <= endDate) {
-                                        const day = currentDate.getDay();
-                                        if (day === 0 || day === 6) {
-                                            hasWeekend = true;
-                                            break;
-                                        }
-                                        currentDate.setDate(currentDate.getDate() + 1);
-                                    }
-
-                                    if (hasWeekend) {
-                                        weekendWarning.classList.remove('hidden');
-                                        // descriptionTextarea.setAttribute('required', 'required');
-                                        // descriptionTextarea.classList.add('border-red-500');
-                                    } else {
-                                        weekendWarning.classList.add('hidden');
-                                        // descriptionTextarea.removeAttribute('required');
-                                        // descriptionTextarea.classList.remove('border-red-500');
-                                    }
-                                }
-
-                                startDateInput.addEventListener('change', checkForWeekend);
-                                endDateInput.addEventListener('change', checkForWeekend);
-
-                                // Also check on form submission
-                                // document.querySelector('form').addEventListener('submit', function(e) {
-                                //     checkForWeekend();
-                                //     if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
-                                //         .trim()) {
-                                //         e.preventDefault();
-                                //         descriptionTextarea.focus();
-                                //     }
-                                // });
-                            });
-                        </script>
 
                         <button x-show="destinations.length > 1" x-on:click="removeDestination(index)" type="button"
                             class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm">
@@ -262,6 +207,17 @@
                     </div>
                 </template>
             </div>
+
+            <!-- Weekend Warning -->
+            <div x-show="hasWeekend" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+                <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la description.</p>
+            </div>
+
+            <!-- Hidden inputs for backend weekend data -->
+            <input type="hidden" name="has_weekend" x-bind:value="hasWeekend ? '1' : '0'">
+            <input type="hidden" name="mission_start_date" x-bind:value="missionStartDate">
+            <input type="hidden" name="mission_end_date" x-bind:value="missionEndDate">
+            <input type="hidden" name="weekend_days" x-bind:value="JSON.stringify(weekendDays)">
 
             <!-- Add destination button -->
             <div class="mt-4">
@@ -283,6 +239,12 @@
                         end_time: ''
                     }],
 
+                    showWeekendWarning: false,
+                    hasWeekend: false,
+                    missionStartDate: '',
+                    missionEndDate: '',
+                    weekendDays: [],
+
                     addDestination() {
                         const lastDestination = this.destinations[this.destinations.length - 1];
                         this.destinations.push({
@@ -293,11 +255,87 @@
                             end_date: '',
                             end_time: ''
                         });
+
+                        // Check for weekend after adding new destination
+                        this.$nextTick(() => {
+                            this.checkForWeekend();
+                        });
                     },
 
                     removeDestination(index) {
                         if (this.destinations.length > 1) {
                             this.destinations.splice(index, 1);
+                            // Check for weekend after removing destination
+                            this.$nextTick(() => {
+                                this.checkForWeekend();
+                            });
+                        }
+                    },
+
+                    checkForWeekend() {
+                        // Get the first destination's start date and last destination's end date
+                        const firstDestination = this.destinations[0];
+                        const lastDestination = this.destinations[this.destinations.length - 1];
+
+                        const startDateStr = firstDestination.start_date;
+                        const endDateStr = lastDestination.end_date;
+
+                        // Reset if dates are not complete
+                        if (!startDateStr || !endDateStr) {
+                            this.showWeekendWarning = false;
+                            this.hasWeekend = false;
+                            this.missionStartDate = '';
+                            this.missionEndDate = '';
+                            this.weekendDays = [];
+                            return;
+                        }
+
+                        const startDate = new Date(startDateStr);
+                        const endDate = new Date(endDateStr);
+
+                        // Check if dates are valid
+                        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                            this.showWeekendWarning = false;
+                            this.hasWeekend = false;
+                            this.missionStartDate = '';
+                            this.missionEndDate = '';
+                            this.weekendDays = [];
+                            return;
+                        }
+
+                        // Store mission dates for backend
+                        this.missionStartDate = startDateStr;
+                        this.missionEndDate = endDateStr;
+
+                        // Check if any day in the range is Saturday (6) or Sunday (0)
+                        let hasWeekend = false;
+                        const weekendDays = [];
+                        const currentDate = new Date(startDate);
+
+                        // Normalize times to avoid timezone issues
+                        currentDate.setHours(0, 0, 0, 0);
+                        endDate.setHours(0, 0, 0, 0);
+
+                        while (currentDate <= endDate) {
+                            const day = currentDate.getDay();
+                            if (day === 0 || day === 6) { // Sunday or Saturday
+                                hasWeekend = true;
+                                weekendDays.push({
+                                    date: new Date(currentDate).toISOString().split('T')[0], // YYYY-MM-DD format
+                                    day: day === 0 ? 'Sunday' : 'Saturday'
+                                });
+                            }
+                            currentDate.setDate(currentDate.getDate() + 1);
+                        }
+
+                        this.showWeekendWarning = hasWeekend;
+                        this.hasWeekend = hasWeekend;
+                        this.weekendDays = weekendDays;
+
+                        // Log for debugging (optional)
+                        if (hasWeekend) {
+                            console.log('Weekend detected:', weekendDays);
+                            console.log('Mission duration:', startDateStr, 'to', endDateStr);
                         }
                     },
 
@@ -305,7 +343,16 @@
                         // Initialize with old input if available
                         @if (old('destinations'))
                             this.destinations = @json(old('destinations'));
+                            // Check for weekend after loading old data
+                            this.$nextTick(() => {
+                                this.checkForWeekend();
+                            });
                         @endif
+
+                        // Set up watchers for date changes
+                        this.$watch('destinations', () => {
+                            this.checkForWeekend();
+                        }, { deep: true });
                     }
                 }));
             });
@@ -811,6 +858,14 @@
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                                             data-modal-toggle="draftOrSubmitModal">{{ __('Submit Tournee') }}
                                         </button>
+                                    </div>
+                                    <div>
+                                        <a href="{{route('tournees.index')}}">
+                                        <button
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                                            type="button">
+                                            {{ __('Delete') }}
+                                        </button></a>
                                     </div>
                                 </div>
                             </div>

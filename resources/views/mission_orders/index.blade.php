@@ -42,7 +42,7 @@
                             </select>
                         </div>
                     </th>
-                    <th scope="col" class="py-3 px-6 blue-color">
+                    <th scope="col" class="py-3 px-1 blue-color w-60">
                         <div class="flex flex-col">
                             <span @click="sortByColumn" class="cursor-pointer font-semibold">{{ __('Lieu de la mission') }}</span>
                             <select x-model="filters.country"
@@ -69,8 +69,8 @@
                             <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.start_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <input type="date" x-model="filters.start_date_to" placeholder="To"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                {{-- <input type="date" x-model="filters.start_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm"> --}}
                             </div>
                         </div>
                     </th>
@@ -81,8 +81,8 @@
                             <div class="mt-1 space-y-1">
                                 <input type="date" x-model="filters.end_date_from" placeholder="From"
                                     class="w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                <input type="date" x-model="filters.end_date_to" placeholder="To"
-                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                {{-- <input type="date" x-model="filters.end_date_to" placeholder="To"
+                                    class="w-full border-gray-300 rounded-md shadow-sm text-sm"> --}}
                             </div>
                         </div>
                     </th>
@@ -136,12 +136,12 @@
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $missionOrder->start_date->format('d/m/Y') }} at {{ $missionOrder->start_time2 }}
+                                {{ $missionOrder->start_date->format('d/m/Y') }} at {{ \Carbon\Carbon::parse($missionOrder->start_time2)->format('H:i') }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
                             <div class="cursor-pointer">
-                                {{ $missionOrder->end_date->format('d/m/Y') }} at {{ $missionOrder->end_time2 }}
+                                {{ $missionOrder->end_date->format('d/m/Y') }} at {{ \Carbon\Carbon::parse($missionOrder->end_time2)->format('H:i') }}
                             </div>
                         </td>
                         <td class="py-4 px-6 border-b cursor-pointer">
@@ -158,42 +158,8 @@
                                             {{ __('Edit') }}
                                         </a>
                                     </td>
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="deleteModal-{{ $missionOrder->id }}">
-                                            {{ __('Delete') }}
-                                        </button>
-                                    </td>
                                 @endif
                             @break
-
-                            {{-- @case('sup_approve')
-                                @if (auth()->user()->employee->hasRole('supervisor') &&
-                                        in_array(
-                                            $missionOrder->employee->department_id,
-                                            Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
-                                            {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }}
-                                        </button>
-                                    </td>
-                                @endif
-                            @break
-
-                            @case('sg_approve')
-                                @if (auth()->user()->employee->hasRole('sg'))
-                                    <td class="text-center px-0 py-1 border-b">
-                                        <button
-                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900"
-                                            type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
-                                            {{ __('Approve') }}
-                                        </button>
-                                    </td>
-                                @endif
-                            @break --}}
 
                             @case('approved')
                                 @if ($missionOrder->employee->id == auth()->user()->employee->id && $missionOrder->memor_status == null)
@@ -216,7 +182,6 @@
                                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-1 py-1 text-center hover:text-gray-900">{{ __('Print') }}</a>
                             </td>
                         @endif
-                        @include('partials.modals._delete-mission')
                         {{-- @include('partials.modals._approve-mission') --}}
                     </tr>
                 @endforeach
@@ -243,9 +208,9 @@
                 employee_id: '',
                 country: '',
                 start_date_from: '',
-                start_date_to: '',
+              //  start_date_to: '',
                 end_date_from: '',
-                end_date_to: '',
+              //  end_date_to: '',
                 status: ''
             },
             filterRow(mission) {
@@ -271,10 +236,10 @@
                     const fromDate = new Date(this.filters.start_date_from);
                     if (startDate < fromDate) return false;
                 }
-                if (this.filters.start_date_to) {
-                    const toDate = new Date(this.filters.start_date_to);
-                    if (startDate > toDate) return false;
-                }
+                // if (this.filters.start_date_to) {
+                //     const toDate = new Date(this.filters.start_date_to);
+                //     if (startDate > toDate) return false;
+                // }
 
                 // Filter by end date range
                 const endDate = new Date(mission.end_date);
@@ -282,10 +247,10 @@
                     const fromDate = new Date(this.filters.end_date_from);
                     if (endDate < fromDate) return false;
                 }
-                if (this.filters.end_date_to) {
-                    const toDate = new Date(this.filters.end_date_to);
-                    if (endDate > toDate) return false;
-                }
+                // if (this.filters.end_date_to) {
+                //     const toDate = new Date(this.filters.end_date_to);
+                //     if (endDate > toDate) return false;
+                // }
 
                 // Filter by status
                 if (this.filters.status && mission.status !== this.filters.status) {

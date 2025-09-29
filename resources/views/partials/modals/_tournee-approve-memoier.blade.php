@@ -24,15 +24,15 @@
             </div>
             <!-- Modal body -->
             <div class="p-4 overflow-y-auto" style="max-height: 700px">
-                <form method="POST"
+                <form method="POST" id="approveForm-{{ $tournee->id }}"
                     action="{{ route('tournee_approves.m_approve', $tournee->id) }}">
                     @csrf
                     <div class="flex flex-wrap -mx-3 mb-6">
                         <div class="relative z-0 mb-4 w-full group">
-                            <input type="text" name="comment"
+                            <input type="text" name="comment"  id="comment-{{ $tournee->id }}"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="" />
-                            <label for="comment"
+                            <label for="comment-{{ $tournee->id }}"
                                 class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">
                                 {{ __('Comment') }}
                             </label>
@@ -43,27 +43,58 @@
                     </div>
                     <div class="flex justify-end items-center space-x-2 rounded-b ">
                         <div>
-                            <button data-modal-toggle="approveModal-{{ $tournee->id }}"
-                                name="action" value="review"
+                            <button type="button" onclick="submitForm('review', {{ $tournee->id }})"
                                 class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                                {{ __('Review (Back to Draft)') }}
+                                {{ __("Retour en brouillon chez l'agent") }}
                             </button>
                         </div>
-                        <div>
-                            <button name="action" value="approve"
+                        {{-- <div>
+                            <button type="button" onclick="submitForm('approve', {{ $tournee->id }})"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                data-modal-toggle="approveModal-{{ $tournee->id }}">{{ __('Approve (GO Next!)') }}
+                                >{{ __('Approve (GO Next!)') }}
                             </button>
-                        </div>
+                        </div> --}}
                         <div>
-                            <button name="action" value="reject"
+                            <button  type="button" onclick="submitForm('reject', {{ $tournee->id }})"
                                 class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                data-modal-toggle="approveModal-{{ $tournee->id }}">{{ __('Reject (End process)') }}
+                                >{{ __('Rejecter') }}
                             </button>
                         </div>
                     </div>
+                    <input type="hidden" name="action" id="action-{{ $tournee->id }}" value="">
                 </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+function submitForm(action, missionOrderId) {
+    const form = document.getElementById(`approveForm-${missionOrderId}`);
+    const commentInput = document.getElementById(`comment-${missionOrderId}`);
+    const actionInput = document.getElementById(`action-${missionOrderId}`);
+console.log(form, commentInput, actionInput);
+    // Reset any previous error styling
+    commentInput.classList.remove('border-red-500');
+    commentInput.classList.add('border-gray-300');
+
+    // Set the action value
+    actionInput.value = action;
+
+    // Only require comment if action is 'reject'
+    if (action === 'reject') {
+        commentInput.required = true;
+        if (!commentInput.value.trim()) {
+            // Add red border to indicate error
+            commentInput.focus();
+            commentInput.classList.remove('border-gray-300');
+            commentInput.classList.add('border-red-500');
+            return false;
+        }
+    } else {
+        commentInput.required = false;
+    }
+
+    // Submit the form
+    form.submit();
+}
+</script>

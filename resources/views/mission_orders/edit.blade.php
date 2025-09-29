@@ -215,6 +215,9 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ old('end_time', $missionOrder->end_time) }}" type="time" required></x-date-time-input>
             </div>
         </div>
+        <!-- Hidden input to send weekend flag to backend -->
+        <input type="hidden" name="has_weekend" id="has_weekend" value="{{old('has_weekend', $missionOrder->has_weekend)}}">
+
         <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
                 description.</p>
@@ -223,14 +226,18 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const startDateInput = document.getElementById('start_date');
                 const endDateInput = document.getElementById('end_date');
-                //const descriptionTextarea = document.getElementById('description');
                 const weekendWarning = document.getElementById('weekend-warning');
+                const hasWeekendInput = document.getElementById('has_weekend');
 
                 function checkForWeekend() {
                     const startDate = new Date(startDateInput.value);
                     const endDate = new Date(endDateInput.value);
 
-                    if (!startDateInput.value || !endDateInput.value) return;
+                    if (!startDateInput.value || !endDateInput.value) {
+                        // Reset flag if dates are not set
+                        hasWeekendInput.value = '0';
+                        return;
+                    }
 
                     // Check if any day in the range is Saturday (6) or Sunday (0)
                     let hasWeekend = false;
@@ -247,27 +254,24 @@
 
                     if (hasWeekend) {
                         weekendWarning.classList.remove('hidden');
-                        // descriptionTextarea.setAttribute('required', 'required');
-                        // descriptionTextarea.classList.add('border-red-500');
+                        hasWeekendInput.value = '1'; // Set flag to true
                     } else {
                         weekendWarning.classList.add('hidden');
-                        // descriptionTextarea.removeAttribute('required');
-                        // descriptionTextarea.classList.remove('border-red-500');
+                        hasWeekendInput.value = '0'; // Set flag to false
                     }
+                }
+
+                // Check on page load if there are existing values
+                if (startDateInput.value && endDateInput.value) {
+                    checkForWeekend();
                 }
 
                 startDateInput.addEventListener('change', checkForWeekend);
                 endDateInput.addEventListener('change', checkForWeekend);
 
-                // Also check on form submission
-                // document.querySelector('form').addEventListener('submit', function(e) {
-                //     checkForWeekend();
-                //     if (weekendWarning.classList.contains('hidden') === false && !descriptionTextarea.value
-                //         .trim()) {
-                //         e.preventDefault();
-                //         descriptionTextarea.focus();
-                //     }
-                // });
+                // Also check when dates are cleared
+                startDateInput.addEventListener('input', checkForWeekend);
+                endDateInput.addEventListener('input', checkForWeekend);
             });
         </script>
 
@@ -795,6 +799,14 @@
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                                             data-modal-toggle="draftOrSubmitModal">{{ __('Submit Mission') }}
                                         </button>
+                                    </div>
+                                    <div>
+                                        <button
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                                            type="button" data-modal-toggle="deleteModal-{{ $missionOrder->id }}">
+                                            {{ __('Delete') }}
+                                        </button>
+                                        @include('partials.modals._delete-mission')
                                     </div>
                                 </div>
                             </div>

@@ -75,12 +75,12 @@
                                 {{ $destination->departure_location }}</td>
                             <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
                                 {{ $destination->start_date->format('d/m/Y') }} at
-                                {{ $destination->start_time }}</td>
+                                {{ \Carbon\Carbon::parse($destination->start_time)->format('H:i') }}</td>
                             <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
                                 {{ $destination->arrive_location }}</td>
                             <td class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
                                 {{ $destination->end_date->format('d/m/Y') }} at
-                                {{ $destination->end_time }}</td>
+                                {{ \Carbon\Carbon::parse($destination->end_time)->format('H:i') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

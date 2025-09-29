@@ -195,68 +195,6 @@
         </div>
     </td>
 </tr>
-                            {{-- <!-- Repas Row -->
-                            <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    <span class="expense-badge bg-green-100 text-green-800">Repas</span>
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    {{ $tournee->no_meals }}
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 reimbursement-amount"
-                                    data-currency="INR" data-amount="{{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}">
-                                    {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    INR
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 direct-amount"
-                                    data-currency="INR" data-amount="0">--
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    --
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-inr">
-                                    {{ $tournee->no_meals * $tournee->bareme->meal_cost * $current_rate->eur_rate }}
-                                </td>
-                            </tr>
-
-                            <!-- Hébergement Row -->
-                            <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
-                                    <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
-                                    <input type="hidden" name="expenses[1][type]" value="accommodation">
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    {{ $tournee->no_accomodation }}
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    <input type="number" name="expenses[1][reimbursement_amount]" value="{{ $tournee->acc_reimbursement_amount }}" step="0.01" min="0"
-                                        class="reimbursement-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm" data-currency="INR">
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    <select name="expenses[1][reimbursement_currency]" class="reimbursement-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
-                                        <option value="INR" @selected($tournee->acc_reimbursement_currency === 'INR')>INR</option>
-                                        <option value="EUR" @selected($tournee->acc_reimbursement_currency === 'EUR')>EUR</option>
-                                        <option value="USD" @selected($tournee->acc_reimbursement_currency === 'USD')>USD</option>
-                                    </select>
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    <input type="number" name="expenses[1][direct_amount]" value="{{ $tournee->acc_direct_amount }}" step="0.01" min="0"
-                                        class="direct-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm" data-currency="INR">
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
-                                    <select name="expenses[1][direct_currency]" class="direct-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
-                                        <option value="INR" @selected($tournee->acc_direct_currency === 'INR')>INR</option>
-                                        <option value="EUR" @selected($tournee->acc_direct_currency === 'EUR')>EUR</option>
-                                        <option value="USD" @selected($tournee->acc_direct_currency === 'USD')>USD</option>
-                                    </select>
-                                </td>
-                                <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
-                                    <input type="hidden" name="expenses[1][total_inr]" value="{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}">
-                                    <span class="total-inr">{{ $tournee->no_accomodation * $tournee->bareme->accomodation_cost * $current_rate->eur_rate }}</span>
-                                </td>
-                            </tr> --}}
 
                             <!-- Repas #2 Row -->
                             @php $index = 2; @endphp
@@ -1054,36 +992,22 @@
                             document.getElementById('grand-total-input').value = grandTotal.toFixed(2);
                         }
 
-                        // Function to validate accommodation amounts with currency conversion
+// Function to validate accommodation amounts with currency conversion
 function validateAccommodationAmounts() {
     const accommodationInputs = document.querySelectorAll('.accommodation-input');
     const accommodationCurrencies = document.querySelectorAll('.accommodation-currency');
-    const maxAmountINR = parseFloat(document.getElementById('max-accommodation').value);
-    const maxAmountEUR = parseFloat(document.getElementById('max-accommodation-eur').value);
+    const accommodationReductionInput = document.querySelector('.reduced-accommodation-input');
 
-    // Add event listeners to inputs
-    accommodationInputs.forEach(input => {
-        input.addEventListener('input', validateAccommodationTotal);
-    });
-
-    // Add event listeners to currency selects
-    accommodationCurrencies.forEach(select => {
-        select.addEventListener('change', function() {
-            // Update the data-currency attribute on the corresponding input
-            const inputName = this.name.replace('_currency', '_amount');
-            const correspondingInput = document.querySelector(`input[name="${inputName}"]`);
-            if (correspondingInput) {
-                correspondingInput.setAttribute('data-currency', this.value);
-            }
-            validateAccommodationTotal();
-        });
-    });
-
+    // Function to validate the accommodation total
     function validateAccommodationTotal() {
         const reimbursementInput = document.querySelector('input[name="expenses[1][reimbursement_amount]"]');
         const directInput = document.querySelector('input[name="expenses[1][direct_amount]"]');
         const reimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
         const directCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
+
+        // Get the CURRENT maximum values (after reduction)
+        const maxAmountINR = parseFloat(document.getElementById('max-accommodation').value);
+        const maxAmountEUR = parseFloat(document.getElementById('max-accommodation-eur').value);
 
         const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
         const directValue = parseFloat(directInput.value) || 0;
@@ -1118,7 +1042,7 @@ function validateAccommodationAmounts() {
                 const newValue = Math.max(0, directValue - reductionOriginal);
                 directInput.value = newValue.toFixed(2);
             } else {
-                // If neither input is focused (e.g., currency changed), reduce both proportionally
+                // If neither input is focused (e.g., currency changed or reduction changed), reduce both proportionally
                 const reimbursementRatio = reimbursementINR / totalINR;
                 const directRatio = directINR / totalINR;
 
@@ -1141,6 +1065,85 @@ function validateAccommodationAmounts() {
             updateRowCalculation.call(reimbursementInput);
         }
     }
+
+    // Add event listeners to all accommodation-related inputs
+    accommodationInputs.forEach(input => {
+        input.addEventListener('input', validateAccommodationTotal);
+    });
+
+    accommodationCurrencies.forEach(select => {
+        select.addEventListener('change', function() {
+            // Update the data-currency attribute on the corresponding input
+            const inputName = this.name.replace('_currency', '_amount');
+            const correspondingInput = document.querySelector(`input[name="${inputName}"]`);
+            if (correspondingInput) {
+                correspondingInput.setAttribute('data-currency', this.value);
+            }
+            validateAccommodationTotal();
+        });
+    });
+
+    // Also validate when reduction input changes
+    if (accommodationReductionInput) {
+        accommodationReductionInput.addEventListener('input', validateAccommodationTotal);
+    }
+
+    // Return the validation function so it can be called from other places
+    return validateAccommodationTotal;
+}
+
+// Function to handle accommodation quantity changes
+function handleAccommodationQuantityChanges() {
+    const accommodationInput = document.querySelector('.reduced-accommodation-input');
+    const accommodationCost = parseFloat(document.getElementById('accommodation-cost').value);
+    const originalAccommodation = parseInt(document.getElementById('original-accommodation').value);
+    const actualAccommodationElement = document.querySelector('.actual-accommodation');
+    const eurRate = parseFloat(eurToInrInput.value);
+
+    // Calculate initial values from database
+    const initialReducedAccommodation = parseInt(accommodationInput.value) || 0;
+    const initialActualAccommodation = Math.max(0, originalAccommodation - initialReducedAccommodation);
+
+    // Update the actual accommodation display
+    actualAccommodationElement.textContent = initialActualAccommodation;
+
+    // Update the maximum values for the accommodation inputs
+    const initialMaxAmountINR = initialActualAccommodation * accommodationCost * eurRate;
+    const initialMaxAmountEUR = initialActualAccommodation * accommodationCost;
+
+    document.getElementById('max-accommodation').value = initialMaxAmountINR;
+    document.getElementById('max-accommodation-eur').value = initialMaxAmountEUR;
+
+    // Update the max attributes on the input fields
+    const reimbursementInput = document.querySelector('input[name="expenses[1][reimbursement_amount]"]');
+    const directInput = document.querySelector('input[name="expenses[1][direct_amount]"]');
+
+    if (reimbursementInput) reimbursementInput.setAttribute('data-max', initialMaxAmountINR);
+    if (directInput) directInput.setAttribute('data-max', initialMaxAmountINR);
+
+    // Add event listener for input changes
+    accommodationInput.addEventListener('input', function() {
+        const reducedAccommodation = parseInt(this.value) || 0;
+
+        // Calculate actual number of accommodation nights (total - reduced)
+        const actualAccommodation = Math.max(0, originalAccommodation - reducedAccommodation);
+
+        // Update the actual accommodation display
+        actualAccommodationElement.textContent = actualAccommodation;
+
+        // Update the maximum values for the accommodation inputs
+        const maxAmountINR = actualAccommodation * accommodationCost * eurRate;
+        const maxAmountEUR = actualAccommodation * accommodationCost;
+
+        document.getElementById('max-accommodation').value = maxAmountINR;
+        document.getElementById('max-accommodation-eur').value = maxAmountEUR;
+
+        // Update the max attributes on the input fields
+        if (reimbursementInput) reimbursementInput.setAttribute('data-max', maxAmountINR);
+        if (directInput) directInput.setAttribute('data-max', maxAmountINR);
+
+        // The validation will be triggered automatically by the event listeners
+    });
 }
 
 // Function to handle meal quantity changes
@@ -1195,133 +1198,17 @@ function handleMealQuantityChanges() {
     });
 }
 
-// Function to handle accommodation quantity changes
-function handleAccommodationQuantityChanges() {
-    const accommodationInput = document.querySelector('.reduced-accommodation-input');
-    const accommodationCost = parseFloat(document.getElementById('accommodation-cost').value);
-    const originalAccommodation = parseInt(document.getElementById('original-accommodation').value);
-    const actualAccommodationElement = document.querySelector('.actual-accommodation');
-    const eurRate = parseFloat(eurToInrInput.value);
+// Initialize functions
+    handleMealQuantityChanges();
+    handleAccommodationQuantityChanges();
 
-    // Calculate initial values from database
-    const initialReducedAccommodation = parseInt(accommodationInput.value) || 0;
-    const initialActualAccommodation = Math.max(0, originalAccommodation - initialReducedAccommodation);
+    // Get the validation function and set up event listeners
+    const validateAccommodationTotal = validateAccommodationAmounts();
 
-    // Update the actual accommodation display
-    actualAccommodationElement.textContent = initialActualAccommodation;
-
-    // Update the maximum values for the accommodation inputs
-    const initialMaxAmountINR = initialActualAccommodation * accommodationCost * eurRate;
-    const initialMaxAmountEUR = initialActualAccommodation * accommodationCost;
-
-    document.getElementById('max-accommodation').value = initialMaxAmountINR;
-    document.getElementById('max-accommodation-eur').value = initialMaxAmountEUR;
-
-    // Update the max attributes on the input fields
-    const reimbursementInput = document.querySelector('input[name="expenses[1][reimbursement_amount]"]');
-    const directInput = document.querySelector('input[name="expenses[1][direct_amount]"]');
-
-    reimbursementInput.setAttribute('data-max', initialMaxAmountINR);
-    directInput.setAttribute('data-max', initialMaxAmountINR);
-
-    // Get current values from inputs
-    const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
-    const directValue = parseFloat(directInput.value) || 0;
-    const reimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
-    const directCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
-
-    // Convert both amounts to INR for comparison
-    const reimbursementINR = convertToINR(reimbursementValue, reimbursementCurrency);
-    const directINR = convertToINR(directValue, directCurrency);
-    const totalINR = reimbursementINR + directINR;
-
-    // If the current total exceeds the new maximum, adjust the values
-    if (totalINR > initialMaxAmountINR) {
-        const excess = totalINR - initialMaxAmountINR;
-
-        // Reduce both amounts proportionally
-        const reimbursementRatio = reimbursementINR / totalINR;
-        const directRatio = directINR / totalINR;
-
-        const reimbursementReduction = reimbursementCurrency === 'INR'
-            ? excess * reimbursementRatio
-            : (excess * reimbursementRatio) / exchangeRates[reimbursementCurrency];
-
-        const directReduction = directCurrency === 'INR'
-            ? excess * directRatio
-            : (excess * directRatio) / exchangeRates[directCurrency];
-
-        reimbursementInput.value = Math.max(0, reimbursementValue - reimbursementReduction).toFixed(2);
-        directInput.value = Math.max(0, directValue - directReduction).toFixed(2);
-    }
-
-    // Update the row calculation
-    updateRowCalculation.call(reimbursementInput);
-
-    // Add event listener for input changes
-    accommodationInput.addEventListener('input', function() {
-        const reducedAccommodation = parseInt(this.value) || 0;
-
-        // Calculate actual number of accommodation nights (total - reduced)
-        // Allow negative values (user can enter more than original)
-        const actualAccommodation = Math.max(0, originalAccommodation - reducedAccommodation);
-
-        // Update the actual accommodation display
-        actualAccommodationElement.textContent = actualAccommodation;
-
-        // Update the maximum values for the accommodation inputs
-        const maxAmountINR = actualAccommodation * accommodationCost * eurRate;
-        const maxAmountEUR = actualAccommodation * accommodationCost;
-
-        document.getElementById('max-accommodation').value = maxAmountINR;
-        document.getElementById('max-accommodation-eur').value = maxAmountEUR;
-
-        // Update the max attributes on the input fields
-        reimbursementInput.setAttribute('data-max', maxAmountINR);
-        directInput.setAttribute('data-max', maxAmountINR);
-
-        // Update the total for the accommodation row
-        const currentReimbursementValue = parseFloat(reimbursementInput.value) || 0;
-        const currentDirectValue = parseFloat(directInput.value) || 0;
-        const currentReimbursementCurrency = document.querySelector('select[name="expenses[1][reimbursement_currency]"]').value;
-        const currentDirectCurrency = document.querySelector('select[name="expenses[1][direct_currency]"]').value;
-
-        // Convert both amounts to INR for comparison
-        const currentReimbursementINR = convertToINR(currentReimbursementValue, currentReimbursementCurrency);
-        const currentDirectINR = convertToINR(currentDirectValue, currentDirectCurrency);
-        const currentTotalINR = currentReimbursementINR + currentDirectINR;
-
-        // If the current total exceeds the new maximum, adjust the values
-        if (currentTotalINR > maxAmountINR) {
-            const excess = currentTotalINR - maxAmountINR;
-
-            // Reduce both amounts proportionally
-            const reimbursementRatio = currentReimbursementINR / currentTotalINR;
-            const directRatio = currentDirectINR / currentTotalINR;
-
-            const reimbursementReduction = currentReimbursementCurrency === 'INR'
-                ? excess * reimbursementRatio
-                : (excess * reimbursementRatio) / exchangeRates[currentReimbursementCurrency];
-
-            const directReduction = currentDirectCurrency === 'INR'
-                ? excess * directRatio
-                : (excess * directRatio) / exchangeRates[currentDirectCurrency];
-
-            reimbursementInput.value = Math.max(0, currentReimbursementValue - reimbursementReduction).toFixed(2);
-            directInput.value = Math.max(0, currentDirectValue - directReduction).toFixed(2);
-
-            // Show a warning
-            alert(`Le nombre de nuits a été réduit à ${actualAccommodation}. Les montants ont été ajustés en conséquence.`);
-        }
-
-        // Update the row calculation
-        updateRowCalculation.call(reimbursementInput);
-    });
-}
-
-handleMealQuantityChanges();
-handleAccommodationQuantityChanges();
-validateAccommodationAmounts();
+    // Also validate accommodation on page load to handle initial database values
+    setTimeout(() => {
+        validateAccommodationTotal();
+    }, 100);
                         // Initialize calculations
                         updateAllCalculations();
                     });

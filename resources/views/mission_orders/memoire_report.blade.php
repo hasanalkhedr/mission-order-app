@@ -36,6 +36,12 @@
                         <td class="w-1/3">Objet de la mission :</td>
                         <td colspan="3" class="w-2/3">{{ $missionOrder->purpose }}</td>
                     </tr>
+                    @if($missionOrder->conge)
+                    <tr>
+                        <td class="w-1/3">Conge pendant mission:</td>
+                        <td colspan="3" class="w-2/3">{{ $missionOrder->conge }}</td>
+                    </tr>
+                    @endif
                     <tr><td colspan="4">
                         <table class="table-auto w-full text-left border border-gray-300">
                             <thead>
@@ -55,15 +61,15 @@
                                     <td class="w-1/5">{{$missionOrder->departure_location}}</td>
                                     <td class="w-1/5">{{$missionOrder->arrive_location}}</td>
                                     <td class="w-1/5">{{$missionOrder->start_date->format('d/m/Y')}}</td>
-                                    <td class="w-1/5">{{$missionOrder->start_time}}</td>
-                                    <td class="w-1/5">{{$missionOrder->start_time2}}</td>
+                                    <td class="w-1/5">{{\Carbon\Carbon::parse($missionOrder->start_time)->format('H:i')}}</td>
+                                    <td class="w-1/5">{{\Carbon\Carbon::parse($missionOrder->start_time2)->format('H:i')}}</td>
                                 </tr>
                                 <tr>
                                     <td class="w-1/5">{{$missionOrder->endMission_location}}</td>
                                     <td class="w-1/5">{{$missionOrder->return_location}}</td>
                                     <td class="w-1/5">{{$missionOrder->end_date->format('d/m/Y')}}</td>
-                                    <td class="w-1/5">{{$missionOrder->end_time2}}</td>
-                                    <td class="w-1/5">{{$missionOrder->end_time}}</td>
+                                    <td class="w-1/5">{{\Carbon\Carbon::parse($missionOrder->end_time2)->format('H:i')}}</td>
+                                    <td class="w-1/5">{{\Carbon\Carbon::parse($missionOrder->end_time)->format('H:i')}}</td>
                                 </tr>
                             </tbody>
                         </table></td>
@@ -84,7 +90,11 @@
                     </tr> --}}
                 </tbody>
             </table>
-
+@if($missionOrder->has_weekend)
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
+            <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
+        </div>
+        @endif
             <!-- Expense Table -->
             <table class="table-auto w-full text-left">
                 <thead>
@@ -298,14 +308,15 @@
                                     <td class="border border-gray-500 w-3/12">A rembourser à l'agent</td>
                                     <td class="border border-gray-500 w-3/12">Prise en charge directe</td>
                                     <td class="border border-gray-500 w-2/12">Avance</td>
-                                    <td class="border border-gray-500 w-3/12">Net à payer <span class="text-xxs">(A rembourser à l'agent - Avance)</span></td>
+                                    {{-- <td class="border border-gray-500 w-3/12">Net à payer <span class="text-xxs">(A rembourser à l'agent - Avance)</span></td> --}}
+                                    <td class="border border-gray-500 w-3/12">Mission totale</td>
                                 </tr>
                                 <tr>
                                     <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total }}</td>
                                     <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_direct_total }}
                                     </td>
                                     <td class="border border-gray-500 w-2/12">{{ $missionOrder->advance }}</td>
-                                    <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total - $missionOrder->advance }}
+                                    <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total + $missionOrder->expense_direct_total }}
                                     </td>
                                 </tr>
                             </table>
@@ -315,7 +326,7 @@
             </table>
 
             <!-- Net Total Table -->
-            <table class="table-auto w-full text-left">
+            {{-- <table class="table-auto w-full text-left">
                 <tr>
                     <td class="w-1/2 py-[1px]">ARRETE ET LIQUIDE LA SOMME DE :</td>
                         <td class="w-2/2 py-[1px] font-bold text-red-600">{{ $missionOrder->expense_reimbursement_total - $missionOrder->advance }} INR
@@ -323,7 +334,7 @@
                             INR
                         </td>
                 </tr>
-            </table>
+            </table> --}}
 
             <!-- Signatures -->
             <table class="table-auto w-full text-left">
@@ -472,7 +483,7 @@
     </div>
     <!-- Action Buttons -->
     <div class="flex justify-center space-x-4 mb-8 no-print">
-        <button onclick="window.print()"
+        {{-- <button onclick="window.print()"
             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -480,19 +491,28 @@
                 </path>
             </svg>
             {{ __('Print Report') }}
-        </button>
+        </button> --}}
         <button id="download-pdf"
             class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                </path>
             </svg>
             {{ __('Save as PDF file') }}
         </button>
         @if((auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'sg_approve') || (auth()->user()->employee->hasRole('controller') && $missionOrder->memor_status === 'controller_approve'))
-            <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center hover:text-gray-900"
+            <form method="POST" action="{{ route('mission_approves.m_approve', $missionOrder->id) }}">
+                @csrf
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
+                    {{ __('Valider') }}
+                </button>
+                <input type="hidden" name="action" value="approve">
+            </form>
+            <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center"
                 type="button" data-modal-toggle="approveModal-{{ $missionOrder->id }}">
-                {{ __('Approve or Reject') }}
+                {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
+                Rejeter - Retour Agent
             </button>
         @endif
         @include('partials.modals._approve-memoier')
@@ -688,21 +708,40 @@
 
                 updateProgress(30, "Generating PDF...");
 
-                // Create a promise that resolves when the PDF is generated
-                await new Promise((resolve, reject) => {
-                    html2pdf()
-                        .set(options)
-                        .from(element)
-                        .save()
-                        .then(() => {
-                            updateProgress(90, "Finalizing PDF...");
-                            setTimeout(() => {
-                                updateProgress(100, "Done!");
-                                resolve();
-                            }, 500);
-                        })
-                        .catch(reject);
-                });
+                // Generate PDF and open in new tab instead of downloading
+            const pdf = await html2pdf().set(options).from(element).outputPdf('blob');
+
+            updateProgress(90, "Opening PDF...");
+
+            // Create blob URL with proper filename and open in new tab
+            const blob = new Blob([pdf], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            // Open in new tab
+            const newTab = window.open(blobUrl, '_blank');
+
+            // Set the filename for download by adding a suggested filename to the blob URL
+            // Note: This approach may not work in all browsers
+            if (newTab) {
+                // Alternative approach: Use download attribute in an iframe
+                setTimeout(() => {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = blobUrl;
+                    iframe.setAttribute('download', filename);
+                    document.body.appendChild(iframe);
+                    setTimeout(() => {
+                        document.body.removeChild(iframe);
+                    }, 100);
+                }, 1000);
+            }
+
+            // Clean up the blob URL after some time
+            setTimeout(() => {
+                URL.revokeObjectURL(blobUrl);
+            }, 5000);
+
+            updateProgress(100, "Done!");
             } catch (error) {
                 console.error("PDF generation failed:", error);
                 updateProgress(0, "Failed to generate PDF");
