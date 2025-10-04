@@ -20,13 +20,11 @@ class TourneeLevelNotification extends BaseAnnouncement
     public function __construct($tournee)
     {
         $this->tournee = $tournee;
-        $this->title = 'La Tournee ' . $this->tournee->order_number . '|'
-            . $this->tournee->purpose . ' a besoin de votre avis!';
-        $this->body = 'Soumis par: ' . $this->tournee->employee->first_name . ' '
-            . $this->tournee->employee->last_name.', Département: '.$tournee->employee->department->name ;
+        $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+        $this->body = 'Ordre de tournee besoin de votre avis!';
+        $this->link = route('tournees.report', $tournee->id);
+        $this->linkText = 'voir Ordre de tournee';
         $this->icon = 'review';
-        $this->link = route('tournees.show', $tournee->id);
-        $this->linkText = 'Cliquez ici pour voir la tournee';
     }
 
     /**

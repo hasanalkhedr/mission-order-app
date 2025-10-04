@@ -43,8 +43,14 @@
                     </div>
                     <div class="flex justify-end items-center space-x-2 rounded-b ">
                         <div>
+                            <button type="button" data-modal-toggle="approveModal-{{ $tournee->id }}"
+                                class="text-blue-800 bg-white hover:bg-white border border-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                                {{ __('Cancel') }}
+                            </button>
+                        </div>
+                        <div>
                             <button type="button" onclick="submitForm('review', {{ $tournee->id }})"
-                                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
                                 {{ __("Retour en brouillon chez l'agent") }}
                             </button>
                         </div>
@@ -54,12 +60,12 @@
                                 >{{ __('Approve (GO Next!)') }}
                             </button>
                         </div> --}}
-                        <div>
+                        {{-- <div>
                             <button  type="button" onclick="submitForm('reject', {{ $tournee->id }})"
                                 class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                                 >{{ __('Rejecter') }}
                             </button>
-                        </div>
+                        </div> --}}
                     </div>
                     <input type="hidden" name="action" id="action-{{ $tournee->id }}" value="">
                 </form>
@@ -81,7 +87,7 @@ console.log(form, commentInput, actionInput);
     actionInput.value = action;
 
     // Only require comment if action is 'reject'
-    if (action === 'reject') {
+    if (action === 'reject' || action === 'review' ) {
         commentInput.required = true;
         if (!commentInput.value.trim()) {
             // Add red border to indicate error

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\MissionApprove;
 use App\Models\MissionOrder;
 use App\Models\user;
+use App\Notifications\MemoireMissionOrderAccountantNotification;
 use App\Notifications\MemoireMissionOrderApproveNotification;
 use App\Notifications\MemoireMissionOrderLevelNotification;
 use App\Notifications\MissionOrderApproveNotification;
@@ -83,6 +85,7 @@ class MissionApproveController extends Controller
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
+                        $this->notifyAccountant($request->accountant, $missionOrder);
                         $newStatus = 'approved';
                         break;
                 }
@@ -110,9 +113,20 @@ class MissionApproveController extends Controller
                 $query->whereJsonContains('roles', 'sg');
             })->get();
             foreach ($users as $user) {
-                $user->notify($notification);
+                if($user->employee->id != $missionOrder->employee_id) {
+                    $user->notify($notification);
+                }
             }
         }
         return redirect()->route('mission_orders.m_index');
+    }
+
+    private function notifyAccountant(int $accountant_id, MissionOrder $missionOrder) {
+        $missionOrder->update([
+            'accountant_id' => $accountant_id,
+        ]);
+        $accountant = Employee::find($accountant_id);
+        $notification = new MemoireMissionOrderAccountantNotification($missionOrder);
+        $accountant->user->notify($notification);
     }
 }

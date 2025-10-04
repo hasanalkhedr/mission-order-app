@@ -108,10 +108,10 @@
                 </tr> --}}
             </tbody>
         </table>
-@if($tournee->has_weekend)
-        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
-            <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
-        </div>
+        @if($tournee->has_weekend)
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
+                <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
+            </div>
         @endif
         <!-- Expense Table -->
         <table class="table-auto w-full text-left">
@@ -180,6 +180,7 @@
         </tr>
 
         <!-- Hébergement Row -->
+        @if($tournee->acc_total_inr && $tournee->acc_total_inr>0)
         <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 <span class="expense-badge bg-blue-100 text-blue-800">Hébergement</span>
@@ -203,7 +204,9 @@
                 {{ $tournee->acc_total_inr }}
             </td>
         </tr>
-        @forelse ($tournee->expenses as $expense)
+        @endif
+        @foreach ($tournee->expenses as $expense)
+            @if($expense->total_inr && $expense->total_inr>0)
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                 <!-- Type -->
                 <td
@@ -260,14 +263,15 @@
                     {{ $expense->total_inr }}
                 </td>
             </tr>
-        @empty
+            @endif
+        {{-- @empty
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                 <td colspan="6"
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
                     {{ __('No Expenses Found') }}
                 </td>
-            </tr>
-        @endforelse
+            </tr> --}}
+        @endforeach
     </tbody>
     <tfoot>
         <tr>
@@ -463,6 +467,18 @@
                 </tr>
             </tbody>
         </table>
+        @if($tournee->memor_status === 'approved' && $tournee->accountant_id)
+             <table class="table-auto w-full text-left mt-20 pt-20">
+                <tbody>
+                    <tr>
+                        <td class="px-2 py-[1px] w-1/2">
+                            <span class="font-bold text-lg text-center">Preparation de paiment:</span>
+                            <span class="font-bold text-lg text-center">{{\App\Models\Employee::find($tournee->accountant_id)->first_name}} {{\App\Models\Employee::find($tournee->accountant_id)->last_name}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            @endif
     </div>
 
     <!-- Documents - each will be on separate pages -->
@@ -497,41 +513,114 @@
     @endforeach
 </div>
 <!-- Action Buttons -->
-<div class="flex justify-center space-x-4 mb-8 no-print">
-    {{-- <button onclick="window.print()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-            </path>
-        </svg>
-        {{ __('Print Report') }}
-    </button> --}}
-    <button id="download-pdf"
-        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-            </path>
-        </svg>
-        {{ __('Save as PDF file') }}
-    </button>
-    @if((auth()->user()->employee->hasRole('sg') && $tournee->memor_status === 'sg_approve') || (auth()->user()->employee->hasRole('controller') && $tournee->memor_status === 'controller_approve'))
-        <form method="POST" action="{{ route('tournee_approves.m_approve', $tournee->id) }}">
-            @csrf
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
+    <div class="flex justify-center space-x-4 mb-8 no-print">
+        <button id="download-pdf"
+            class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                </path>
+            </svg>
+            {{ __('Save as PDF file') }}
+        </button>
+        @if (auth()->user()->employee->hasRole('controller') && $tournee->memor_status === 'controller_approve' && Auth::user()->employee->id != $tournee->employee_id)
+            <form method="POST" action="{{ route('tournee_approves.m_approve', $tournee->id) }}">
+                @csrf
+                <button
+                    class="bg-white text-center hover:bg-white text-blue-800 border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
+                    <svg class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ __('Valider') }}
+                </button>
+                <input type="hidden" name="action" value="approve">
+            </form>
+            <button
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48"
+                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
+                {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                </svg>
+                Retour Agent
+            </button>
+        @endif
+        @if (auth()->user()->employee->hasRole('sg') && $tournee->memor_status === 'sg_approve' && Auth::user()->employee->id != $tournee->employee_id)
+            <!-- Valider Button with Modal Trigger -->
+            <button type="button"
+                    data-modal-target="validerModal-{{ $tournee->id }}"
+                    data-modal-toggle="validerModal-{{ $tournee->id }}"
+                    class="bg-white text-center hover:bg-white text-blue-800 border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
+                <svg class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 {{ __('Valider') }}
             </button>
-            <input type="hidden" name="action" value="approve">
-        </form>
-        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center"
-            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-            {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
-            Rejeter - Retour Agent
-        </button>
-    @endif
-    @include('partials.modals._tournee-approve-memoier')
-</div>
+
+            <!-- Valider Modal -->
+            <div id="validerModal-{{ $tournee->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Preparation de paiment
+                            </h3>
+                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="validerModal-{{ $tournee->id }}">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5">
+                            <form method="POST" action="{{ route('tournee_approves.m_approve', $tournee->id) }}">
+                                @csrf
+                                <div class="mb-4">
+                                    <label for="approval_type-{{ $tournee->id }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sélectionnez l'employé responsable de la préparation du paiement.</label>
+                                    <select id="approval_type-{{ $tournee->id }}" name="accountant" required
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value="">Sélectionnez une employé</option>
+                                        @foreach (\App\Models\Employee::accountant()->get() as $employee)
+                                            <option value="{{$employee->id}}">{{$employee->first_name}} {{$employee->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex justify-end space-x-3">
+                                    <button type="submit"
+                                            name="action"
+                                            value="approve"
+                                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        Confirmer
+                                    </button>
+                                    <button type="button"
+                                            data-modal-toggle="validerModal-{{ $tournee->id }}"
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48"
+                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
+                {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                </svg>
+                Retour Agent
+            </button>
+        @endif
+        @include('partials.modals._tournee-approve-memoier')
+    </div>
+
 <style>
     @media print {
         body {

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\TourneeApprove;
 use App\Models\Tournee;
 use App\Models\User;
+use App\Notifications\MemoireTourneeAccountantNotification;
 use App\Notifications\MemoireTourneeApproveNotification;
 use App\Notifications\MemoireTourneeLevelNotification;
 use App\Notifications\TourneeApproveNotification;
@@ -84,6 +86,7 @@ class TourneeApproveController extends Controller
                         $newStatus = 'sg_approve';
                         break;
                     case 'sg_approve':
+                        $this->notifyAccountant($request->accountant, $tournee);
                         $newStatus = 'approved';
                         break;
                 }
@@ -113,9 +116,21 @@ class TourneeApproveController extends Controller
                 $query->whereJsonContains('roles', 'sg');
             })->get();
             foreach ($users as $user) {
-                $user->notify($notification);
+               if($user->employee->id != $tournee->employee_id) {
+                    $user->notify($notification);
+                }
             }
         }
         return redirect()->route('tournees.m_index');
+    }
+
+
+    private function notifyAccountant(int $accountant_id, Tournee $tournee) {
+        $tournee->update([
+            'accountant_id' => $accountant_id,
+        ]);
+        $accountant = Employee::find($accountant_id);
+        $notification = new MemoireTourneeAccountantNotification($tournee);
+        $accountant->user->notify($notification);
     }
 }

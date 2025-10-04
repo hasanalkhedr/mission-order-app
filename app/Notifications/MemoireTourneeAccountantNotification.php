@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use MBarlow\Megaphone\Types\BaseAnnouncement;
 
-class MemoireTourneeLevelNotification extends BaseAnnouncement
+class MemoireTourneeAccountantNotification extends BaseAnnouncement
 {
     use Queueable;
 
@@ -21,10 +21,10 @@ class MemoireTourneeLevelNotification extends BaseAnnouncement
     {
         $this->tournee = $tournee;
         $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
-        $this->body = 'Mémoire de frais (tournee) besoin de votre avis!';
+        $this->body = 'Mémoire de frais (tournee) besoin de Preparation de paiment';
         $this->link = route('tournees.m_report', $tournee->id);
         $this->linkText = 'voir Mémoire de frais (tournee)';
-        $this->icon = 'review';
+        $this->icon = 'ok';
     }
 
     /**
@@ -34,18 +34,18 @@ class MemoireTourneeLevelNotification extends BaseAnnouncement
      */
     public function via($notifiable): array
     {
-        return ['database'/*, 'mail'*/];
+        return ['database', 'mail'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    /*public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject($this->title)
             ->greeting($this->title)
-            ->line('Bonjour '.$notifiable->employee->first_name.' '.$notifiable->employee->last_name)
+            ->line('Bonjour ' . $notifiable->employee->first_name . ' ' . $notifiable->employee->last_name)
             ->line($this->body)
             ->action($this->linkText, $this->link)
             ->salutation('Cordialement');
@@ -58,12 +58,7 @@ class MemoireTourneeLevelNotification extends BaseAnnouncement
      */
     public function toDatabase($notifiable): array
     {
-        $notifiable->createPendingNotificationForMission($this->title, $this->body, $this->link, $this->linkText);
         return [
-            'order_id' => $this->tournee->id,
-            'order_number' => $this->tournee->order_number,
-            'purpose' => $this->tournee->purpose,
-            'status' => $this->tournee->memor_status,
             'title' => $this->title,
             'body' => $this->body,
             'link' => $this->link,

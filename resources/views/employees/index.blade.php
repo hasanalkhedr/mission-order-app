@@ -31,6 +31,9 @@
                         {{ __('Roles') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
+                        {{ __('Preparation de paiment') }}
+                    </th>
+                    {{-- <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Fonction Administrative') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
@@ -38,7 +41,7 @@
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Service') }}
-                    </th>
+                    </th> --}}
                     {{-- @if (auth()->user()->hasRole('human_resource')) --}}
                     @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6 blue-color">
@@ -77,7 +80,16 @@
                             {{implode(' | ', $employee->getRoles()) }}
                             {{-- {{ config('globals.roles.'.$employee->role) }} --}}
                         </td>
-                        @if ($employee->position == null)
+                        <td class="py-4 px-6 border-b">
+                            @if($employee->accountant)
+                                <span class="flex items-center justify-center h-6 w-6 rounded-md bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </span>
+                        @endif
+                        </td>
+                        {{-- @if ($employee->position == null)
                             <td class="py-4 px-6 border-b">
                                 <div class="font-bold">
                                     -
@@ -115,7 +127,7 @@
                                     {{ $employee->service }}
                                 </div>
                             </td>
-                        @endif
+                        @endif --}}
                         {{-- @hasanyrole('human_resource|sg|head') --}}
                         @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">

@@ -149,7 +149,7 @@
         <label for="department_id"
             class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">{{ __('Service') }}</label>
     </div>
-    <div class="grid md:grid-cols-2 md:gap-6">
+    <div class="grid md:grid-cols-3 md:gap-6">
         <div class="relative z-0 mb-6 w-full group">
             <p class="mb-2 text-sm font-medium blue-color">
                 {{ __('Submit Requests') }}</p>
@@ -164,11 +164,18 @@
                 <input type="checkbox" disabled name="recieve_email" {{ $employee->recieve_email ? 'checked' : '' }}>
             </div>
         </div>
+        <div class="relative z-0 mb-6 w-full group">
+            <p class="mb-2 text-sm font-medium blue-color">
+                {{ __('Preparation de paiment') }}</p>
+            <div class="mt-2 flex flex-row">
+                <input type="checkbox" disabled name="accountant" {{ $employee->accountant ? 'checked' : '' }}>
+            </div>
+        </div>
     </div>
     {{-- @hasanyrole('human_resource|sg|head') --}}
     @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
         <button
-            class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg mr-3"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mr-3"
             data-modal-toggle="editProfileModal-{{$employee->id}}">
             {{ __('Edit Employee Profile') }}
         </button>
@@ -178,7 +185,7 @@
             (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg')))
         {{-- auth()->user()->hasRole(['human_resource', 'sg', 'head'])) --}}
         <button
-            class="text-white hover:bg-blue-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg"
+            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
             data-modal-toggle="editPasswordModal">
             {{ __('Edit Employee Password') }}
         </button>

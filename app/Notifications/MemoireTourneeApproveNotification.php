@@ -24,53 +24,40 @@ class MemoireTourneeApproveNotification extends BaseAnnouncement
         $this->tourneeApprove = $tourneeApprove;
         switch ($tourneeApprove->memor_status) {
             case 'draft':
-                $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' besoin de revoir!';
-                $this->body = 'Révisé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . '\nRôle révisé: '
-                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment;
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais (tournee) besoin de revoir';
+                if ($this->tourneeApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->tourneeApprove->comment;
+                }
+                $this->link = route('tournees.m_create', $tournee->id);
+                $this->linkText = 'voir Mémoire de frais (tournee)';
                 $this->icon = 'review';
                 break;
             case 'rejected':
-                $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Rejeté!';
-                $this->body = 'Rejeté par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . '\nRôle rejeté: '
-                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment;
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais (tournee) Rejeté!';
+                if ($this->tourneeApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->tourneeApprove->comment;
+                }
+                $this->link = route('tournees.m_report', $tournee->id);
+                $this->linkText = 'voir Mémoire de frais (tournee)';
                 $this->icon = 'reject';
                 break;
-            // case 'controller_approve':
-            //     $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-            //         . $this->tournee->purpose . ' Approuvé!';
-            //     $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-            //         . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-            //         . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
-            //         . $this->tourneeApprove->comment . "\nEn attente d'un examen des Contrôleur maintenant";
-            //     $this->icon = 'ok';
-            //     break;
             case 'sg_approve':
-                $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment . '\nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais (tournee) Approuvé! \nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->link = route('tournees.m_report', $tournee->id);
+                $this->linkText = 'voir Mémoire de frais (tournee)';
                 $this->icon = 'ok';
                 break;
             case 'approved':
-                $this->title = "Votre Mémoire de frais d'Ordre de Tournee " . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->tourneeApprove->approval_role . '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment . "\nVotre Mémoire de frais d'Ordre de Tournee a été approuvée, vous pouvez demander à le payer maintenant";
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais (tournee) Approuvé! \nvous pouvez demander à le payer maintenant';
+                $this->link = route('tournees.m_report', $tournee->id);
+                $this->linkText = 'voir Mémoire de frais (tournee)';
                 $this->icon = 'ok';
                 break;
         }
-        $this->link = route('tournees.m_show', $tournee->id);
-        $this->linkText = 'Cliquez ici pour voir le Mémoire de frais de la Tournee';
     }
 
     /**

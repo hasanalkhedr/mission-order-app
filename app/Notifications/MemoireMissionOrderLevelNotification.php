@@ -20,13 +20,11 @@ class MemoireMissionOrderLevelNotification extends BaseAnnouncement
     public function __construct($missionOrder)
     {
         $this->missionOrder = $missionOrder;
-        $this->title = 'Mémoire de frais de la Mission ' . $this->missionOrder->order_number . '|'
-            . $this->missionOrder->purpose . ' a besoin de votre avis!';
-        $this->body = 'Soumis par: ' . $this->missionOrder->employee->first_name . ' '
-            . $this->missionOrder->employee->last_name.', Département: '.$missionOrder->employee->department->name ;
+        $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+        $this->body = 'Mémoire de frais besoin de votre avis!';
+        $this->link = route('mission_orders.m_report', $missionOrder->id);
+        $this->linkText = 'voir Mémoire de frais';
         $this->icon = 'review';
-        $this->link = route('mission_orders.m_show', $missionOrder->id);
-        $this->linkText = 'Cliquez ici pour voir le Mémoire de frais de la Mission';
     }
 
     /**

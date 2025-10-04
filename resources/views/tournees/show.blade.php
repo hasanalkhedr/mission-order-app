@@ -216,7 +216,7 @@
                             {{ __('Comment') }}
                         </th>
                         <th class="cursor-pointer py-3 px-6 blue-color">
-                            {{ __('Sataus') }}
+                            {{ __('Status') }}
                         </th>
                         <th class="cursor-pointer py-3 px-6 blue-color">
                             {{ __('Date of Approve') }}

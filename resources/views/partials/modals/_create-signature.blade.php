@@ -82,17 +82,18 @@
                     </div>
                     <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                         <div>
-                            <button data-modal-toggle="createSignatureModal" type="button"
-                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                                {{ __('Cancel') }}
-                            </button>
-                        </div>
-                        <div>
                             <button
-                                class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg">
+                                class="text-white hover:bg-blue-800 bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
                                 {{ __('Create') }}
                             </button>
                         </div>
+                        <div>
+                            <button data-modal-toggle="createSignatureModal" type="button"
+                                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                {{ __('Cancel') }}
+                            </button>
+                        </div>
+
                     </div>
                 </form>
             </div>

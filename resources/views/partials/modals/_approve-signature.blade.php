@@ -30,18 +30,19 @@
                     @method('PUT')
                     <div class="flex justify-end items-center space-x-2 rounded-b ">
                         <div>
-                            <button data-modal-toggle="approveSignatureModal-{{ $signature->id }}"
-                                name="action" value="review"
-                                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                                {{ __('Review (Back to Draft)') }}
-                            </button>
-                        </div>
-                        <div>
                             <button name="action" value="approve"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                                 data-modal-toggle="approveSignatureModal-{{ $signature->id }}">{{ __('Approve') }}
                             </button>
                         </div>
+                        <div>
+                            <button data-modal-toggle="approveSignatureModal-{{ $signature->id }}"
+                                name="action" value="review"
+                                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                {{ __('Review (Back to Draft)') }}
+                            </button>
+                        </div>
+
                     </div>
                 </form>
             </div>

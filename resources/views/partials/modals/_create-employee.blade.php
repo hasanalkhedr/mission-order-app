@@ -199,7 +199,7 @@
                             </select>
                         </div>
 
-                        <div class="grid md:grid-cols-2 md:gap-6">
+                        <div class="grid md:grid-cols-3 md:gap-6">
                             <div class="relative z-0 mb-4 w-full group">
                                 <p class="mb-2 text-sm font-medium blue-color">{{ __('Submit Requests') }}</p>
                                 <div class="mt-2 flex flex-row">
@@ -222,21 +222,33 @@
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            <div class="relative z-0 mb-4 w-full group">
+                                <p class="mb-2 text-sm font-medium blue-color">{{ __('Preparation de paiment') }}</p>
+                                <div class="mt-2 flex flex-row">
+                                    <input type="hidden" name="accountant" value="0" />
+                                    <input type="checkbox" name="accountant" value="1" id="accountant">
+                                </div>
+                                @error('accountant')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                     <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                         <div>
-                            <button data-modal-toggle="createModal" type="button"
-                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
-                                {{ __('Cancel') }}
-                            </button>
-                        </div>
-                        <div>
                             <button
-                                class="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blue-bg">
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
                                 {{ __('Create') }}
                             </button>
                         </div>
+                        <div>
+                            <button data-modal-toggle="createModal" type="button"
+                                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                {{ __('Cancel') }}
+                            </button>
+                        </div>
+
                     </div>
                 </form>
             </div>

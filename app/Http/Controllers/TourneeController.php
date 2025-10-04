@@ -187,7 +187,9 @@ class TourneeController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    $user->notify($notification);
+                    if($user->employee->id != $tournee->employee_id) {
+                        $user->notify($notification);
+                    }
                 }
                 break;
         }
@@ -345,7 +347,9 @@ class TourneeController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    $user->notify($notification);
+                    if($user->employee->id != $tournee->employee_id) {
+                        $user->notify($notification);
+                    }
                 }
                 break;
         }
@@ -390,7 +394,7 @@ class TourneeController extends Controller
                         ELSE 8
                     END
                 ")->orderBy('id', 'desc')->paginate(10);
-        } else if ($employee->hasRole('sg') ) {
+        } else if ($employee->hasRole('controller') ) {
             $tournees = Tournee::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')
@@ -614,7 +618,9 @@ class TourneeController extends Controller
         })->get();
 
         foreach ($users as $user) {
-            $user->notify($notification);
+            if($user->employee->id != $tournee->employee_id) {
+                $user->notify($notification);
+            }
         }
 
         return redirect()->route('tournees.m_index');

@@ -311,17 +311,8 @@
 </div>
 <!-- Action Buttons -->
 <div class="flex justify-center space-x-4 mb-8 no-print">
-    {{-- <button onclick="window.print()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-            </path>
-        </svg>
-        {{ __('Print Report') }}
-    </button> --}}
     <button id="download-pdf"
-        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
+        class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -332,29 +323,47 @@
     @if (auth()->user()->employee->hasRole('supervisor') && in_array($tournee->employee->department_id,App\Models\Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()) && $tournee->status === 'sup_approve')
         <form method="POST" action="{{ route('tournee_approves.approve', $tournee->id) }}">
             @csrf
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
-                {{ __('Valider') }}
-            </button>
+            <button
+                    class="bg-white text-center hover:bg-white text-blue-800 border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
+                    <svg class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ __('Valider') }}
+                </button>
             <input type="hidden" name="action" value="approve">
         </form>
-        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center"
-            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-            {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
-            Rejeter - Retour Agent
-        </button>
-    @elseif (auth()->user()->employee->hasRole('sg') && $tournee->status === 'sg_approve')
+        <button
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48"
+                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
+                {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                </svg>
+                Retour Agent
+            </button>
+    @elseif (auth()->user()->employee->hasRole('sg') && $tournee->status === 'sg_approve' && Auth::user()->employee->id != $tournee->employee_id)
         <form method="POST" action="{{ route('tournee_approves.approve', $tournee->id) }}">
             @csrf
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center">
-                {{ __('Valider') }}
-            </button>
+            <button
+                    class="bg-white text-center hover:bg-white text-blue-800 border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
+                    <svg class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ __('Valider') }}
+                </button>
             <input type="hidden" name="action" value="approve">
         </form>
-        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center"
-            type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
-            {{-- {{ __('AVIS DU SUPÉRIEUR HIÉRARCHIQUE') }} --}}
-            Rejeter - Retour Agent
-        </button>
+        <button
+                class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48"
+                type="button" data-modal-toggle="approveModal-{{ $tournee->id }}">
+                {{-- {{ __('Approve or Reject') }} --}}
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                </svg>
+                Retour Agent
+            </button>
     @endif
     @include('partials.modals._approve-tournee')
 </div>

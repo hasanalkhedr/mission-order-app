@@ -24,53 +24,40 @@ class MissionOrderApproveNotification extends BaseAnnouncement
         $this->missionApprove = $missionApprove;
         switch ($missionApprove->status) {
             case 'draft':
-                $this->title = 'Votre Mission ' . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' besoin de revoir';
-                $this->body = 'Révisé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . '\nRôle révisé: '
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment;
-                    $this->icon = 'review';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de mission besoin de revoir';
+                if ($this->missionApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->missionApprove->comment;
+                }
+                $this->link = route('mission_orders.edit', $missionOrder->id);
+                $this->linkText = 'voir Ordre de mission';
+                $this->icon = 'review';
                 break;
             case 'rejected':
-                $this->title = 'Votre Mission ' . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Rejeté!';
-                $this->body = 'Rejeté par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . '\nRôle rejeté: '
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment;
-                    $this->icon = 'reject';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de mission Rejeté!';
+                if ($this->missionApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->missionApprove->comment;
+                }
+                $this->link = route('mission_orders.report', $missionOrder->id);
+                $this->linkText = 'voir Ordre de mission';
+                $this->icon = 'reject';
                 break;
-            // case 'hr_approve':
-            //     $this->title = 'Votre Mission ' . $this->missionOrder->order_number . '|'
-            //         . $this->missionOrder->purpose . ' Approuvé!';
-            //     $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-            //         . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-            //         . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-            //         . $this->missionApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
-            //         $this->icon = 'ok';
-            //     break;
             case 'sg_approve':
-                $this->title = 'Votre Mission ' . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment. '\nEn attente SG (Secrétariat Général) Réviser maintenant';
-                    $this->icon = 'ok';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de mission Approuvé! \nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->link = route('mission_orders.report', $missionOrder->id);
+                $this->linkText = 'voir Ordre de mission';
+                $this->icon = 'ok';
                 break;
             case 'approved':
-                $this->title = 'Votre Mission ' . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment. '\nvotre mission a été approuvée, vous pouvez la démarrer maintenant';
-                    $this->icon = 'ok';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de mission Approuvé! \nvous pouvez la démarrer maintenant';
+                $this->link = route('mission_orders.report', $missionOrder->id);
+                $this->linkText = 'voir Ordre de mission';
+                $this->icon = 'ok';
                 break;
         }
-        $this->link = route('mission_orders.show', $missionOrder->id);
-        $this->linkText = 'Cliquez ici pour voir la Mission';
     }
 
     /**
@@ -91,7 +78,7 @@ class MissionOrderApproveNotification extends BaseAnnouncement
         return (new MailMessage)
             ->subject($this->title)
             ->greeting($this->title)
-            ->line('Bonjour '.$notifiable->employee->first_name.' '.$notifiable->employee->last_name)
+            ->line('Bonjour ' . $notifiable->employee->first_name . ' ' . $notifiable->employee->last_name)
             ->line($this->body)
             ->action($this->linkText, $this->link)
             ->salutation('Cordialement');

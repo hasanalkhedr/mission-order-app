@@ -706,8 +706,26 @@
             </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full px-3">
-                <x-primary-button data-modal-toggle="draftOrSubmitModal" type="button">Soumettre</x-primary-button>
+            <div class="w-full px-3 py-3">
+                <div class="flex justify-center items-center p-6 space-x-2 rounded-b border-t border-gray-200">
+                    <div>
+                        <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-md w-48 px-5 py-2.5 text-center"
+                            name="action" value="submit">{{ __('Submit Mission') }}
+                        </button>
+                    </div>
+                    <div>
+                        <button class="text-blue-700 bg-white hover:bg-white focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 focus:z-10 border border-gray-200 "
+                            name="action" value="draft">{{ __('Save as Draft') }}
+                        </button>
+                    </div>
+                    <div>
+                        <a href="{{route('mission_orders.index')}}">
+                        <button class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg text-md w-48 px-5 py-2.5 text-center"
+                            type="button">{{ __('Delete') }}
+                        </button></a>
+                    </div>
+                </div>
+                {{-- <x-primary-button data-modal-toggle="draftOrSubmitModal" type="button">Soumettre</x-primary-button>
                 <div id="draftOrSubmitModal" tabindex="-1" aria-hidden="true"
                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
                     <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
@@ -768,7 +786,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </form>

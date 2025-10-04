@@ -51,7 +51,8 @@ class EmployeeController extends Controller
             /*'position' => 'required',
             'administrativ_residence' => 'required',
             'service' => 'required',*/
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'accountant' => 'boolean'
         ]);
 
         $user = User::create([
@@ -88,7 +89,8 @@ class EmployeeController extends Controller
             /*'position' => 'required',
             'administrativ_residence' => 'required',
             'service' => 'required',*/
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'accountant' => 'boolean'
         ]);
         $user = $employee->user;
         $user->name = $request->first_name . ' ' . $request->last_name;

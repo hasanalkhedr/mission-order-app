@@ -23,54 +23,41 @@ class TourneeApproveNotification extends BaseAnnouncement
         $this->tournee = $tournee;
         $this->tourneeApprove = $tourneeApprove;
         switch ($tourneeApprove->status) {
-            case 'draft':
-                $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' besoin de revoir!';
-                $this->body = 'Révisé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . '\nRôle révisé: '
-                    . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment;
-                    $this->icon = 'review';
+           case 'draft':
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de tournee besoin de revoir';
+                if ($this->tourneeApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->tourneeApprove->comment;
+                }
+                $this->link = route('tournees.edit', $tournee->id);
+                $this->linkText = 'voir Ordre de tournee';
+                $this->icon = 'review';
                 break;
             case 'rejected':
-                $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Rejeté!';
-                $this->body = 'Rejeté par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . '\nRôle rejeté: '
-                    . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment;
-                    $this->icon = 'reject';
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de tournee Rejeté!';
+                if ($this->tourneeApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->tourneeApprove->comment;
+                }
+                $this->link = route('tournees.report', $tournee->id);
+                $this->linkText = 'voir Ordre de tournee';
+                $this->icon = 'reject';
                 break;
-            // case 'hr_approve':
-            //     $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-            //         . $this->tournee->purpose . ' Approuvé!';
-            //     $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-            //         . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-            //         . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-            //         . $this->tourneeApprove->comment. "\nEn attente d'un examen des ressources humaines (RH) maintenant";
-            //         $this->icon = 'ok';
-            //     break;
             case 'sg_approve':
-                $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment. '\nEn attente SG (Secrétariat Général) Réviser maintenant';
-                    $this->icon = 'ok';
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de tournee Approuvé! \nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->link = route('tournees.report', $tournee->id);
+                $this->linkText = 'voir Ordre de tournee';
+                $this->icon = 'ok';
                 break;
             case 'approved':
-                $this->title = 'Votre Tournee ' . $this->tournee->order_number . '|'
-                    . $this->tournee->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->tourneeApprove->employee->first_name . ' '
-                    . $this->tourneeApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->tourneeApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->tourneeApprove->comment. '\nVotre tournee a été approuvée, vous pouvez la démarrer maintenant';
-                    $this->icon = 'ok';
+                $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
+                $this->body = 'Votre Ordre de tournee Approuvé! \nvous pouvez la démarrer maintenant';
+                $this->link = route('tournees.report', $tournee->id);
+                $this->linkText = 'voir Ordre de tournee';
+                $this->icon = 'ok';
                 break;
         }
-        $this->link = route('tournees.show', $tournee->id);
-        $this->linkText = 'Cliquez ici pour voir la Tournee';
     }
 
     /**

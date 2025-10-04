@@ -23,54 +23,41 @@ class MemoireMissionOrderApproveNotification extends BaseAnnouncement
         $this->missionOrder = $missionOrder;
         $this->missionApprove = $missionApprove;
         switch ($missionApprove->memor_status) {
-            case 'draft':
-                $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' besoin de revoir!';
-                $this->body = 'Révisé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . '\nRôle révisé: '
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment;
-                    $this->icon = 'review';
+             case 'draft':
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais besoin de revoir';
+                if ($this->missionApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->missionApprove->comment;
+                }
+                $this->link = route('mission_orders.m_create', $missionOrder->id);
+                $this->linkText = 'voir Mémoire de frais';
+                $this->icon = 'review';
                 break;
             case 'rejected':
-                $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Rejeté!';
-                $this->body = 'Rejeté par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . '\nRôle rejeté: '
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment;
-                    $this->icon = 'reject';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais Rejeté!';
+                if ($this->missionApprove->comment) {
+                    $this->body = $this->body . '\nCommentaire de révision:' . $this->missionApprove->comment;
+                }
+                $this->link = route('mission_orders.m_report', $missionOrder->id);
+                $this->linkText = 'voir Mémoire de frais';
+                $this->icon = 'reject';
                 break;
-            // case 'controller_approve':
-            //     $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-            //         . $this->missionOrder->purpose . ' Approuvé!';
-            //     $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-            //         . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-            //         . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-            //         . $this->missionApprove->comment. "\nEn attente d'un examen des Contrôleur maintenant";
-            //         $this->icon = 'ok';
-            //     break;
             case 'sg_approve':
-                $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment. '\nEn attente SG (Secrétariat Général) Réviser maintenant';
-                    $this->icon = 'ok';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais Approuvé! \nEn attente SG (Secrétariat Général) Réviser maintenant';
+                $this->link = route('mission_orders.m_report', $missionOrder->id);
+                $this->linkText = 'voir Mémoire de frais';
+                $this->icon = 'ok';
                 break;
             case 'approved':
-                $this->title = "Votre Mémoire de frais d'Ordre de Mission " . $this->missionOrder->order_number . '|'
-                    . $this->missionOrder->purpose . ' Approuvé!';
-                $this->body = 'Approuvé par: ' . $this->missionApprove->employee->first_name . ' '
-                    . $this->missionApprove->employee->last_name . "\nRôle d'approbation: "
-                    . $this->missionApprove->approval_role. '\nCommentaire de révision:'
-                    . $this->missionApprove->comment. "\nVotre Mémoire de frais d'Ordre de Mission a été approuvée, vous pouvez demander à le payer maintenant";
-                    $this->icon = 'ok';
+                $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+                $this->body = 'Votre Mémoire de frais Approuvé! \nvous pouvez demander à le payer maintenant';
+                $this->link = route('mission_orders.m_report', $missionOrder->id);
+                $this->linkText = 'voir Mémoire de frais';
+                $this->icon = 'ok';
                 break;
         }
-        $this->link = route('mission_orders.m_show', $missionOrder->id);
-        $this->linkText = 'Cliquez ici pour voir le Mémoire de frais de la Mission';
     }
 
     /**

@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use MBarlow\Megaphone\Types\BaseAnnouncement;
 
-class MissionOrderLevelNotification extends BaseAnnouncement
+class MemoireMissionOrderAccountantNotification extends BaseAnnouncement
 {
     use Queueable;
 
@@ -21,10 +21,10 @@ class MissionOrderLevelNotification extends BaseAnnouncement
     {
         $this->missionOrder = $missionOrder;
         $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
-        $this->body = 'Ordre de mission besoin de votre avis!';
-        $this->link = route('mission_orders.report', $missionOrder->id);
-        $this->linkText = 'voir Ordre de mission';
-        $this->icon = 'review';
+        $this->body = 'Mémoire de frais besoin de Preparation de paiment';
+        $this->link = route('mission_orders.m_report', $missionOrder->id);
+        $this->linkText = 'voir Mémoire de frais';
+        $this->icon = 'ok';
     }
 
     /**
@@ -34,22 +34,22 @@ class MissionOrderLevelNotification extends BaseAnnouncement
      */
     public function via($notifiable): array
     {
-        return ['database'/*, 'mail'*/];
+        return ['database', 'mail'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    /* public function toMail(object $notifiable): MailMessage
-     {
-         return (new MailMessage)
-             ->subject($this->title)
-             ->greeting($this->title)
-             ->line('Bonjour '.$notifiable->employee->first_name.' '.$notifiable->employee->last_name)
-             ->line($this->body)
-             ->action($this->linkText, $this->link)
-             ->salutation('Cordialement');
-     }*/
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject($this->title)
+            ->greeting($this->title)
+            ->line('Bonjour ' . $notifiable->employee->first_name . ' ' . $notifiable->employee->last_name)
+            ->line($this->body)
+            ->action($this->linkText, $this->link)
+            ->salutation('Cordialement');
+    }
 
     /**
      * Get the array representation of the notification.
@@ -58,12 +58,7 @@ class MissionOrderLevelNotification extends BaseAnnouncement
      */
     public function toDatabase($notifiable): array
     {
-        $notifiable->createPendingNotificationForMission($this->title, $this->body, $this->link, $this->linkText);
         return [
-            'order_id' => $this->missionOrder->id,
-            'order_number' => $this->missionOrder->order_number,
-            'purpose' => $this->missionOrder->purpose,
-            'status' => $this->missionOrder->status,
             'title' => $this->title,
             'body' => $this->body,
             'link' => $this->link,

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    protected $fillable = ['id', 'first_name', 'last_name', 'email', 'phone', 'department_id', 'profile_image', 'is_supervisor', 'recieve_email', 'allow_order', 'user_id', 'roles', 'position', 'administrativ_residence', 'service'];
+    protected $fillable = ['id', 'first_name', 'last_name', 'email', 'phone', 'department_id', 'profile_image', 'is_supervisor', 'recieve_email', 'allow_order', 'user_id', 'roles', 'position', 'administrativ_residence', 'service', 'accountant'];
 
     protected $casts = [
         'roles' => 'array',
+        'accountant' => 'boolean',
     ];
 
     public function department()
@@ -75,12 +76,19 @@ class Employee extends Model
         $this->roles = array_unique($roles);
         return $this;
     }
-    public function getRoles() {
-        return collect($this->roles)->map(fn ($role) =>config('globals.roles.' . $role))->toArray();
+    public function getRoles()
+    {
+        return collect($this->roles)->map(fn($role) => config('globals.roles.' . $role))->toArray();
     }
 
-    public function signature() {
+    public function signature()
+    {
         return $this->hasOne(Signature::class);
+    }
+
+    public function scopeAccountant($query)
+    {
+        return $query->where('accountant', true);
     }
 }
 

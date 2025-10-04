@@ -24,10 +24,10 @@
                             <p id="file-name" class="text-sm text-gray-500 mt-2"></p>
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" id="cancel-upload"
-                                class="px-4 py-2 bg-gray-300 rounded">Annuler</button>
                             <button type="button" id="confirm-upload"
-                                class="px-4 py-2 bg-blue-600 text-white rounded">Télécharger</button>
+                                class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded">Télécharger</button>
+                            <button type="button" id="cancel-upload"
+                                class="px-4 py-2 bg-white text-blue-700 rounded">Annuler</button>
                         </div>
                     </div>
                 </div>
@@ -41,22 +41,24 @@
                             <img id="viewed-image" class="max-w-full max-h-96 object-contain border rounded-md hidden">
                             <iframe id="viewed-pdf" class="w-full h-96 border rounded-md hidden"></iframe>
                         </div>
-                        <div class="flex justify-between">
+                        <div class="flex justify-end">
                             <div class="flex space-x-2">
+                                <button type="button" id="download-file"
+                                    class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded">
+                                    <i class="fas fa-download mr-2"></i>Télécharger
+                                </button>
                                 <button type="button" id="replace-file"
-                                    class="px-4 py-2 bg-yellow-500 text-white rounded">
+                                    class="px-4 py-2 bg-white hover:bg-yellow-200 text-blue-700 rounded border border-yellow-200">
                                     <i class="fas fa-sync-alt mr-2"></i>Remplacer
                                 </button>
-                                <button type="button" id="delete-file" class="px-4 py-2 bg-red-600 text-white rounded">
+                                <button type="button" id="delete-file" class="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded">
                                     <i class="fas fa-trash mr-2"></i>Supprimer
                                 </button>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button type="button" id="close-viewer"
-                                    class="px-4 py-2 bg-gray-300 rounded">Fermer</button>
-                                <button type="button" id="download-file"
-                                    class="px-4 py-2 bg-green-600 text-white rounded">
-                                    <i class="fas fa-download mr-2"></i>Télécharger
+                                <button type="button" id="close-viewer" class="px-4 py-2 bg-white rounded border border-yellow-200">
+                                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"></path>
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -327,10 +329,10 @@
                                             @endif
                                             <!-- This will be dynamically added when a new file is uploaded -->
                                             <div class="file-input-container"></div>
-                                            <button type="button"
+                                            {{-- <button type="button"
                                                 class="delete-row px-2 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-xs">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </button> --}}
                                         </div>
                                     </td>
                                     <input type="hidden" name="expenses[{{ $index }}][reimbursement_amount]"
@@ -459,10 +461,10 @@
                                             @endif
                                             <!-- This will be dynamically added when a new file is uploaded -->
                                             <div class="file-input-container"></div>
-                                            <button type="button"
+                                            {{-- <button type="button"
                                                 class="delete-row px-2 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-xs">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </button> --}}
                                         </div>
                                     </td>
                                 </tr>
@@ -586,10 +588,10 @@
                                             @endif
                                             <!-- This will be dynamically added when a new file is uploaded -->
                                             <div class="file-input-container"></div>
-                                            <button type="button"
+                                            {{-- <button type="button"
                                                 class="delete-row px-2 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-xs">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </button> --}}
                                         </div>
                                     </td>
                                 </tr>

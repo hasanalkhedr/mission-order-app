@@ -195,7 +195,9 @@ class MissionOrderController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    $user->notify($notification);
+                    if($user->employee->id != $missionOrder->employee_id) {
+                        $user->notify($notification);
+                    }
                 }
                 break;
         }
@@ -338,7 +340,9 @@ class MissionOrderController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    $user->notify($notification);
+                    if($user->employee->id != $missionOrder->employee_id) {
+                        $user->notify($notification);
+                    }
                 }
                 break;
         }
@@ -612,7 +616,9 @@ class MissionOrderController extends Controller
         })->get();
 
         foreach ($users as $user) {
-            $user->notify($notification);
+            if($user->employee->id != $missionOrder->employee_id) {
+                $user->notify($notification);
+            }
         }
 
         return redirect()->route('mission_orders.m_index');
