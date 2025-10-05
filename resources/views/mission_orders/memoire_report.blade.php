@@ -483,7 +483,7 @@
         @foreach ($missionOrder->expenses as $expense)
         @if($expense->expense_document)
             <div class="document-page" style="page-break-before: always; width: 210mm;">
-                <h4 class="text-center font-bold mb-1">Document: {{ $expense->description }}</h4>
+                <h4 class="text-center font-bold mb-1">Document: {{ $expense->type }} {{$expense->transport_type ?? ''}} {{$expense->meal_location ?? ''}} {{$expense->description ?? ''}}</h4>
                 <div class="flex justify-center">
                     @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                         <div id="pdf-viewer-{{ $expense->id }}" class="pdf-container"
@@ -769,7 +769,7 @@
                         quality: 0.98
                     },
                     html2canvas: {
-                        scale: 2,
+                        scale: 1.7,
                         useCORS: true,
                         allowTaint: true,
                         scrollX: 0,
