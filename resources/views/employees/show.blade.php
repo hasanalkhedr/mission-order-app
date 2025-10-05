@@ -68,7 +68,7 @@
         <div class="w-1/3 px-3">
             <div class="relative w-full h-full mx-auto">
                 @if ($employee->profile_image)
-                    <img class="w-1/2 h-auto object-cover" src="{{ asset('storage/app/public/' . $employee->profile_image) }}" alt="Profile Image" class="object-cover w-full h-full">
+                    <img class="w-1/2 h-auto object-cover" src="{{ asset('storage/public/' . $employee->profile_image) }}" alt="Profile Image" class="object-cover w-full h-full">
                 @else
                     <img class="w-1/2 h-auto object-cover" src="{{ Vite::asset('resources/images/default-avatar.jpg') }}" alt="Profile Image" class="object-cover w-full h-full">
                 @endif

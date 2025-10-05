@@ -105,7 +105,7 @@
                                 <!-- Image preview -->
                                 @if ($employee->profile_image)
                                     <img id="{{ 'eprofileImagePreview' . $employee->id }}"
-                                        src="{{ asset('storage/app/public/' . $employee->profile_image) }}"
+                                        src="{{ asset('storage/public/' . $employee->profile_image) }}"
                                         alt="Image de profil" class="object-cover w-full h-full">
                                 @else
                                     <img id="{{ 'eprofileImagePreview' . $employee->id }}"

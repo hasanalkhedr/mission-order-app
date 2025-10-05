@@ -769,11 +769,11 @@
                                         // This is an existing file from the server
                                         // Check if it's a PDF or image
                                         if (receiptPath.toLowerCase().endsWith('.pdf')) {
-                                            viewedPdf.src = '/storage/' + receiptPath;
+                                            viewedPdf.src = '/storage/public/' + receiptPath;
                                             viewedPdf.classList.remove('hidden');
                                             viewedImage.classList.add('hidden');
                                         } else {
-                                            viewedImage.src = '/storage/' + receiptPath;
+                                            viewedImage.src = '/storage/public/' + receiptPath;
                                             viewedImage.classList.remove('hidden');
                                             viewedPdf.classList.add('hidden');
                                         }

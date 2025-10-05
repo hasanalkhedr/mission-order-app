@@ -468,7 +468,7 @@
         @foreach ($missionOrder->expenses as $expense)
             @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                 renderPDF(
-                    "{{ asset('storage/' . $expense->expense_document) }}",
+                    "{{ asset('storage/public/' . $expense->expense_document) }}",
                     "pdf-viewer-{{ $expense->id }}"
                 );
             @endif

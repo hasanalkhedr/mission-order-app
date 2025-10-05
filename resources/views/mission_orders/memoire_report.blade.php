@@ -473,7 +473,7 @@
                         <div id="pdf-viewer-{{ $missionOrder->id }}" class="pdf-container"
                             style="width: 100%; height: 240mm;"></div>
                     @else
-                        <img src="{{ asset('storage/' . $missionOrder->acc_expense_document) }}"
+                        <img src="{{ asset('storage/public/' . $missionOrder->acc_expense_document) }}"
                             style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
                     @endif
                 </div>
@@ -489,7 +489,7 @@
                         <div id="pdf-viewer-{{ $expense->id }}" class="pdf-container"
                             style="width: 100%; height: 240mm;"></div>
                     @else
-                        <img src="{{ asset('storage/' . $expense->expense_document) }}"
+                        <img src="{{ asset('storage/public/' . $expense->expense_document) }}"
                             style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
                     @endif
                 </div>
@@ -704,7 +704,7 @@
             @foreach ($missionOrder->expenses as $expense)
                 @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                     renderPDF(
-                        "{{ asset('storage/' . $expense->expense_document) }}",
+                        "{{ asset('storage/public/' . $expense->expense_document) }}",
                         "pdf-viewer-{{ $expense->id }}"
                     );
                 @endif

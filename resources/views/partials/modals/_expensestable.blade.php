@@ -1,4 +1,4 @@
-<!-- Expenses Table and Modals -->
+s<!-- Expenses Table and Modals -->
 <h2 class="pb-2 text-sm font-bold text-blue-700">Transport et Frais divers</h2>
 <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
@@ -769,11 +769,11 @@
                                         // This is an existing file from the server
                                         // Check if it's a PDF or image
                                         if (receiptPath.toLowerCase().endsWith('.pdf')) {
-                                            viewedPdf.src = '/storage/' + receiptPath;
+                                            viewedPdf.src = '/storage/public/' + receiptPath;
                                             viewedPdf.classList.remove('hidden');
                                             viewedImage.classList.add('hidden');
                                         } else {
-                                            viewedImage.src = '/storage/' + receiptPath;
+                                            viewedImage.src = '/storage/public/' + receiptPath;
                                             viewedImage.classList.remove('hidden');
                                             viewedPdf.classList.add('hidden');
                                         }
