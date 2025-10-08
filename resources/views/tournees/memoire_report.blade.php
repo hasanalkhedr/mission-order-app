@@ -718,6 +718,12 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize all PDF viewers
+        @if (pathinfo($tournee->acc_expense_document, PATHINFO_EXTENSION) === 'pdf')
+                renderPDF(
+                    "{{ asset('storage/public/' . $tournee->acc_expense_document) }}",
+                    "pdf-viewer-{{ $tournee->id }}"
+                );
+            @endif
         @foreach ($tournee->expenses as $expense)
             @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                 renderPDF(
