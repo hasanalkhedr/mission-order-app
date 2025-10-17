@@ -481,6 +481,314 @@
             @endif
     </div>
 
+    <!-- OM REPORT -->
+    <div class="report-page" style="width: 210mm; height: 297mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-2">
+            <x-application-logo class="h-16" />
+            <div class="text-right">
+                <p>New Delhi, {{ $tournee->order_date->format('d/m/Y') }}</p>
+            </div>
+        </div>
+        <!-- Title -->
+        <h1 class="text-2xl font-bold text-center mb-2">ORDRE DE TOURNEE {{ $tournee->order_number }}</h1>
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th colspan="2" class="px-4">Tourneeary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="w-1/3">Nom, Prénom :</td>
+                    <td class="w-2/3">{{ $tournee->employee->first_name }} {{ $tournee->employee->last_name }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="w-1/3">Fonction :</td>
+                    <td class="w-2/3">{{ $tournee->employee->position }}</td>
+                </tr>
+                <tr>
+                    <td class="w-1/3">Résidence administrative :</td>
+                    <td class="w-2/3">{{ $tournee->employee->administrativ_residence }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th colspan="2" class="px-4">Tournee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="w-1/5">Objet/Motfits:</td>
+                    <td class="w-4/5">{{ $tournee->purpose }}</td>
+                </tr>
+                @if($tournee->conge)
+                <tr>
+                    <td class="w-1/3">Conge pendant mission:</td>
+                    <td class="w-2/3">{{ $tournee->conge }}</td>
+                </tr>
+                @endif
+                <tr>
+                    <td colspan="2" class="w-full">
+                        <h2 class="text-md text-center justify-center text-blue-500">Destinations du Tournee</h2>
+                        <table class="w-full text-xs text-center text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <th class="cursor-pointer py-[2px] px-[2px] blue-color">#</th>
+                                <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de départ</th>
+                                <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure d'arrivée lieu de
+                                    mission
+                                </th>
+                                <th class="cursor-pointer py-[2px] px-[2px] blue-color">Lieu de mission</th>
+                                <th class="cursor-pointer py-[2px] px-[2px] blue-color">Date et Heure de départ lieu de
+                                    mission
+                                </th>
+                            </thead>
+                            <tbody>
+                                @foreach ($tournee->tourneeDestinations as $index => $destination)
+                                    <tr class="bg-white hover:bg-gray-50">
+                                        <td
+                                            class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                            {{ $index }}</td>
+                                        <td
+                                            class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                            {{ $destination->departure_location }}</td>
+                                        <td
+                                            class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                            {{ $destination->start_date->format('d/m/Y') }} at
+                                            {{ \Carbon\Carbon::parse($destination->start_time)->format('H:i') }}</td>
+                                        <td
+                                            class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                            {{ $destination->arrive_location }}</td>
+                                        <td
+                                            class="border-b py-[2px] px-[2px] font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                                            {{ $destination->end_date->format('d/m/Y') }} at
+                                            {{ \Carbon\Carbon::parse($destination->end_time)->format('H:i') }}</td>
+                                   </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        @if($tournee->has_weekend)
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
+            <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
+        </div>
+        @endif
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th class="px-4">Pays de Tournee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="w-full">
+                        {{ $tournee->bareme->pays }}
+                        (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }}
+                        / Repas:{{ $tournee->bareme->meal_cost }} /
+                        Hebergement:{{ $tournee->bareme->accomodation_cost }})
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th colspan="2" class="px-4">Frais de tournee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="w-5/6">Demande d'avance:</td>
+                    <td class="w-1/6">{{ $tournee->advance >0 ? $tournee->advance : 'NON' }}</td>
+                </tr>
+                <tr>
+                    <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
+                    <td class="w-1/6">{{ $tournee->charge == 1 ? 'OUI' : 'NON' }}</td>
+                </tr>
+                <tr>
+                    <td class="w-5/6">Prise en charge des frais de transport (Taxi/Uber, Transport public, etc..):</td>
+                    <td class="w-1/6">{{ $tournee->charge1 == 1 ? 'OUI' : 'NON' }}</td>
+                </tr>
+                <tr>
+                    <td class="w-5/6">Prise en charge frais d'hébergement:</td>
+                    <td class="w-1/6">{{ $tournee->ijm == 1 ? 'OUI' : 'NON' }}</td>
+                </tr>
+                <tr>
+                    <td class="w-5/6">Prise en charge frais de repas:</td>
+                    <td class="w-1/6">{{ $tournee->repas == 1 ? 'OUI' : 'NON' }}</td>
+                </tr>
+                {{-- <tr>
+                    <td colspan="2" class="w-full">{{ $tournee->budget_text }}</td>
+                </tr> --}}
+            </tbody>
+        </table>
+        <!-- Expense Table -->
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th class="px-4">Dépenses prévues supplémentaires</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="w-full">
+                        <div class="flex flex-col">
+                            <div class="-m-1.5 overflow-x-auto">
+                                <div class="p-[2px] min-w-full inline-block align-middle">
+                                    <div class="overflow-hidden">
+<table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+    <thead>
+        <tr>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Type</th>
+            <th scope="col"
+                class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                Nature de la dépense</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($tournee->expenses as $expense)
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                <td
+                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                    {{__($expense->type)}}
+                </td>
+                <td
+                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                    @if ($expense->type === 'transport')
+                        {{ __('expense.transport_types.' . $expense->transport_type) }}<br/>
+                        @if($expense->transport_type === 'car_rental_with_driver')
+                        ({{$expense->passenger == 1 ? __('passenger').',' : ''}}
+                        {{$expense->distance == 1 ? __('distance').',' : ''}}<br/>
+                        {{$expense->material == 1 ? __('material').',' : ''}}
+                        {{$expense->visits == 1 ? __('visits') : ''}})
+                        @endif
+                    @else
+                        {{ $expense->meal_location }}
+                        {{ $expense->description }}
+                    @endif
+                </td>
+            </tr>
+        @empty
+            <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                <td colspan="6"
+                    class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
+                    {{ __('No Expenses Found') }}
+                </td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        @if($tournee->description && $tournee->description != '')
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th colspan="2" class="px-4">Observations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2" class="w-full">{{ $tournee->description }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        @endif
+        <table class="table-auto w-full text-left">
+            <thead>
+                <tr class="bg-blue-200">
+                    <th colspan="2" class="px-4">Signature de l'autorité compétente</th>
+                </tr>
+            </thead>
+            {{-- <tbody>
+                <tr>
+                    <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
+                        <span
+                            class="font-bold text-lg w-24 text-center">{{ Str::upper($director->first_name) . ' ' . $director->last_name }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
+                        <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
+                        <div class="flex">
+                            <div class="w-2/3"></div>
+                            <div class="w-1/3">
+                                <span class="font-light text-md text-right">
+                                    @if ($director && $director->signature && $director->signature->status == 'approved')
+                                        <img src="{{ asset('storage/' . $director->signature->signature_path) }}"
+                                            class="w-60 h-auto max-w-60">
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody> --}}
+        </table>
+        <table class="table-auto w-full text-left">
+            <tbody>
+                <tr>
+                    <td class="px-2 py-[1px] w-1/3">
+                        <span class="font-bold text-lg text-center">Agent: </span>
+                    </td>
+                    <td class="px-2 py-[1px] w-1/3">
+                        <span class="font-bold text-lg text-center">Chef de Service: </span>
+                    </td>
+                    <td class="px-2 py-[1px] w-1/3">
+                        <span class="font-bold text-lg text-center">Ordonateur: </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">Date de Soumission</span>
+                    </td>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">Date de Validation</span>
+                    </td>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">Date de Validation</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">{{$tournee->order_date->format('d/m/Y')}}</span>
+                    </td>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">
+                            {{$tournee->getTourneeAprroves()->where('approval_role', 'Chef de Service')->first() ?
+                                $tournee->getTourneeAprroves()->where('approval_role', 'Chef de Service')->first()->created_at->format('d/m/Y') : ''}}
+                        </span>
+                    </td>
+                    <td class="w-1/3 px-2 py-[1px]">
+                        <span class="font-light text-md text-center">{{$tournee->getTourneeAprroves()->where('approval_role', 'Ordonateur')->first() ?
+                            $tournee->getTourneeAprroves()->where('approval_role', 'Ordonateur')->first()->created_at->format('d/m/Y') : ''}}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <!-- Documents - each will be on separate pages -->
     @if($tournee->acc_expense_document)
         <div class="document-page" style="page-break-before: always; width: 210mm;">

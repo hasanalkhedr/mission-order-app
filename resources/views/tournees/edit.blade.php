@@ -853,13 +853,13 @@
             <div class="w-full px-3">
                 <div class="flex justify-center items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                     <div>
-                        <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-md w-48 px-5 py-2.5 text-center"
-                            name="action" value="submit">{{ __('Submit Mission') }}
+                        <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 focus:z-10 "
+                            name="action" value="draft">{{ __('Save as Draft') }}
                         </button>
                     </div>
                     <div>
-                        <button class="text-blue-700 bg-white-700 hover:bg-white-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-md font-bold px-5 py-2.5 focus:z-10 border border-gray-200 "
-                            name="action" value="draft">{{ __('Save as Draft') }}
+                        <button class="text-blue-700 bg-white-700 hover:bg-white-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-md w-48 px-5 py-2.5 text-center border border-gray-200"
+                            name="action" value="submit">{{ __('Submit Mission') }}
                         </button>
                     </div>
                     <div>

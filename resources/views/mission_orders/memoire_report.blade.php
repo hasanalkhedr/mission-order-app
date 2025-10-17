@@ -464,6 +464,313 @@
             </table>
             @endif
         </div>
+
+        <!-- OM REPORT -->
+        <div class="report-page" style="width: 210mm; height: 297mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
+            <!-- Header -->
+            <div class="flex justify-between items-start mb-2">
+                <x-application-logo class="h-16" />
+                <div class="text-right">
+                    <p>New Delhi, {{ $missionOrder->order_date->format('d/m/Y') }}</p>
+                </div>
+            </div>
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-center mb-2">ORDRE DE MISSION {{ $missionOrder->order_number }}</h1>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Missionary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-1/3">Nom, Prénom :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->first_name }}
+                            {{ $missionOrder->employee->last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Fonction :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->position }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3">Résidence administrative :</td>
+                        <td class="w-2/3">{{ $missionOrder->employee->administrativ_residence }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-1/5">Objet/Motfits:</td>
+                        <td class="w-4/5">{{ $missionOrder->purpose }}</td>
+                    </tr>
+                    @if ($missionOrder->conge)
+                        <tr>
+                            <td class="w-1/3">Conge pendant mission:</td>
+                            <td class="w-2/3">{{ $missionOrder->conge }}</td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <table class="table-auto w-full text-left border border-gray-300">
+                            <thead>
+                                <tr>
+                                    <th colspan="5">Détail du déplacement résidence administrative - lieu de la mission
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="w-1/5">Lieu de départ</th>
+                                    <th class="w-1/5">Lieu de mission</th>
+                                    <th class="w-1/5">Date de départ</th>
+                                    <th class="w-1/5">Heure de départ</th>
+                                    <th class="w-1/5">Heure d'arrivée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-1/5">{{ $missionOrder->departure_location }}</td>
+                                    <td class="w-1/5">{{ $missionOrder->arrive_location }}</td>
+                                    <td class="w-1/5">{{ $missionOrder->start_date->format('d/m/Y') }}</td>
+                                    <td class="w-1/5">
+                                        {{ \Carbon\Carbon::parse($missionOrder->start_time)->format('H:i') }}</td>
+                                    <td class="w-1/5">
+                                        {{ \Carbon\Carbon::parse($missionOrder->start_time2)->format('H:i') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="w-1/5">{{ $missionOrder->endMission_location }}</td>
+                                    <td class="w-1/5">{{ $missionOrder->return_location }}</td>
+                                    <td class="w-1/5">{{ $missionOrder->end_date->format('d/m/Y') }}</td>
+                                    <td class="w-1/5">{{ \Carbon\Carbon::parse($missionOrder->end_time2)->format('H:i') }}
+                                    </td>
+                                    <td class="w-1/5">{{ \Carbon\Carbon::parse($missionOrder->end_time)->format('H:i') }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tr>
+                </tbody>
+            </table>
+            @if ($missionOrder->has_weekend)
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
+                    <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
+                </div>
+            @endif
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th class="px-4">Pays de Mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-full">
+                            {{ $missionOrder->bareme->pays }}
+                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
+                            / Repas:{{ $missionOrder->bareme->meal_cost }} /
+                            Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Frais de mission</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-5/6">Demande d'avance:</td>
+                        <td class="w-1/6">{{ $missionOrder->advance > 0 ? $missionOrder->advance : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
+                        <td class="w-1/6">{{ $missionOrder->charge == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge des frais de transport (Taxi/Uber, Transport public, etc..):</td>
+                        <td class="w-1/6">{{ $missionOrder->charge1 == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge frais d'hébergement:</td>
+                        <td class="w-1/6">{{ $missionOrder->ijm == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="w-5/6">Prise en charge frais de repas:</td>
+                        <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    {{-- <tr>
+                    <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
+                </tr> --}}
+                </tbody>
+            </table>
+            <!-- Expense Table -->
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th class="px-4">Dépenses prévues supplémentaires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-full">
+                            <div class="flex flex-col">
+                                <div class="-m-1.5 overflow-x-auto">
+                                    <div class="p-[2px] min-w-full inline-block align-middle">
+                                        <div class="overflow-hidden">
+                                            <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Type</th>
+                                                        <th scope="col"
+                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            Nature de la dépense</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse ($missionOrder->expenses as $expense)
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                {{ __($expense->type) }}
+                                                            </td>
+                                                            <td
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                @if ($expense->type === 'transport')
+                                                                    {{ __('expense.transport_types.' . $expense->transport_type) }}<br />
+                                                                    @if ($expense->transport_type === 'car_rental_with_driver')
+                                                                        ({{ $expense->passenger == 1 ? __('passenger') . ',' : '' }}
+                                                                        {{ $expense->distance == 1 ? __('distance') . ',' : '' }}<br />
+                                                                        {{ $expense->material == 1 ? __('material') . ',' : '' }}
+                                                                        {{ $expense->visits == 1 ? __('visits') : '' }})
+                                                                    @endif
+                                                                @else
+                                                                    {{ $expense->meal_location }}
+                                                                    {{ $expense->description }}
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
+                                                            <td colspan="6"
+                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
+                                                                {{ __('No Expenses Found') }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            @if ($missionOrder->description && $missionOrder->description != '')
+                <table class="table-auto w-full text-left">
+                    <thead>
+                        <tr class="bg-blue-200">
+                            <th colspan="2" class="px-4">Observations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="w-full">{{ $missionOrder->description }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
+            <table class="table-auto w-full text-left">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="px-4">Signature de l'autorité compétente</th>
+                    </tr>
+                </thead>
+                {{-- <tbody>
+                <tr>
+                    <td colspan="2" class="w-full px-28 pt-2 pb-2 justify-end items-end text-right">
+                        <span class="font-bold text-lg w-24 text-center">{{Str::upper($director->first_name) . ' ' . $director->last_name}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="w-full px-24 pt-0 pb-2 text-right">
+                        <span class="font-light text-md  w-16 text-center">COCAC - Directrice de l'IFI</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="w-full px-24 pt-0 pb-40 text-right">
+                        <div class="flex">
+                            <div class="w-2/3"></div>
+                            <div class="w-1/3">
+                                <span class="font-light text-md text-right">
+                                    @if ($director && $director->signature && $director->signature->status == 'approved')
+                                        <img src="{{asset('storage/' . $director->signature->signature_path)}}" class="w-60 h-auto max-w-60">
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody> --}}
+            </table>
+            <table class="table-auto w-full text-left">
+                <tbody>
+                    <tr>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Agent: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Chef de Service: </span>
+                        </td>
+                        <td class="px-2 py-[1px] w-1/3">
+                            <span class="font-bold text-lg text-center">Ordonateur: </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Soumission</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">Date de Validation</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span
+                                class="font-light text-md text-center">{{ $missionOrder->order_date->format('d/m/Y') }}</span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span class="font-light text-md text-center">
+                                {{ $missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->last()
+                                    ? $missionOrder->getMissionAprroves()->where('approval_role', 'Chef de Service')->last()->created_at->format('d/m/Y')
+                                    : '' }}
+                            </span>
+                        </td>
+                        <td class="w-1/3 px-2 py-[1px]">
+                            <span
+                                class="font-light text-md text-center">{{ $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last()
+                                    ? $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last()->created_at->format('d/m/Y')
+                                    : '' }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Documents - each will be on separate pages -->
         @if($missionOrder->acc_expense_document)
             <div class="document-page" style="page-break-before: always; width: 210mm;">

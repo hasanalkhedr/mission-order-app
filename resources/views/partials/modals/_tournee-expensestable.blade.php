@@ -1,5 +1,5 @@
 <!-- Expenses Table and Modals -->
-<h2 class="pb-2 text-sm font-bold text-blue-700">Transport et Frais divers</h2>
+{{-- <h2 class="pb-2 text-sm font-bold text-blue-700">Transport et Frais divers</h2> --}}
 <div class="flex flex-col">
     <div class="-m-1.5 overflow-x-auto">
         <div class="p-1.5 min-w-full inline-block align-middle">
