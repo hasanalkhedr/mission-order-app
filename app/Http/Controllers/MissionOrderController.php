@@ -8,6 +8,10 @@ use App\Models\Employee;
 use App\Models\MissionOrder;
 use App\Models\Bareme;
 use App\Notifications\MemoireMissionOrderLevelNotification;
+use App\Notifications\MemoireMissionOrderReadyToPayAccountantNotification;
+use App\Notifications\MemoireMissionOrderReadyToPayNotification;
+use App\Notifications\MemoireMissionOrderRejectAccountantNotification;
+use App\Notifications\MemoireMissionOrderRejectNotification;
 use App\Notifications\MissionOrderLevelNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -373,7 +377,7 @@ class MissionOrderController extends Controller
         if ($employee->hasRole('sg')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
-            })->where('status', 'like', 'approved')
+            })->where('status', 'like', 'approved')->orWhere('status', 'like', 'rejected')
                 ->orderByRaw("
                     CASE
                         WHEN memor_status = 'sg_approve' THEN 1
@@ -644,5 +648,50 @@ class MissionOrderController extends Controller
             'memor_status' => null,
         ]);
         return redirect()->route('mission_orders.m_index');
+    }
+    public function m_readyToPay(Request $request, MissionOrder $missionOrder) {
+        if(auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
+            $missionOrder->update([
+                'memor_status' => 'paid',
+            ]);
+            $ownerNotification = new MemoireMissionOrderReadyToPayNotification($missionOrder);
+            $missionOrder->employee->user->notify($ownerNotification);
+
+            $accountantNotification = new MemoireMissionOrderReadyToPayAccountantNotification($missionOrder);
+            if($missionOrder->accountant_id) {
+                $accountant = Employee::find($missionOrder->accountant_id);
+                $accountant->user->notify($accountantNotification);
+            }
+            return redirect()->route('mission_orders.m_index');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    public function m_accountingReject(Request $request, MissionOrder $missionOrder) {
+        if(auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
+            $missionOrder->update([
+                'memor_status' => 'rejected',
+                'status' => 'rejected',
+                'reject_comment' => $request->input('comment')
+            ]);
+            $newMissionOrder = $missionOrder->replicate();
+            $newMissionOrder->status = 'approved';
+            $newMissionOrder->memor_status = 'draft';
+            $newMissionOrder->save();
+
+            $ownerNotification = new MemoireMissionOrderRejectNotification($missionOrder, $newMissionOrder);
+            $missionOrder->employee->user->notify($ownerNotification);
+
+            $accountantNotification = new MemoireMissionOrderRejectAccountantNotification($missionOrder, $newMissionOrder);
+            if($missionOrder->accountant_id) {
+                $accountant = Employee::find($missionOrder->accountant_id);
+                $accountant->user->notify($accountantNotification);
+            }
+            return redirect()->route('mission_orders.m_index');
+
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }

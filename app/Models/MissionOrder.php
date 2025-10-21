@@ -10,6 +10,11 @@ class MissionOrder extends Model
     {
 
         static::creating(function ($missionOrder) {
+            // Check if this is a replicated model
+        if ($missionOrder->is_replicating ?? false) {
+            // Keep the modified order number from replicating event
+            return;
+        }
             $missionOrder->order_number = MissionOrder::generateOrderNumber();
         });
         static::updating(function ($missionOrder) {
@@ -34,6 +39,11 @@ class MissionOrder extends Model
                     $missionOrder->no_meals = $missionOrder->no_meals + 1;
                 }
             }
+        });
+        static::replicating(function($missionOrder) {
+            $missionOrder->order_number = $missionOrder->order_number . '-V2';
+            // Set a flag to indicate this is a replication
+            $missionOrder->is_replicating = true;
         });
     }
     // Method to generate the next order number
@@ -102,6 +112,8 @@ class MissionOrder extends Model
         'acc_expense_document',
         'has_weekend',
         'accountant_id',
+        'is_replicating',
+        'reject_comment',
     ];
     protected $casts = [
         'order_date' => 'date',

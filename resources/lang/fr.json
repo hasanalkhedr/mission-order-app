@@ -19,8 +19,8 @@
     "hr_approve": "Validée RH",
     "sg_approve": "Validation ordonnateur",
     "approved": "Valide",
-    "rejected": "Rejetée",
-    "paid": "payé",
+    "rejected": "Comptabilité rejetée",
+    "paid": "Prêt à payer",
     "controller_approve": "validation gestionnaire",
 
     "Save Mission as Draft or Submit it": "Enregistrer la mission en brouillon ou la soumettre",

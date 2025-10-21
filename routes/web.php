@@ -50,6 +50,8 @@ Route::middleware(['web', 'check.rate'])->group(function () {
     Route::get('mission_orders/{missionOrder}/m_report', [MissionOrderController::class, 'm_report'])->middleware('auth')->name('mission_orders.m_report');
     Route::put('mission_orders/{missionOrder}/m_destroy', [MissionOrderController::class, 'm_destroy'])->middleware('auth')->name('mission_orders.m_destroy');
     Route::put('/mission_orders/{missionOrder}/changeDates', [MissionOrderController::class, 'changeDates'])->middleware(['auth', 'role:sg'])->name('mission_orders.changeDates');
+    Route::put('/mission_orders/{missionOrder}/m_readyToPay',[MissionOrderController::class, 'm_readyToPay'])->middleware(['auth', 'role:sg'])->name('mission_orders.m_readyToPay');
+    Route::put('/mission_orders/{missionOrder}/m_accountingReject',[MissionOrderController::class, 'm_accountingReject'])->middleware(['auth', 'role:sg'])->name('mission_orders.m_accountingReject');
     Route::resource('mission_orders', MissionOrderController::class)->middleware('auth');
 
     // Tournee routes

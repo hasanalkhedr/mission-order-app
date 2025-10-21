@@ -806,6 +806,7 @@
     </div>
     <!-- Action Buttons -->
     <div class="flex justify-center space-x-4 mb-8 no-print">
+        @if($missionOrder->memor_status !== 'rejected')
         <button id="download-pdf"
             class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-48">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -815,6 +816,7 @@
             </svg>
             {{ __('Save as PDF file') }}
         </button>
+        @endif
         @if (auth()->user()->employee->hasRole('controller') && $missionOrder->memor_status === 'controller_approve' && Auth::user()->employee->id != $missionOrder->employee_id)
             <form method="POST" action="{{ route('mission_approves.m_approve', $missionOrder->id) }}">
                 @csrf
@@ -910,6 +912,83 @@
                 Retour Agent
             </button>
         @endif
+
+        @if (auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id)
+            <form method="POST" action="{{ route('mission_orders.m_readyToPay', $missionOrder->id) }}">
+                @method('PUT')
+                @csrf
+                <button
+                    class="bg-white text-center hover:bg-white text-blue-800 border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-60">
+                    <svg class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ __('Prêt à payer') }}
+                </button>
+            </form>
+
+            <button type="button"
+                    data-modal-target="accountingModal-{{ $missionOrder->id }}"
+                    data-modal-toggle="accountingModal-{{ $missionOrder->id }}"
+                    class="bg-red-800 text-center hover:bg-red-700 text-white border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-60">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                    </svg>
+                    {{ __('Rejet comptable') }}
+            </button>
+
+            <!-- Accounting Modal -->
+            <div id="accountingModal-{{ $missionOrder->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Pourquoi avez-vous refusé le MDF de comptable?
+                            </h3>
+                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="accountingModal-{{ $missionOrder->id }}">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5">
+                            <form method="POST" action="{{ route('mission_orders.m_accountingReject', $missionOrder->id) }}">
+                                @method('PUT')
+                                @csrf
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="relative z-0 mb-4 w-full group">
+                                        <input type="text" name="comment" id="comment-{{ $missionOrder->id }}" required
+                                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                            placeholder="" />
+                                        <label for="comment-{{ $missionOrder->id }}"
+                                            class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">
+                                            {{ __('Comment') }}
+                                        </label>
+                                        @error('comment')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-blue-700">ce MDF sera archivé, et une autre copie de celui-ci sera renvoyée à l'agent pour le corriger et le soumettre à nouveau</span>
+                                </div>
+                                <button class="bg-red-800 text-center hover:bg-red-700 text-white border border-blue-300 font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center w-full">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                                    </svg>
+                                    Confirmer la comptabilité rejeter
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @include('partials.modals._approve-memoier')
     </div>
     <style>

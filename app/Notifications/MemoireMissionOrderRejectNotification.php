@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use MBarlow\Megaphone\Types\BaseAnnouncement;
+
+class MemoireMissionOrderRejectNotification extends BaseAnnouncement
+{
+    use Queueable;
+
+    public $missionOrder;
+    public $icon;
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct($missionOrder, $newMissionOrder)
+    {
+        $this->missionOrder = $missionOrder;
+        $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
+        $this->body = 'Votre MDF original '.$missionOrder->order_number.' a été rejeté par le comptable et archivé. une nouvelle copie avec numéro '.$newMissionOrder->order_number.' vous est renvoyée pour correction et soumission à nouveau. ('.$missionOrder->reject_comment.')';
+        $this->link = route('mission_orders.m_create', $newMissionOrder->id);
+        $this->linkText = 'voir Mémoire de frais copiée';
+        $this->icon = 'reject';
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via($notifiable): array
+    {
+        return ['database', 'mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject($this->title)
+            ->greeting($this->title)
+            ->line('Bonjour '.$notifiable->employee->first_name.' '.$notifiable->employee->last_name)
+            ->line($this->body)
+            ->action($this->linkText, $this->link)
+            ->salutation('Cordialement');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'title' => $this->title,
+            'body' => $this->body,
+            'link' => $this->link,
+            'linkText' => $this->linkText,
+            'icon' => $this->icon,
+        ];
+    }
+}

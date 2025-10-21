@@ -5,6 +5,10 @@ use App\Notifications\ChancelleryRateNotification;
 use App\Notifications\MemoireMissionOrderAccountantNotification;
 use App\Notifications\MemoireMissionOrderApproveNotification;
 use App\Notifications\MemoireMissionOrderLevelNotification;
+use App\Notifications\MemoireMissionOrderReadyToPayAccountantNotification;
+use App\Notifications\MemoireMissionOrderReadyToPayNotification;
+use App\Notifications\MemoireMissionOrderRejectAccountantNotification;
+use App\Notifications\MemoireMissionOrderRejectNotification;
 use App\Notifications\MemoireTourneeAccountantNotification;
 use App\Notifications\MemoireTourneeApproveNotification;
 use App\Notifications\MemoireTourneeLevelNotification;
@@ -56,6 +60,12 @@ return [
 
         MemoireMissionOrderAccountantNotification::class => 'vendor.megaphone.types.memoire-mission-order-accountant-notification',
         MemoireTourneeAccountantNotification::class => 'vendor.megaphone.types.memoire-tournee-accountant-notification',
+
+        MemoireMissionOrderReadyToPayNotification::class => 'vendor.megaphone.types.memoire-mission-order-readyToPay-notification',
+        MemoireMissionOrderReadyToPayAccountantNotification::class => 'vendor.megaphone.types.memoire-mission-order-readyToPay-accountant-notification',
+        MemoireMissionOrderRejectNotification::class => 'vendor.megaphone.types.memoire-mission-order-reject-notification',
+        MemoireMissionOrderRejectAccountantNotification::class => 'vendor.megaphone.types.memoire-mission-order-reject-accountant-notification',
+
     ],
 
     /*
