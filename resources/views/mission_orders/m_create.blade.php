@@ -139,8 +139,7 @@
         </div>
 @if($missionOrder->has_weekend)
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
-            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la
-                description.</p>
+            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motifs de la mission.</p>
         </div>
         @endif
         <div class="flex flex-wrap -mx-3 mb-2">

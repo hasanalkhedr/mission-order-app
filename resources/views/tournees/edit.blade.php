@@ -227,7 +227,7 @@
 
             <!-- Weekend Warning -->
             <div x-show="hasWeekend" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
-                <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la description.</p>
+                <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motifs de la mission.</p>
             </div>
 
             <!-- Hidden inputs for backend weekend data -->
@@ -656,10 +656,10 @@
                                                         x-model="expense.transport_type" required
                                                         x-on:change="handleTransportTypeChange(index)">
                                                         <option value="">--sélectionner--</option>
-                                                        <option value="plane">Avion</option>
+                                                        {{-- <option value="plane">Avion</option>
                                                         <option value="train">Train</option>
                                                         <option value="taxi_uber">Taxi/Uber</option>
-                                                        <option value="public_transport">Transport public</option>
+                                                        <option value="public_transport">Transport public</option> --}}
                                                         <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
                                                         <option value="autre">autre</option>
                                                     </x-select-input>
@@ -735,7 +735,7 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Frais d'Receptions">Frais d'Receptions</option>
+                                                    <option value="Frais d'Receptions">au lieu de Frais d’receptions</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">

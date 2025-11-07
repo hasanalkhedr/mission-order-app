@@ -60,13 +60,6 @@
                             </a>
                         </li>
                         <hr />
-                        <li>
-                            <a href="{{ route('chancelleryRates.index') }}"
-                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
-                                <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
-                            </a>
-                        </li>
-                        <hr />
                         <!-- Mission Menu -->
                         <li>
                             <button type="button"
@@ -140,6 +133,13 @@
                             <a href="{{ route('signatures.index') }}"
                                 class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                                 <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
+                            </a>
+                        </li>
+                        <hr />
+                        <li>
+                            <a href="{{ route('chancelleryRates.index') }}"
+                                class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                                <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
                             </a>
                         </li>
                         <hr />
@@ -218,13 +218,6 @@
                         </a>
                     </li>
                     <hr />
-                    <li>
-                        <a href="{{ route('chancelleryRates.index') }}"
-                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
-                            <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
-                        </a>
-                    </li>
-                    <hr />
                     <!-- Mission Menu -->
                     <li>
                         <button type="button"
@@ -298,6 +291,13 @@
                         <a href="{{ route('signatures.index') }}"
                             class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
                             <span class="mx-2 font-medium">{{ __('Signatures') }}</span>
+                        </a>
+                    </li>
+                    <hr />
+                    <li>
+                        <a href="{{ route('chancelleryRates.index') }}"
+                            class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500">
+                            <span class="mx-2 font-medium">{{ __('Chancellery Rates') }}</span>
                         </a>
                     </li>
                     <hr />
