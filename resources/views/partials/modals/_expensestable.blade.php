@@ -259,7 +259,7 @@
                             </tr>
 
                             <!-- Repas #2 Row -->
-                            @php $index = 2; @endphp
+                            {{-- @php $index = 2; @endphp
                             @foreach ($missionOrder->expenses->where('type', 'extra_meal') as $expense)
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
                                     <td
@@ -332,7 +332,7 @@
                                             {{-- <button type="button"
                                                 class="delete-row px-2 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-xs">
                                                 <i class="fas fa-trash"></i>
-                                            </button> --}}
+                                            </button>
                                         </div>
                                     </td>
                                     <input type="hidden" name="expenses[{{ $index }}][reimbursement_amount]"
@@ -345,8 +345,97 @@
                                         value="INR">
                                 </tr>
                                 @php $index++; @endphp
-                            @endforeach
-
+                            @endforeach --}}
+<!-- Repas #2 Row -->
+@php $index = 2; @endphp
+@foreach ($missionOrder->expenses->where('type', 'extra_meal') as $expense)
+    <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
+            <span class="expense-badge bg-green-100 text-green-800">Repas #{{ $loop->iteration }}</span>
+            <input type="hidden" name="expenses[{{ $index }}][type]" value="extra_meal">
+            <input type="hidden" name="expenses[{{ $index }}][expense_id]" value="{{ $expense->id }}">
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <div class="flex flex-col items-center">
+                <span class="text-xs text-gray-500 mb-1">Nombre de repas</span>
+                <input type="number" name="expenses[{{ $index }}][meal_participants]"
+                       value="{{ $expense->meal_participants ?? 0 }}" min="0"
+                       class="extra-meals-input w-20 px-2 py-1 border border-gray-300 rounded-md text-sm"
+                       data-index="{{ $index }}">
+            </div>
+            <input type="hidden" id="extra-meal-cost-{{ $index }}" value="{{ $missionOrder->bareme->meal_cost }}">
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <input type="number" name="expenses[{{ $index }}][reimbursement_amount]"
+                   value="{{ $expense->reimbursement_amount ?? 0 }}" step="0.01" min="0"
+                   class="reimbursement-input extra-meal-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+                   data-currency="{{ $expense->reimbursement_currency ?? 'INR' }}"
+                   data-index="{{ $index }}"
+                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <select name="expenses[{{ $index }}][reimbursement_currency]"
+                    class="reimbursement-currency extra-meal-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+                    data-index="{{ $index }}">
+                <option value="INR" @selected(($expense->reimbursement_currency ?? 'INR') === 'INR')>INR</option>
+                <option value="EUR" @selected(($expense->reimbursement_currency ?? 'INR') === 'EUR')>EUR</option>
+                <option value="USD" @selected(($expense->reimbursement_currency ?? 'INR') === 'USD')>USD</option>
+            </select>
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <input type="number" name="expenses[{{ $index }}][direct_amount]"
+                   value="{{ $expense->direct_amount ?? 0 }}" step="0.01" min="0"
+                   class="direct-input extra-meal-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+                   data-currency="{{ $expense->direct_currency ?? 'INR' }}"
+                   data-index="{{ $index }}"
+                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <select name="expenses[{{ $index }}][direct_currency]"
+                    class="direct-currency extra-meal-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
+                    data-index="{{ $index }}">
+                <option value="INR" @selected(($expense->direct_currency ?? 'INR') === 'INR')>INR</option>
+                <option value="EUR" @selected(($expense->direct_currency ?? 'INR') === 'EUR')>EUR</option>
+                <option value="USD" @selected(($expense->direct_currency ?? 'INR') === 'USD')>USD</option>
+            </select>
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
+            <input type="hidden" name="expenses[{{ $index }}][total_inr]"
+                   value="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+            <span class="total-inr extra-meal-total-{{ $index }}">
+                {{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+            </span>
+        </td>
+        <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
+            <div class="flex flex-col space-y-1">
+                @if ($expense->expense_document)
+                    <button type="button"
+                            class="view-receipt-btn px-2 py-1 bg-green-100 text-green-600 rounded-md hover:bg-blue-200 text-xs"
+                            data-expense-type="extra_meal"
+                            data-expense-id="{{ $expense->id }}"
+                            data-expense-index="{{ $index }}"
+                            data-has-receipt="true"
+                            data-receipt-path="{{ $expense->expense_document }}">
+                        <i class="fas fa-receipt"></i>
+                    </button>
+                    <input type="hidden" name="expenses[{{ $index }}][existing_receipt]"
+                           value="{{ $expense->expense_document }}">
+                @else
+                    <button type="button"
+                            class="view-receipt-btn px-2 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 text-xs"
+                            data-expense-type="extra_meal"
+                            data-expense-id="{{ $expense->id }}"
+                            data-expense-index="{{ $index }}"
+                            data-has-receipt="false">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                @endif
+                <div class="file-input-container"></div>
+            </div>
+        </td>
+    </tr>
+    @php $index++; @endphp
+@endforeach
                             <!-- Transport Row -->
                             @foreach ($missionOrder->expenses->where('type', 'transport') as $expense)
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
@@ -1429,6 +1518,153 @@
                             });
                         }
 
+// Function to handle extra meal quantity changes
+function handleExtraMealQuantityChanges() {
+    document.querySelectorAll('.extra-meals-input').forEach(input => {
+        const index = input.getAttribute('data-index');
+        const mealCost = parseFloat(document.getElementById(`extra-meal-cost-${index}`).value);
+        const eurRate = parseFloat(eurToInrInput.value);
+
+        // Add event listener for input changes
+        input.addEventListener('input', function() {
+            const numberOfMeals = parseInt(this.value) || 0;
+
+            // Update the maximum values for the meal inputs
+            const maxAmountINR = numberOfMeals * mealCost * eurRate;
+
+            // Update the max attributes on the input fields
+            const reimbursementInput = document.querySelector(`input[name="expenses[${index}][reimbursement_amount]"]`);
+            const directInput = document.querySelector(`input[name="expenses[${index}][direct_amount]"]`);
+
+            if (reimbursementInput) reimbursementInput.setAttribute('data-max', maxAmountINR);
+            if (directInput) directInput.setAttribute('data-max', maxAmountINR);
+
+            // Validate the current amounts
+            validateExtraMealAmounts(index);
+
+            // Update the total display
+            updateExtraMealTotal(index);
+        });
+    });
+}
+
+// Function to update extra meal total display
+function updateExtraMealTotal(index) {
+    const reimbursementInput = document.querySelector(`input[name="expenses[${index}][reimbursement_amount]"]`);
+    const directInput = document.querySelector(`input[name="expenses[${index}][direct_amount]"]`);
+    const reimbursementCurrency = document.querySelector(`select[name="expenses[${index}][reimbursement_currency]"]`).value;
+    const directCurrency = document.querySelector(`select[name="expenses[${index}][direct_currency]"]`).value;
+
+    const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
+    const directValue = parseFloat(directInput.value) || 0;
+
+    // Convert both amounts to INR for the total
+    const reimbursementINR = convertToINR(reimbursementValue, reimbursementCurrency);
+    const directINR = convertToINR(directValue, directCurrency);
+    const totalINR = reimbursementINR + directINR;
+
+    // Update total display
+    const totalElement = document.querySelector(`.extra-meal-total-${index}`);
+    const totalInput = document.querySelector(`input[name="expenses[${index}][total_inr]"]`);
+
+    totalElement.textContent = totalINR.toFixed(2);
+    if (totalInput) totalInput.value = totalINR.toFixed(2);
+}
+
+// Function to validate extra meal amounts with currency conversion
+function validateExtraMealAmounts(index) {
+    const reimbursementInput = document.querySelector(`input[name="expenses[${index}][reimbursement_amount]"]`);
+    const directInput = document.querySelector(`input[name="expenses[${index}][direct_amount]"]`);
+    const reimbursementCurrency = document.querySelector(`select[name="expenses[${index}][reimbursement_currency]"]`).value;
+    const directCurrency = document.querySelector(`select[name="expenses[${index}][direct_currency]"]`).value;
+
+    // Get the CURRENT maximum values
+    const maxAmountINR = parseFloat(reimbursementInput.getAttribute('data-max'));
+
+    const reimbursementValue = parseFloat(reimbursementInput.value) || 0;
+    const directValue = parseFloat(directInput.value) || 0;
+
+    // Convert both amounts to INR for comparison with the total
+    const reimbursementINR = convertToINR(reimbursementValue, reimbursementCurrency);
+    const directINR = convertToINR(directValue, directCurrency);
+    const totalINR = reimbursementINR + directINR;
+
+    if (totalINR > maxAmountINR) {
+        // Calculate how much to reduce from the current input
+        const excess = totalINR - maxAmountINR;
+
+        // Determine which input was just changed
+        const activeElement = document.activeElement;
+        if (activeElement === reimbursementInput) {
+            // Reduce reimbursement amount
+            const reductionINR = excess;
+            const reductionOriginal = reimbursementCurrency === 'INR' ?
+                reductionINR :
+                reductionINR / exchangeRates[reimbursementCurrency];
+
+            const newValue = Math.max(0, reimbursementValue - reductionOriginal);
+            reimbursementInput.value = newValue.toFixed(2);
+        } else if (activeElement === directInput) {
+            // Reduce direct amount
+            const reductionINR = excess;
+            const reductionOriginal = directCurrency === 'INR' ?
+                reductionINR :
+                reductionINR / exchangeRates[directCurrency];
+
+            const newValue = Math.max(0, directValue - reductionOriginal);
+            directInput.value = newValue.toFixed(2);
+        } else {
+            // If neither input is focused, reduce both proportionally
+            const reimbursementRatio = reimbursementINR / totalINR;
+            const directRatio = directINR / totalINR;
+
+            const reimbursementReduction = reimbursementCurrency === 'INR' ?
+                excess * reimbursementRatio :
+                (excess * reimbursementRatio) / exchangeRates[reimbursementCurrency];
+
+            const directReduction = directCurrency === 'INR' ?
+                excess * directRatio :
+                (excess * directRatio) / exchangeRates[directCurrency];
+
+            reimbursementInput.value = Math.max(0, reimbursementValue - reimbursementReduction).toFixed(2);
+            directInput.value = Math.max(0, directValue - directReduction).toFixed(2);
+        }
+
+        // Show a warning
+        alert(`Le total des montants ne peut pas dépasser ${maxAmountINR.toFixed(2)} INR.`);
+
+        // Update the total display
+        updateExtraMealTotal(index);
+    }
+}
+
+// Add event listeners to all extra meal-related inputs
+document.querySelectorAll('.extra-meal-input').forEach(input => {
+    input.addEventListener('input', function() {
+        const index = this.getAttribute('data-index');
+        validateExtraMealAmounts(index);
+        updateExtraMealTotal(index);
+        updateAllTotals();
+    });
+});
+
+document.querySelectorAll('.extra-meal-currency').forEach(select => {
+    select.addEventListener('change', function() {
+        const index = this.getAttribute('data-index');
+        // Update the data-currency attribute on the corresponding input
+        const inputName = this.name.replace('_currency', '_amount');
+        const correspondingInput = document.querySelector(`input[name="${inputName}"]`);
+        if (correspondingInput) {
+            correspondingInput.setAttribute('data-currency', this.value);
+        }
+        validateExtraMealAmounts(index);
+        updateExtraMealTotal(index);
+        updateAllTotals();
+    });
+});
+
+// Initialize the extra meal functionality
+handleExtraMealQuantityChanges();
                         // Initialize functions
                         handleMealQuantityChanges();
                         handleAccommodationQuantityChanges();
