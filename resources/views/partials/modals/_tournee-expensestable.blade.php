@@ -351,7 +351,7 @@
 @foreach ($tournee->expenses->where('type', 'extra_meal') as $expense)
     <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-100">
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800">
-            <span class="expense-badge bg-green-100 text-green-800">Repas #{{ $loop->iteration }}</span>
+            <span class="expense-badge bg-green-100 text-green-800">Repas pris durant le temps de transport</span>
             <input type="hidden" name="expenses[{{ $index }}][type]" value="extra_meal">
             <input type="hidden" name="expenses[{{ $index }}][expense_id]" value="{{ $expense->id }}">
         </td>
