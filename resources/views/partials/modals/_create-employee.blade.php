@@ -134,7 +134,7 @@
                         </div>
 
                         <div class="relative z-0 mb-4 w-full group">
-                            <input type="number" name="position"
+                            <input name="position"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="" />
                             <label for="position"
@@ -147,7 +147,7 @@
                         </div>
 
                         <div class="relative z-0 mb-4 w-full group">
-                            <input type="number" name="administrativ_residence"
+                            <input name="administrativ_residence"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="" />
                             <label for="administrativ_residence"
@@ -159,7 +159,7 @@
                             @enderror
                         </div>
                         <div class="relative z-0 mb-4 w-full group">
-                            <input type="number" name="service"
+                            <input name="service"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="" />
                             <label for="service"

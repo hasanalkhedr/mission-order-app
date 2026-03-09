@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\User;
+use Config;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -54,7 +55,12 @@ class EmployeeController extends Controller
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'accountant' => 'boolean'
         ]);
+$userLimit = Config::get('app.user_limit');
+        $currentUserCount = Employee::count();
 
+        if ($userLimit && $currentUserCount >= $userLimit) {
+            return back()->withErrors(['limit' => "Limite de création d'utilisateurs atteinte."]);
+        }
         $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
