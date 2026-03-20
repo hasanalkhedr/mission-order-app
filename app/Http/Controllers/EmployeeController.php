@@ -64,7 +64,7 @@ $userLimit = Config::get('app.user_limit');
         $user = User::create([
             'name' => $request->first_name . ' ' . $request->last_name,
             'email' => $request->email,
-            'password' => bcrypt('password'),
+            'password' => bcrypt($request->password),
         ]);
 
         $employee = Employee::create(array_merge($request->all(), ['user_id' => $user->id]));
