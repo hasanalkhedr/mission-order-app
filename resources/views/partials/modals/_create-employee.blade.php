@@ -139,7 +139,7 @@
                                 placeholder="" />
                             <label for="position"
                                 class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">
-                                {{ __('Fonction Administrative') }}
+                                {{ __('Fonction') }}
                             </label>
                             @error('position')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -152,13 +152,13 @@
                                 placeholder="" />
                             <label for="administrativ_residence"
                                 class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">
-                                {{ __('administrativ_residence') }}
+                                {{ __('Ville de résidence administrative') }}
                             </label>
                             @error('administrativ_residence')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="relative z-0 mb-4 w-full group">
+                        {{-- <div class="relative z-0 mb-4 w-full group">
                             <input name="service"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="" />
@@ -169,7 +169,7 @@
                             @error('service')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="relative z-40 mb-4 w-full group">
                             <label for="role_ids" class="mb-2 text-sm font-medium blue-color">
@@ -186,11 +186,11 @@
                         </div>
                         <div class="relative z-0 mb-4 w-full group">
                             <label for="department_id" class="mb-2 text-sm font-medium blue-color">
-                                {{ __('Select Department') }}
+                                {{ __('Select Secteur') }}
                             </label>
                             <select name="department_id" id="department_id_create"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                <option value="" disabled>{{ __('Select Department') }}</option>
+                                <option value="" disabled>{{ __('Select Secteur') }}</option>
                                 @if (count($departments))
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">{{ $department->name }}</option>

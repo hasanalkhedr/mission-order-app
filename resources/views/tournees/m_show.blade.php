@@ -32,7 +32,7 @@
             </div>
             <div class="w-1/4 px-3">
                 <x-label>
-                    Dép / Antenne
+                    Secteur
                 </x-label>
                 <label
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2">{{ $tournee->employee->department->name }}</label>

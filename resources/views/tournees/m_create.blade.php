@@ -54,13 +54,13 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-1/2 px-3">
                 <x-label>
-                    Residence Administrative
+                    Ville de résidence administrative
                 </x-label>
                 <x-readonly-text-input value="{{ $tournee->employee->administrativ_residence }}" />
             </div>
             <div class="w-1/2 px-3">
                 <x-label>
-                    Dép / Antenne
+                    Secteur
                 </x-label>
                 <x-readonly-text-input value="{{ $tournee->employee->department->name }}" />
             </div>

@@ -29,7 +29,7 @@
                         <td class="w-2/3">{{ $missionOrder->employee->position }}</td>
                     </tr>
                     <tr>
-                        <td class="w-1/3">Résidence administrative :</td>
+                        <td class="w-1/3">Ville de résidence administrative:</td>
                         <td class="w-2/3">{{ $missionOrder->employee->administrativ_residence }}</td>
                     </tr>
                 </tbody>
@@ -269,7 +269,7 @@
                             <span class="font-bold text-lg text-center">Chef de Service: </span>
                         </td>
                         <td class="px-2 py-[1px] w-1/3">
-                            <span class="font-bold text-lg text-center">Ordonateur: </span>
+                            <span class="font-bold text-lg text-center">Ordonnateur: </span>
                         </td>
                     </tr>
                     <tr>
@@ -297,8 +297,8 @@
                         </td>
                         <td class="w-1/3 px-2 py-[1px]">
                             <span
-                                class="font-light text-md text-center">{{ $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last()
-                                    ? $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonateur')->last()->created_at->format('d/m/Y')
+                                class="font-light text-md text-center">{{ $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonnateur')->last()
+                                    ? $missionOrder->getMissionAprroves()->where('approval_role', 'Ordonnateur')->last()->created_at->format('d/m/Y')
                                     : '' }}
                             </span>
                         </td>

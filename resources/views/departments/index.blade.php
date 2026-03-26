@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-@section('title', __('Departments'))
+@section('title', __('Secteurs'))
 <nav class="flex justify-between items-center p-2 text-black font-bold">
     <div class="text-lg blue-color">
-        {{ __('Departments') }}
+        {{ __('Secteurs') }}
     </div>
     <div>
         @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))

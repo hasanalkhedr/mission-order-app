@@ -60,7 +60,7 @@
                                 <li>
                                     <a class="flex items-center mx-2 px-2 py-2 text-white rounded-lg transition duration-75 group hover:bg-blue-500"
                                         href="{{ route('departments.index') }}">
-                                        <span class="mx-2 font-medium">{{ __('Departments') }}</span>
+                                        <span class="mx-2 font-medium">{{ __('Secteur') }}</span>
                                     </a>
 
                                 </li>
