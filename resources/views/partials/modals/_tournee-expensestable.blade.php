@@ -75,11 +75,11 @@
                                 <input type="number" id="eurToInr" value="{{ $current_rate->eur_rate }}" readonly
                                     class="w-32 px-2 py-1 border border-gray-300 rounded-md shadow-sm">
                             </div>
-                            <div class="flex items-center">
+                            {{-- <div class="flex items-center">
                                 <label class="mr-2 text-gray-700 w-32">USD → INR</label>
                                 <input type="number" id="usdToInr" value="{{ $current_rate->usd_rate }}" readonly
                                     class="w-32 px-2 py-1 border border-gray-300 rounded-md shadow-sm">
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -203,7 +203,7 @@
                                         class="reimbursement-currency accommodation-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                         <option value="INR" @selected($tournee->acc_reimbursement_currency === 'INR')>INR</option>
                                         <option value="EUR" @selected($tournee->acc_reimbursement_currency === 'EUR')>EUR</option>
-                                        <option value="USD" @selected($tournee->acc_reimbursement_currency === 'USD')>USD</option>
+                                        {{-- <option value="USD" @selected($tournee->acc_reimbursement_currency === 'USD')>USD</option> --}}
                                     </select>
                                 </td>
                                 <td
@@ -220,7 +220,7 @@
                                         class="direct-currency accommodation-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                         <option value="INR" @selected($tournee->acc_direct_currency === 'INR')>INR</option>
                                         <option value="EUR" @selected($tournee->acc_direct_currency === 'EUR')>EUR</option>
-                                        <option value="USD" @selected($tournee->acc_direct_currency === 'USD')>USD</option>
+                                        {{-- <option value="USD" @selected($tournee->acc_direct_currency === 'USD')>USD</option> --}}
                                     </select>
                                 </td>
                                 <td
@@ -379,7 +379,7 @@
                     data-index="{{ $index }}">
                 <option value="INR" @selected(($expense->reimbursement_currency ?? 'INR') === 'INR')>INR</option>
                 <option value="EUR" @selected(($expense->reimbursement_currency ?? 'INR') === 'EUR')>EUR</option>
-                <option value="USD" @selected(($expense->reimbursement_currency ?? 'INR') === 'USD')>USD</option>
+                {{-- <option value="USD" @selected(($expense->reimbursement_currency ?? 'INR') === 'USD')>USD</option> --}}
             </select>
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -396,7 +396,7 @@
                     data-index="{{ $index }}">
                 <option value="INR" @selected(($expense->direct_currency ?? 'INR') === 'INR')>INR</option>
                 <option value="EUR" @selected(($expense->direct_currency ?? 'INR') === 'EUR')>EUR</option>
-                <option value="USD" @selected(($expense->direct_currency ?? 'INR') === 'USD')>USD</option>
+                {{-- <option value="USD" @selected(($expense->direct_currency ?? 'INR') === 'USD')>USD</option> --}}
             </select>
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
@@ -497,7 +497,7 @@
                                             class="reimbursement-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             <option value="INR" @selected($expense->reimbursement_currency === 'INR')>INR</option>
                                             <option value="EUR" @selected($expense->reimbursement_currency === 'EUR')>EUR</option>
-                                            <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option>
+                                            {{-- <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option> --}}
                                         </select>
                                     </td>
                                     <td
@@ -513,7 +513,7 @@
                                             class="direct-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             <option value="INR" @selected($expense->reimbursement_currency === 'INR')>INR</option>
                                             <option value="EUR" @selected($expense->reimbursement_currency === 'EUR')>EUR</option>
-                                            <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option>
+                                            {{-- <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option> --}}
                                         </select>
                                     </td>
                                     <td
@@ -624,7 +624,7 @@
                                             class="reimbursement-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             <option value="INR" @selected($expense->reimbursement_currency === 'INR')>INR</option>
                                             <option value="EUR" @selected($expense->reimbursement_currency === 'EUR')>EUR</option>
-                                            <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option>
+                                            {{-- <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option> --}}
                                         </select>
                                     </td>
                                     <td
@@ -640,7 +640,7 @@
                                             class="direct-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             <option value="INR" @selected($expense->reimbursement_currency === 'INR')>INR</option>
                                             <option value="EUR" @selected($expense->reimbursement_currency === 'EUR')>EUR</option>
-                                            <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option>
+                                            {{-- <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option> --}}
                                         </select>
                                     </td>
                                     <td
@@ -791,7 +791,7 @@
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const eurToInrInput = document.getElementById('eurToInr');
-                        const usdToInrInput = document.getElementById('usdToInr');
+                        // const usdToInrInput = document.getElementById('usdToInr');
                         const grandTotalElement = document.getElementById('grand-total');
                         const reimbursementTotalElement = document.getElementById('reimbursement-total');
                         const directTotalElement = document.getElementById('direct-total');
@@ -1099,7 +1099,7 @@
 
                         let exchangeRates = {
                             EUR: parseFloat(eurToInrInput.value),
-                            USD: parseFloat(usdToInrInput.value)
+                            // USD: parseFloat(usdToInrInput.value)
                         };
 
                         // Add event listeners to all input and select elements for dynamic calculation

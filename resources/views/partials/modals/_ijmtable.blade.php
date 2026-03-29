@@ -109,7 +109,7 @@
                         <tr>
                             <td colspan="2" class="px-6 py-1 text-center text-xs font-extrabold text-red-600 uppercase border border-gray-500 bg-gray-400">
                                 1 EURO = {{ number_format($current_rate->eur_rate,2)}} |
-                                1 USD = {{ number_format($current_rate->usd_rate,2)}}
+                                {{-- 1 USD = {{ number_format($current_rate->usd_rate,2)}} --}}
                             </td>
                             <th scope="col" colspan="2"
                                 class="px-6 py-1 text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">

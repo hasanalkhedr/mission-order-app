@@ -399,7 +399,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate->eur_rate }};
+                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate->eur_rate ?? 0 }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 

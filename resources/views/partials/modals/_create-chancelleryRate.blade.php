@@ -36,14 +36,14 @@
                                 <label for="eur_rate" class="block text-sm font-medium text-gray-700 mb-2">
                                     {{ __('EUR to INR Rate') }}
                                 </label>
-                                <input type="number" step="0.0001" class="form-control" id="eur_rate" name="eur_rate"
+                                <input type="number" step="0.000001" class="form-control" id="eur_rate" name="eur_rate"
                                     required placeholder="Enter EUR to INR rate">
                                 <small class="form-text text-muted">
                                     {{ __('1 EURO = ? INR') }}
                                 </small>
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="usd_rate" class="block text-sm font-medium text-gray-700 mb-2">
                                     {{ __('USD to INR Rate') }}
                                 </label>
@@ -52,7 +52,7 @@
                                 <small class="form-text text-muted">
                                     {{ __('1 USD = ? INR') }}
                                 </small>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 

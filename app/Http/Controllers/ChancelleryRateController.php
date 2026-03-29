@@ -19,13 +19,13 @@ class ChancelleryRateController extends Controller
     {
         $request->validate([
             'eur_rate' => 'required|numeric|min:0',
-            'usd_rate' => 'required|numeric|min:0',
+            // 'usd_rate' => 'required|numeric|min:0',
             'month_year' => 'required|date'
         ]);
 
         $rate = ChancelleryRate::create([
             'eur_rate' => $request->eur_rate,
-            'usd_rate' => $request->usd_rate,
+            // 'usd_rate' => $request->usd_rate,
             'month_year' => $request->month_year,
             'status' => 'draft',
         ]);
@@ -41,12 +41,12 @@ class ChancelleryRateController extends Controller
     {
         $request->validate([
             'eur_rate' => 'required|numeric|min:0',
-            'usd_rate' => 'required|numeric|min:0'
+            // 'usd_rate' => 'required|numeric|min:0'
         ]);
 
         $chancelleryRate->update([
             'eur_rate' => $request->eur_rate,
-            'usd_rate' => $request->usd_rate,
+            // 'usd_rate' => $request->usd_rate,
         ]);
         if(auth()->user()->employee->hasRole('sg')) {
             $this->approveChancelleryRate($request, $chancelleryRate);

@@ -25,9 +25,9 @@
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('EUR to INR') }}
                     </th>
-                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
+                    {{-- <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('USD to INR') }}
-                    </th>
+                    </th> --}}
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Status') }}
                     </th>
@@ -61,11 +61,11 @@
                             </div>
                         </td>
 
-                        <td class="py-4 px-6 border-b">
+                        {{-- <td class="py-4 px-6 border-b">
                             <div class="font-bold text-blue-400">
                                 1 USD = {{ $chancelleryRate->usd_rate }} {{ __('INR') }}
                             </div>
-                        </td>
+                        </td> --}}
 
                         <td class="py-4 px-6 border-b">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('chancellery_rates', function (Blueprint $table) {
-            $table->decimal('eur_rate', 10, 6)->change(); // Conversion rate (e.g., 1 USD = X Local)
-            $table->decimal('usd_rate', 10, 6)->change(); // Conversion rate (e.g., 1 USD = X Local)
+            $table->decimal('eur_rate', 10, 6)->default(0)->change(); // Conversion rate (e.g., 1 USD = X Local)
+            $table->decimal('usd_rate', 10, 6)->default(0)->change(); // Conversion rate (e.g., 1 USD = X Local)
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('chancellery_rates', function (Blueprint $table) {
-            $table->decimal('eur_rate', 10, 4)->change(); // Conversion rate (e.g., 1 USD = X Local)
-            $table->decimal('usd_rate', 10, 4)->change(); // Conversion rate (e.g., 1 USD = X Local)
+            $table->decimal('eur_rate', 10, 4)->default(0)->change(); // Conversion rate (e.g., 1 USD = X Local)
+            $table->decimal('usd_rate', 10, 4)->default(0)->change(); // Conversion rate (e.g., 1 USD = X Local)
         });
     }
 };

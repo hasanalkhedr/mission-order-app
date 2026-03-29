@@ -248,7 +248,8 @@ class MissionOrderController extends Controller
                         $totalDays += 1;
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate;
+                    $maxAdvanceInLocal = ChancelleryRate::rateOfDate($missionOrder->start_date) ?
+                        $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate :    0;
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }

@@ -125,7 +125,7 @@
         <div class="flex flex-wrap -mx-1 mb-2">
             <div class="w-1/2 px-3">
                 <x-label>
-                    Avance sur IJM (EURO ou USD)<span class="text-red-500">*</span>
+                    Avance sur IJM (EURO)<span class="text-red-500">*</span>
                 </x-label>
                 <input type="text" disabled type="number"
                     class="ms-1 text-sm font-medium text-blue-600 dark:text-gray-500 mr-5 bg-gray-100 px-2 py-2 text-center"
