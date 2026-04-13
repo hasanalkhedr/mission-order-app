@@ -173,7 +173,7 @@
                         @endswitch
                         @if (auth()->user()->employee->id === $tournee->employee_id
                         || (auth()->user()->employee->hasRole('supervisor') && in_array($tournee->employee->department_id, Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray()))
-                        || auth()->user()->employee->hasRole('controller')
+                        || (auth()->user()->employee->hasRole('controller') && in_array($tournee->employee->department_id, Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray()))
                         || auth()->user()->employee->hasRole('sg'))
                             <td class="text-center px-0 py-1 border-b">
                                 <a href="{{ route('tournees.report', $tournee->id) }}"

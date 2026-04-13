@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    protected $fillable = ['name', 'manager_id'];
+    protected $fillable = ['name', 'manager_id', 'controller_id'];
 
     public function employees()
     {
@@ -16,6 +16,11 @@ class Department extends Model
     public function manager()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function controller()
+    {
+        return $this->belongsTo(Employee::class, 'controller_id');
     }
     public function missionOrders()
     {

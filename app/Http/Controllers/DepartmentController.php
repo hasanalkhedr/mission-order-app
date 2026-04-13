@@ -33,7 +33,8 @@ class DepartmentController extends Controller
         $request->validate(['name' => 'required']);
 
         $department->update($request->all());
-        // if (request('old_manager_id') != request('manager_id')) {
+
+        // Handle manager changes
         $old_manager = Employee::find(request('old_manager_id'));
         $manager = Employee::find(request('manager_id'));
         if ($old_manager != null) {
@@ -47,7 +48,28 @@ class DepartmentController extends Controller
             $manager->addRole('supervisor');
             $manager->save();
         }
-        //}
+
+        // Handle controller changes
+        $old_controller = Employee::find(request('old_controller_id'));
+        $controller = Employee::find(request('controller_id'));
+        if ($old_controller != null) {
+            // Check if old controller is still controller in other departments
+            $otherDepartmentsWithController = Department::where('controller_id', $old_controller->id)
+                ->where('id', '!=', $department->id)
+                ->count();
+
+            // Only remove controller role if not controller in any other department
+            if ($otherDepartmentsWithController == 0) {
+                $old_controller->removeRole('controller');
+                $old_controller->addRole('employee');
+                $old_controller->save();
+            }
+        }
+        if ($controller != null) {
+            $controller->addRole('controller');
+            $controller->save();
+        }
+
         return redirect()->route('departments.index');
     }
     public function destroy(Department $department)

@@ -29,6 +29,19 @@
         <label for="supervisor"
             class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">{{ __('Supervisor') }}</label>
     </div>
+    <div class="relative z-0 mb-6 w-full group">
+        @if ($department->controller_id == null)
+            <input type="text" name="controller"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                disabled value="{{ __('No Controller Assigned') }}" />
+        @else
+            <input type="text" name="controller"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                disabled value="{{ $department->controller->first_name }} {{ $department->controller->last_name }}" />
+        @endif
+        <label for="controller"
+            class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 blue-color">{{ __('Controller') }}</label>
+    </div>
 
     {{-- @hasanyrole('human_resource|sg|head') --}}
     @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))

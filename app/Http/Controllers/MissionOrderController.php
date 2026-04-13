@@ -26,11 +26,21 @@ class MissionOrderController extends Controller
     {
         $search = $request->input('search');
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg')) {
             $missionOrders = MissionOrder::when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })
                 ->orderByRaw("FIELD(status, 'sg_approve','draft', 'sup_approve', 'director_approve', 'approved', 'paid', 'rejected')")
+                ->orderBy('id', 'desc')->paginate(10);
+        } else if ($employee->hasRole('controller')) {
+            $dep_ids = Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray();
+            $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
+            })->when($search, function ($query, $search) {
+                return $query->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('purpose', 'like', '%' . $search . '%');
+            })
+                ->orderByRaw("FIELD(status, 'sup_approve','draft',  'director_approve', 'sg_approve', 'approved', 'paid', 'rejected')")
                 ->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
@@ -65,10 +75,10 @@ class MissionOrderController extends Controller
     public function show(MissionOrder $missionOrder)
     {
         $employee = auth()->user()->employee;
-        $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
+        $dep_ids = Department::where('manager_id', $employee->id)->orWhere('controller_id', $employee->id)->pluck('id')->toArray();
         if (
             $employee->hasRole('sg') ||
-            $employee->hasRole('controller') ||
+            ($employee->hasRole('controller') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id)
         ) {
@@ -101,7 +111,7 @@ class MissionOrderController extends Controller
             'arrive_location' => 'required',
             'departure_location' => 'required',
             'bareme_id' => 'required',
-            'start_date' => 'required|date|after:'.now()->addDays(2),
+            'start_date' => 'required|date|after:' . now()->addDays(2),
             'end_date' => 'required|date|after_or_equal:start_date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
@@ -199,7 +209,7 @@ class MissionOrderController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    if($user->employee->id != $missionOrder->employee_id) {
+                    if ($user->employee->id != $missionOrder->employee_id) {
                         $user->notify($notification);
                     }
                 }
@@ -249,7 +259,7 @@ class MissionOrderController extends Controller
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = ChancelleryRate::rateOfDate($missionOrder->start_date) ?
-                        $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate :    0;
+                        $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate : 0;
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -345,7 +355,7 @@ class MissionOrderController extends Controller
                     $query->whereJsonContains('roles', 'sg');
                 })->get();
                 foreach ($users as $user) {
-                    if($user->employee->id != $missionOrder->employee_id) {
+                    if ($user->employee->id != $missionOrder->employee_id) {
                         $user->notify($notification);
                     }
                 }
@@ -392,7 +402,10 @@ class MissionOrderController extends Controller
                     END
                 ")->orderBy('id', 'desc')->paginate(10);
         } else if ($employee->hasRole('controller')) {
-            $missionOrders = MissionOrder::when($search, function ($query, $search) {
+            $dep_ids = Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray();
+            $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids);
+            })->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')
                 ->orderByRaw("
@@ -438,11 +451,11 @@ class MissionOrderController extends Controller
     public function m_show(Request $request, MissionOrder $missionOrder)
     {
         $employee = auth()->user()->employee;
-        $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
+        $dep_ids = Department::where('manager_id', $employee->id)->orWhere('controller_id', $employee->id)->pluck('id')->toArray();
 
         if (
             $employee->hasRole('sg') ||
-            $employee->hasRole('controller') ||
+            ($employee->hasRole('controller') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('supervisor') && in_array($missionOrder->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('employee') && $missionOrder->employee->id == $employee->id)
         ) {
@@ -549,8 +562,10 @@ class MissionOrderController extends Controller
                 $storedExpense = Expense::find($expenseData['expense_id']);
 
                 // Delete old file if it's being replaced or document was deleted
-                if (($receiptPath && $receiptPath !== $storedExpense->expense_document && $storedExpense->expense_document) ||
-                    ($documentDeleted && $storedExpense->expense_document)) {
+                if (
+                    ($receiptPath && $receiptPath !== $storedExpense->expense_document && $storedExpense->expense_document) ||
+                    ($documentDeleted && $storedExpense->expense_document)
+                ) {
                     Storage::disk('public')->delete($storedExpense->expense_document);
                 }
 
@@ -567,8 +582,10 @@ class MissionOrderController extends Controller
                 $currentAccDocument = $missionOrder->acc_expense_document;
 
                 // Delete old file if it's being replaced or document was deleted
-                if (($receiptPath && $receiptPath !== $currentAccDocument && $currentAccDocument) ||
-                    ($documentDeleted && $currentAccDocument)) {
+                if (
+                    ($receiptPath && $receiptPath !== $currentAccDocument && $currentAccDocument) ||
+                    ($documentDeleted && $currentAccDocument)
+                ) {
                     Storage::disk('public')->delete($currentAccDocument);
                 }
 
@@ -594,7 +611,6 @@ class MissionOrderController extends Controller
             }
         }
 
-        // Rest of your controller method remains the same...
         $action = $request->input('action');
         $memor_status = null;
 
@@ -616,15 +632,27 @@ class MissionOrderController extends Controller
         ]);
 
         $notification = new MemoireMissionOrderLevelNotification($missionOrder);
-        $users = User::whereHas('employee', function ($query) {
-            $query->whereJsonContains('roles', 'controller');
-        })->get();
-
-        foreach ($users as $user) {
-            if($user->employee->id != $missionOrder->employee_id) {
+        $dept_controller = $missionOrder->employee->department->controller;
+        if ($dept_controller) {
+            $dept_controller->user->notify($notification);
+        } else {
+            $missionOrder->update(['memor_status' => 'sg_approve']);
+            $users = User::whereHas('employee', function ($query) {
+                $query->whereJsonContains('roles', 'sg');
+            })->get();
+            foreach ($users as $user) {
                 $user->notify($notification);
             }
         }
+        // $users = User::whereHas('employee', function ($query) {
+        //     $query->whereJsonContains('roles', 'controller');
+        // })->get();
+
+        // foreach ($users as $user) {
+        //     if($user->employee->id != $missionOrder->employee_id) {
+        //         $user->notify($notification);
+        //     }
+        // }
 
         return redirect()->route('mission_orders.m_index');
     }
@@ -650,8 +678,9 @@ class MissionOrderController extends Controller
         ]);
         return redirect()->route('mission_orders.m_index');
     }
-    public function m_readyToPay(Request $request, MissionOrder $missionOrder) {
-        if(auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
+    public function m_readyToPay(Request $request, MissionOrder $missionOrder)
+    {
+        if (auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
             $missionOrder->update([
                 'memor_status' => 'paid',
             ]);
@@ -659,7 +688,7 @@ class MissionOrderController extends Controller
             $missionOrder->employee->user->notify($ownerNotification);
 
             $accountantNotification = new MemoireMissionOrderReadyToPayAccountantNotification($missionOrder);
-            if($missionOrder->accountant_id) {
+            if ($missionOrder->accountant_id) {
                 $accountant = Employee::find($missionOrder->accountant_id);
                 $accountant->user->notify($accountantNotification);
             }
@@ -669,8 +698,9 @@ class MissionOrderController extends Controller
         }
     }
 
-    public function m_accountingReject(Request $request, MissionOrder $missionOrder) {
-        if(auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
+    public function m_accountingReject(Request $request, MissionOrder $missionOrder)
+    {
+        if (auth()->user()->employee->hasRole('sg') && $missionOrder->memor_status === 'approved' && Auth::user()->employee->id != $missionOrder->employee_id) {
             $missionOrder->update([
                 'memor_status' => 'rejected',
                 'status' => 'rejected',
@@ -685,7 +715,7 @@ class MissionOrderController extends Controller
             $missionOrder->employee->user->notify($ownerNotification);
 
             $accountantNotification = new MemoireMissionOrderRejectAccountantNotification($missionOrder, $newMissionOrder);
-            if($missionOrder->accountant_id) {
+            if ($missionOrder->accountant_id) {
                 $accountant = Employee::find($missionOrder->accountant_id);
                 $accountant->user->notify($accountantNotification);
             }

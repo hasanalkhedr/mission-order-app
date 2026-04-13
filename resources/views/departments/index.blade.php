@@ -26,6 +26,9 @@
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Supervisor') }}
                     </th>
+                    <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
+                        {{ __('Controller') }}
+                    </th>
                     @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                         <th scope="col" class="py-3 px-6">
                             <span class="sr-only">{{ __('Edit') }}</span>
@@ -59,6 +62,20 @@
                                 </div>
                             </td>
                         @endif
+                        @if ($department->controller == null)
+                            <td class="py-4 px-6 border-b cursor-pointer">
+                                <div class="font-bold">
+                                    --
+                                </div>
+                            </td>
+                        @else
+                            <td class="py-4 px-6 border-b cursor-pointer"
+                                onclick="window.location.href = '{{ url(route('employees.show', ['employee' => $department->controller_id])) }}'">
+                                <div class="cursor-pointer">
+                                    {{ $department->controller->first_name }} {{ $department->controller->last_name }}
+                                </div>
+                            </td>
+                        @endif
                         @if (auth()->user()->employee->hasRole('controller') || auth()->user()->employee->hasRole('sg'))
                             <td class="py-4 px-6 text-right border-b">
                                 <button class="font-medium hover:underline blue-color" type="button"
@@ -79,7 +96,7 @@
                 @endforeach
             @else
                 <tr class="border-gray-300">
-                    <td colspan="4" class="px-4 py-8 border-t border-gray-300 text-lg">
+                    <td colspan="5" class="px-4 py-8 border-t border-gray-300 text-lg">
                         <p class="text-center">{{ __('No Departments Found') }}</p>
                     </td>
                 </tr>

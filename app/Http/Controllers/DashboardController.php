@@ -27,10 +27,17 @@ class DashboardController extends Controller
             $missionOrders = MissionOrder::orderBy('id', 'desc')->get();
         }
         if ($employee->hasRole('controller')) {
-            $missionCount += MissionOrder::where('status', 'controller_approve')->count();
-            $memoireCount += MissionOrder::where('memor_status', 'controller_approve')->count();
-            $tourneeCount += Tournee::where('status', 'controller_approve')->count();
-            $tourneeMemoireCount += Tournee::where('memor_status', 'controller_approve')->count();
+            $dep_ids = Department::where('controller_id', $employee->id)->pluck('id')->toArray();
+            $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
+            });
+            $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
+                $query->whereIn('department_id', $dep_ids);
+            });
+            $missionCount += $missionOrders->where('status', 'controller_approve')->count();
+            $memoireCount += $missionOrders->where('memor_status', 'controller_approve')->count();
+            $tourneeCount += $tournees->where('status', 'controller_approve')->count();
+            $tourneeMemoireCount += $tournees->where('memor_status', 'controller_approve')->count();
         }
         if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();

@@ -832,7 +832,10 @@
             </svg>
             {{ __('Save as PDF file') }}
         </button>
-        @if (auth()->user()->employee->hasRole('controller') && $tournee->memor_status === 'controller_approve' && Auth::user()->employee->id != $tournee->employee_id)
+        @if (auth()->user()->employee->hasRole('controller')
+            && in_array($tournee->employee->department_id, \App\Models\Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray())
+            && $tournee->memor_status === 'controller_approve'
+            && Auth::user()->employee->id != $tournee->employee_id)
             <form method="POST" action="{{ route('tournee_approves.m_approve', $tournee->id) }}">
                 @csrf
                 <button

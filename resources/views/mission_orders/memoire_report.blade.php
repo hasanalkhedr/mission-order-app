@@ -817,7 +817,8 @@
             {{ __('Save as PDF file') }}
         </button>
         @endif
-        @if (auth()->user()->employee->hasRole('controller') && $missionOrder->memor_status === 'controller_approve' && Auth::user()->employee->id != $missionOrder->employee_id)
+        @if (auth()->user()->employee->hasRole('controller') && in_array($missionOrder->employee->department_id, \App\Models\Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray())
+ && $missionOrder->memor_status === 'controller_approve' && Auth::user()->employee->id != $missionOrder->employee_id)
             <form method="POST" action="{{ route('mission_approves.m_approve', $missionOrder->id) }}">
                 @csrf
                 <button

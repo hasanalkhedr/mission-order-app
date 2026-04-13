@@ -16,12 +16,17 @@ class EmployeeController extends Controller
         $roles = config('globals.roles');
         $departments = Department::all();
         $employee = auth()->user()->employee;
-        if ($employee->hasRole('sg') || $employee->hasRole('controller')) {
+        if ($employee->hasRole('sg') ) {
             $employees = Employee::when($search, function ($query, $search) {
                 return $query->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%');
             })->paginate(10);
-        } else if ($employee->hasRole('supervisor')) {
+        } else if ($employee->hasRole('controller')) {
+            $employees = Employee::where('department_id', '=', auth()->user()->employee->department_id)->when($search, function ($query, $search) {
+                return $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            })->paginate(10);
+        }  else if ($employee->hasRole('supervisor')) {
             $employees = Employee::where('department_id', '=', auth()->user()->employee->department_id)->when($search, function ($query, $search) {
                 return $query->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%');

@@ -58,6 +58,29 @@
                             @endif
                         </select>
                     </div>
+                    <div class="relative z-0 mb-6 w-full group">
+                        <label for="controller_id"
+                            class="mb-2 text-sm font-medium blue-color">{{ __('Select controller') }}</label>
+                        <input type="hidden" name="old_controller_id"
+                            value="{{ $department->controller_id }}">
+                        <select name="controller_id" id="controller_id"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">{{ __('No Controller') }}</option>
+                            {{-- @if (count($department->employees)) --}}
+                                @foreach (\App\Models\Employee::all() as $employee)
+                                    @if ($employee->id === $department->controller_id)
+                                        <option value="{{ $employee->id }}" selected>
+                                            {{ $employee->first_name }} {{ $employee->last_name }}
+                                        </option>
+                                    @else
+                                        <option value="{{ $employee->id }}">
+                                            {{ $employee->first_name }} {{ $employee->last_name }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            {{-- @endif --}}
+                        </select>
+                    </div>
                     <div
                         class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                         <div>
