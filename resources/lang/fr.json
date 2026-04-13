@@ -23,6 +23,9 @@
     "rejected": "Comptabilité rejetée",
     "paid": "Prêt à payer",
     "controller_approve": "validation gestionnaire",
+    "Controller": "Gestionnaire",
+    "Select controller": "Sélectionner le gestionnaire",
+    "No Controller": "Aucun gestionnaire",
 
     "Save Mission as Draft or Submit it": "Enregistrer la mission en brouillon ou la soumettre",
     "When save the mission as draft, you can edit or delete it later.": "Lorsque vous enregistrez la mission en tant que brouillon, vous pouvez la modifier ou la supprimer ultérieurement.",
