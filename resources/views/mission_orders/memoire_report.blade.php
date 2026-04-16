@@ -145,7 +145,7 @@
                 {{ $missionOrder->no_meals }} <span class="text-red-600"> - {{$missionOrder->no_ded_meals}} = {{$missionOrder->no_meals - $missionOrder->no_ded_meals}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 INR
@@ -157,7 +157,7 @@
                 --
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
             </td>
         </tr>
 

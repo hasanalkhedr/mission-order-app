@@ -474,7 +474,7 @@
                     const dailyCost = baremes[selectedBareme]?.accomodation_cost || 0;
                     const totalCost = days * dailyCost;
                     const maxAdvance = totalCost * 0.75; // 75% of total
-                    const maxAdvanceInLocal = maxAdvance * {{ $chancellery_rate }};
+                    const maxAdvanceInLocal = maxAdvance / {{ $chancellery_rate }};
                     return maxAdvanceInLocal.toFixed(2);
                 }
 
@@ -702,7 +702,7 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Frais d’Receptions">au lieu de Frais d’receptions</option>
+                                                    <option value="au lieu de Frais d’receptions">au lieu de Frais d’receptions</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">

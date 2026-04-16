@@ -19,8 +19,8 @@ class ChancelleryRateMissingNotification extends BaseAnnouncement
      */
     public function __construct()
     {
-        $this->title = "Veuillez ajouter les taux de chancellerie pour le mois en cours: ".now()->format('F Y');
-        $this->body = "Veuillez ajouter les taux de chancellerie pour le mois en cours: ".now()->format('F Y');
+        $this->title = "Veuillez ajouter les taux de chancellerie pour le mois en cours: ".now()->isoFormat('MMMM YYYY');
+        $this->body = "Veuillez ajouter les taux de chancellerie pour le mois en cours: ".now()->isoFormat('MMMM YYYY');
         $this->link = route('chancelleryRates.index');
         $this->linkText = 'Cliquez ici pour voir la taux de chancellerie';
         $this->icon = 'review';

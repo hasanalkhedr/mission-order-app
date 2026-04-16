@@ -33,7 +33,8 @@ class TourneeController extends Controller
             $dep_ids = Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderByRaw("FIELD(status, 'sup_approve','draft',  'director_approve', 'sg_approve', 'approved', 'paid', 'rejected')")
@@ -42,7 +43,8 @@ class TourneeController extends Controller
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderByRaw("FIELD(status, 'sup_approve','draft',  'director_approve', 'sg_approve', 'approved', 'paid', 'rejected')")
@@ -128,7 +130,7 @@ class TourneeController extends Controller
                         $totalDays += 1;
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -246,7 +248,7 @@ class TourneeController extends Controller
                         $totalDays += 1;
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->rate;
+                    $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -408,7 +410,8 @@ class TourneeController extends Controller
 
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')
             ->orderByRaw("
@@ -428,7 +431,8 @@ class TourneeController extends Controller
 
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id', 'desc')->paginate(10);
         } else {
@@ -456,7 +460,7 @@ class TourneeController extends Controller
             ($employee->hasRole('supervisor') && in_array($tournee->employee->department_id, $dep_ids)) ||
             ($employee->hasRole('employee') && $tournee->employee->id == $employee->id)
         ) {
-            $current_rate = ChancelleryRate::currentRate()->rate;
+            $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date);
             return view('tournees.m_show', compact('tournee', 'current_rate'));
         } else {
             abort(404);

@@ -27,19 +27,21 @@
                 <form method="POST" action="{{ route('chancelleryRates.store') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="month_year" value="{{ now()->format('Y-m-01') }}">
-
+@php
+    \Carbon\Carbon::setLocale('fr');
+@endphp;
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-4">{{ __('Set Currency Rate for ') }}{{ now()->format('F Y') }}</h2>
+                        <h2 class="text-lg font-semibold mb-4">{{ __('Set Currency Rate for ') }}{{ now()->isoFormat('MMMM YYYY') }}</h2>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
                             <div class="form-group">
                                 <label for="eur_rate" class="block text-sm font-medium text-gray-700 mb-2">
-                                    {{ __('EUR to INR Rate') }}
+                                    {{ __('INR to EUR Rate') }}
                                 </label>
                                 <input type="number" step="0.000001" class="form-control" id="eur_rate" name="eur_rate"
-                                    required placeholder="Enter EUR to INR rate">
+                                    required placeholder="{{ __('Enter INR to EUR rate') }}">
                                 <small class="form-text text-muted">
-                                    {{ __('1 EURO = ? INR') }}
+                                    {{ __('1 INR = ? EUR') }}
                                 </small>
                             </div>
 

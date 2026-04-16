@@ -36,7 +36,8 @@ class MissionOrderController extends Controller
             $dep_ids = Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
             })
@@ -46,7 +47,8 @@ class MissionOrderController extends Controller
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('purpose', 'like', '%' . $search . '%');
             })
@@ -133,7 +135,7 @@ class MissionOrderController extends Controller
                         $totalDays += 1;
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
-                    $maxAdvanceInLocal = $maxAdvance * ChancelleryRate::currentRate()->eur_rate;
+                    $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -259,7 +261,7 @@ class MissionOrderController extends Controller
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = ChancelleryRate::rateOfDate($missionOrder->start_date) ?
-                        $maxAdvance * ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate : 0;
+                        $maxAdvance / ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate : 1;
                     if ($value > $maxAdvanceInLocal) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
                     }
@@ -405,7 +407,8 @@ class MissionOrderController extends Controller
             $dep_ids = Department::where('controller_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            })->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)
+            ->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->where('status', 'like', 'approved')
                 ->orderByRaw("
@@ -424,7 +427,7 @@ class MissionOrderController extends Controller
             $dep_ids = Department::where('manager_id', Auth::user()->employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            })->where('status', 'like', 'approved')->when($search, function ($query, $search) {
+            })->orWhere('employee_id', '=', auth()->user()->employee->id)->where('status', 'like', 'approved')->when($search, function ($query, $search) {
                 return $query->where('order_number', 'like', '%' . $search . '%')->orWhere('purpose', 'like', '%' . $search . '%');
             })->orderBy('id', 'desc')->paginate(10);
         } else {

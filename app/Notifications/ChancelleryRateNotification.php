@@ -20,8 +20,8 @@ class ChancelleryRateNotification extends BaseAnnouncement
     public function __construct($chancelleryRate)
     {
         $this->chancelleryRate = $chancelleryRate;
-        $this->title = "Le contrôleur a ajouté les taux de chancellerie pour ".$this->chancelleryRate->month_year->format('F Y');
-        $this->body = "le taux de chancellerie de ".$this->chancelleryRate->month_year->format('F Y')." est:".$this->chancelleryRate->rate;
+        $this->title = "Le contrôleur a ajouté les taux de chancellerie pour ".$this->chancelleryRate->month_year->isoFormat('MMMM YYYY');
+        $this->body = "le taux de chancellerie de ".$this->chancelleryRate->month_year->isoFormat('MMMM YYYY')." est:".$this->chancelleryRate->rate;
         $this->link = route('chancelleryRates.index');
         $this->linkText = 'Cliquez ici pour voir la taux de chancellerie';
         $this->icon = 'review';

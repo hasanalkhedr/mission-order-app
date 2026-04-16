@@ -14,7 +14,7 @@
                     </svg>
                 </div>
                 <div class="text-base font-bold mt-3 sm:mt-0 sm:ml-4 sm:text-left">
-                    {{ __('Delete Chancellery Rate') }}: {{ $chancelleryRate->month_year->format('F Y') }}
+                    {{ __('Delete Chancellery Rate') }}: {{ $chancelleryRate->month_year->isoFormat('MMMM YYYY') }}
                 </div>
                 <div>
                     <button type="button"

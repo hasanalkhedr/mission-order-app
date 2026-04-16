@@ -24,16 +24,16 @@ class DashboardController extends Controller
             $memoireCount += MissionOrder::where('memor_status', 'sg_approve')->count();
             $tourneeCount += Tournee::where('status', 'sg_approve')->count();
             $tourneeMemoireCount += Tournee::where('memor_status', 'sg_approve')->count();
-            $missionOrders = MissionOrder::orderBy('id', 'desc')->get();
+            //$missionOrders = MissionOrder::orderBy('id', 'desc')->get();
         }
         if ($employee->hasRole('controller')) {
             $dep_ids = Department::where('controller_id', $employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
-                $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            });
+                $query->whereIn('department_id', $dep_ids);
+            })->get();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            });
+            })->get();
             $missionCount += $missionOrders->where('status', 'controller_approve')->count();
             $memoireCount += $missionOrders->where('memor_status', 'controller_approve')->count();
             $tourneeCount += $tournees->where('status', 'controller_approve')->count();
@@ -42,11 +42,11 @@ class DashboardController extends Controller
         if ($employee->hasRole('supervisor')) {
             $dep_ids = Department::where('manager_id', $employee->id)->pluck('id')->toArray();
             $missionOrders = MissionOrder::whereHas('employee', function ($query) use ($dep_ids) {
-                $query->whereIn('department_id', $dep_ids); // Corrected to use whereIn
-            });
+                $query->whereIn('department_id', $dep_ids);
+            })->get();
             $tournees = Tournee::whereHas('employee', function ($query) use ($dep_ids) {
                 $query->whereIn('department_id', $dep_ids);
-            });
+            })->get();
             $missionCount += $missionOrders->where('status', 'sup_approve')->count();
             $memoireCount += $missionOrders->where('memor_status', 'sup_approve')->count();
             $tourneeCount += $tournees->where('status', 'sup_approve')->count();

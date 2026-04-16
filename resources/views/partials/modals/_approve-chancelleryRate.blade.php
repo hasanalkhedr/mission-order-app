@@ -6,7 +6,7 @@
             <!-- Modal header -->
             <div class="flex justify-between items-center p-2 rounded-t border-b">
                 <div class="text-base font-bold mt-3 sm:mt-0 sm:ml-4 sm:text-left blue-color">
-                    {{ __('Approve Chancellery Rate') }}:{{ $chancelleryRate->month_year->format('F Y') }}
+                    {{ __('Approve Chancellery Rate') }}:{{ $chancelleryRate->month_year->isoFormat('MMMM YYYY') }}
                 </div>
                 <div>
                     <button type="button"

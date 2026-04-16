@@ -23,7 +23,7 @@
                         {{ __('Month') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('EUR to INR') }}
+                        {{ __('INR to EUR') }}
                     </th>
                     {{-- <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('USD to INR') }}
@@ -51,13 +51,13 @@
                     <tr class="bg-white hover:bg-gray-50">
                         <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer">
                             <div class="font-bold">
-                                {{ $chancelleryRate->month_year->format('F Y') }}
+                                {{ $chancelleryRate->month_year->isoFormat('MMMM YYYY') }}
                             </div>
                         </td>
 
                         <td class="py-4 px-6 border-b">
                             <div class="font-bold text-red-400">
-                                1 EUR = {{ $chancelleryRate->eur_rate }} {{ __('INR') }}
+                                1 {{ __('INR') }} = {{ $chancelleryRate->eur_rate }} EUR
                             </div>
                         </td>
 
@@ -70,7 +70,7 @@
                         <td class="py-4 px-6 border-b">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full
                                 {{ $chancelleryRate->status == 'approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                {{ ucfirst($chancelleryRate->status) }}
+                                {{ __(ucfirst($chancelleryRate->status).' ') }}
                             </span>
                         </td>
 

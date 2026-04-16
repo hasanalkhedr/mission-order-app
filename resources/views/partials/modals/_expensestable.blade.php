@@ -68,10 +68,10 @@
                 <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-md">
                     <div class="mb-4 p-4 bg-blue-50 rounded-lg">
                         <h2 class="text-lg font-semibold text-blue-800">Taux de change
-                            {{ $current_rate->month_year->format('F Y') }}</h2>
+                            {{ $current_rate->month_year->isoFormat('MMMM YYYY') }}</h2>
                         <div class="grid grid-cols-3 md:grid-cols-3 gap-4 mt-2">
                             <div class="flex items-center">
-                                <label class="mr-2 text-gray-700 w-32">EUR → INR</label>
+                                <label class="mr-2 text-gray-700 w-32">INR → EUR</label>
                                 <input type="number" id="eurToInr" value="{{ $current_rate->eur_rate }}" readonly
                                     class="w-32 px-2 py-1 border border-gray-300 rounded-md shadow-sm">
                             </div>
@@ -138,8 +138,8 @@
                                 </td>
                                 <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 reimbursement-amount"
                                     data-currency="INR"
-                                    data-amount="{{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
-                                    {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                                    data-amount="{{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
+                                    {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
                                 </td>
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -154,7 +154,7 @@
                                 </td>
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-inr">
-                                    {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                                    {{ $missionOrder->no_meals * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
                                 </td>
                             </tr>
 
@@ -180,7 +180,7 @@
                                         </div>
                                     </div>
                                     <input type="hidden" id="max-accommodation"
-                                        value="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost * $current_rate->eur_rate }}">
+                                        value="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
                                     <input type="hidden" id="max-accommodation-eur"
                                         value="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost }}">
                                     <input type="hidden" id="accommodation-cost"
@@ -195,7 +195,7 @@
                                         min="0"
                                         class="reimbursement-input accommodation-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
                                         data-currency="{{ $missionOrder->acc_reimbursement_currency ?? 'INR' }}"
-                                        data-max="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost * $current_rate->eur_rate }}">
+                                        data-max="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
                                 </td>
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -212,7 +212,7 @@
                                         value="{{ $missionOrder->acc_direct_amount }}" step="0.01" min="0"
                                         class="direct-input accommodation-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
                                         data-currency="{{ $missionOrder->acc_direct_currency ?? 'INR' }}"
-                                        data-max="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost * $current_rate->eur_rate }}">
+                                        data-max="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
                                 </td>
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -226,9 +226,9 @@
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
                                     <input type="hidden" name="expenses[1][total_inr]"
-                                        value="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost * $current_rate->eur_rate }}">
+                                        value="{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
                                     <span
-                                        class="total-inr">{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost * $current_rate->eur_rate }}</span>
+                                        class="total-inr">{{ $missionOrder->no_accomodation * $missionOrder->bareme->accomodation_cost / ($current_rate ? $current_rate->eur_rate : 1) }}</span>
                                 </td>
                                 <td
                                     class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -279,8 +279,8 @@
                                     </td>
                                     <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800 reimbursement-amount"
                                         data-currency="INR"
-                                        data-amount="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
-                                        {{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                                        data-amount="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
+                                        {{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -297,9 +297,9 @@
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
                                         <input type="hidden" name="expenses[{{ $index }}][total_inr]"
-                                            value="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+                                            value="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
                                         <span
-                                            class="total-inr">{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}</span>
+                                            class="total-inr">{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}</span>
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -371,7 +371,7 @@
                    class="reimbursement-input extra-meal-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
                    data-currency="{{ $expense->reimbursement_currency ?? 'INR' }}"
                    data-index="{{ $index }}"
-                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
             <select name="expenses[{{ $index }}][reimbursement_currency]"
@@ -388,7 +388,7 @@
                    class="direct-input extra-meal-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
                    data-currency="{{ $expense->direct_currency ?? 'INR' }}"
                    data-index="{{ $index }}"
-                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+                   data-max="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
             <select name="expenses[{{ $index }}][direct_currency]"
@@ -401,9 +401,9 @@
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
             <input type="hidden" name="expenses[{{ $index }}][total_inr]"
-                   value="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}">
+                   value="{{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}">
             <span class="total-inr extra-meal-total-{{ $index }}">
-                {{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost * $current_rate->eur_rate }}
+                {{ ($expense->meal_participants ?? 0) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
             </span>
         </td>
         <td class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
@@ -1127,10 +1127,13 @@
                                 const row = this.closest('tr');
                                 const noMeals = parseInt(this.value) || 0;
                                 const mealCost = {{ $missionOrder->bareme->meal_cost }};
-                                const eurRate = parseFloat(eurToInrInput.value);
-
+                                const eurRate = (() => {
+                                    const rate = parseFloat(eurToInrInput.value);
+                                    return (isNaN(rate) || !isFinite(rate)) ? 1 : rate;
+                                    })();
+console.log("EURRATE: ", eurRate);
                                 // Calculate reimbursement amount
-                                const reimbursementAmount = noMeals * mealCost * eurRate;
+                                const reimbursementAmount = noMeals * mealCost / eurRate;
 
                                 // Update reimbursement amount cell
                                 const reimbursementCell = row.querySelector('.reimbursement-amount');
@@ -1207,7 +1210,7 @@
                         // Function to convert amount from one currency to INR
                         function convertToINR(amount, fromCurrency) {
                             if (fromCurrency === 'INR') return amount;
-                            return amount * exchangeRates[fromCurrency];
+                            return amount / exchangeRates[fromCurrency];
                         }
 
                         // Function to update calculation for a single row
@@ -1417,7 +1420,10 @@
                             const accommodationCost = parseFloat(document.getElementById('accommodation-cost').value);
                             const originalAccommodation = parseInt(document.getElementById('original-accommodation').value);
                             const actualAccommodationElement = document.querySelector('.actual-accommodation');
-                            const eurRate = parseFloat(eurToInrInput.value);
+                            const eurRate = (() => {
+                                const rate = parseFloat(eurToInrInput.value);
+                                return (isNaN(rate) || !isFinite(rate)) ? 1 : rate;
+                                })();
 
                             // Calculate initial values from database
                             const initialReducedAccommodation = parseInt(accommodationInput.value) || 0;
@@ -1427,7 +1433,7 @@
                             actualAccommodationElement.textContent = initialActualAccommodation;
 
                             // Update the maximum values for the accommodation inputs
-                            const initialMaxAmountINR = initialActualAccommodation * accommodationCost * eurRate;
+                            const initialMaxAmountINR = initialActualAccommodation * accommodationCost / eurRate;
                             const initialMaxAmountEUR = initialActualAccommodation * accommodationCost;
 
                             document.getElementById('max-accommodation').value = initialMaxAmountINR;
@@ -1452,7 +1458,7 @@
                                 actualAccommodationElement.textContent = actualAccommodation;
 
                                 // Update the maximum values for the accommodation inputs
-                                const maxAmountINR = actualAccommodation * accommodationCost * eurRate;
+                                const maxAmountINR = actualAccommodation * accommodationCost / eurRate;
                                 const maxAmountEUR = actualAccommodation * accommodationCost;
 
                                 document.getElementById('max-accommodation').value = maxAmountINR;
@@ -1476,13 +1482,16 @@
                             // Calculate initial values from database
                             const initialReducedMeals = parseInt(mealInput.value) || 0;
                             const initialActualMeals = Math.max(0, maxMeals - initialReducedMeals);
-                            const eurRate = parseFloat(eurToInrInput.value);
+                            const eurRate = (() => {
+  const rate = parseFloat(eurToInrInput.value);
+  return (isNaN(rate) || !isFinite(rate)) ? 1 : rate;
+})();
 
                             // Update the actual meals display
                             actualMealsElement.textContent = initialActualMeals;
 
                             // Calculate initial reimbursement amount
-                            const initialReimbursementAmount = initialActualMeals * mealCost * eurRate;
+                            const initialReimbursementAmount = initialActualMeals * mealCost / eurRate;
 
                             // Update reimbursement amount cell
                             const reimbursementCell = document.querySelector('.reimbursement-amount');
@@ -1504,7 +1513,7 @@
                                 actualMealsElement.textContent = actualMeals;
 
                                 // Calculate reimbursement amount
-                                const reimbursementAmount = actualMeals * mealCost * eurRate;
+                                const reimbursementAmount = actualMeals * mealCost / eurRate;
 
                                 // Update reimbursement amount cell
                                 reimbursementCell.textContent = reimbursementAmount.toFixed(2);
@@ -1523,14 +1532,16 @@ function handleExtraMealQuantityChanges() {
     document.querySelectorAll('.extra-meals-input').forEach(input => {
         const index = input.getAttribute('data-index');
         const mealCost = parseFloat(document.getElementById(`extra-meal-cost-${index}`).value);
-        const eurRate = parseFloat(eurToInrInput.value);
-
+        const eurRate = (() => {
+  const rate = parseFloat(eurToInrInput.value);
+  return (isNaN(rate) || !isFinite(rate)) ? 1 : rate;
+})();
         // Add event listener for input changes
         input.addEventListener('input', function() {
             const numberOfMeals = parseInt(this.value) || 0;
 
             // Update the maximum values for the meal inputs
-            const maxAmountINR = numberOfMeals * mealCost * eurRate;
+            const maxAmountINR = numberOfMeals * mealCost / eurRate;
 
             // Update the max attributes on the input fields
             const reimbursementInput = document.querySelector(`input[name="expenses[${index}][reimbursement_amount]"]`);

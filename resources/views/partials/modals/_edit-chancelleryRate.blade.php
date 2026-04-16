@@ -6,7 +6,7 @@
             <!-- Modal header -->
             <div class="flex justify-between items-center p-4 rounded-t border-b">
                 <div class="text-base font-bold mt-3 sm:mt-0 sm:ml-4 sm:text-left blue-color">
-                    {{ __('Edit Chancellery Rates') }}: {{ $chancelleryRate->month_year->format('F Y') }}
+                    {{ __('Edit Chancellery Rates') }}: {{ $chancelleryRate->month_year->isoFormat('MMMM YYYY') }}
                 </div>
                 <div>
                     <button type="button"
@@ -30,17 +30,17 @@
                     @method('PUT')
 
                     <div class="mb-6">
-                        <h2 class="text-lg font-semibold mb-4">{{ __('Set Currency Rates for ')}}{{ $chancelleryRate->month_year->format('F Y') }}</h2>
+                        <h2 class="text-lg font-semibold mb-4">{{ __('Set Currency Rates for ')}}{{ $chancelleryRate->month_year->isoFormat('MMMM YYYY') }}</h2>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label for="eur_rate" class="block text-sm font-medium text-gray-700 mb-2">
-                                    {{ __('EUR to INR Rate') }}
+                                    {{ __('INR to EUR Rate') }}
                                 </label>
                                 <input type="number" step="0.000001" class="form-control" id="eur_rate" name="eur_rate"
                                     value="{{ $chancelleryRate->eur_rate }}" required>
                                 <small class="form-text text-muted">
-                                    {{ __('1 EURO = ? INR') }}
+                                    {{ __('1 INR = ? EUR') }}
                                 </small>
                             </div>
 
