@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="w-1/5">Objet/Motfits:</td>
+                        <td class="w-1/5">Objet/Motif:</td>
                         <td class="w-4/5">{{ $missionOrder->purpose }}</td>
                     </tr>
                     @if ($missionOrder->conge)
@@ -105,9 +105,8 @@
                     <tr>
                         <td class="w-full">
                             {{ $missionOrder->bareme->pays }}
-                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
-                            / Repas:{{ $missionOrder->bareme->meal_cost }} /
-                            Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}:
+                             Repas:{{ $missionOrder->bareme->meal_cost }} - Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
                         </td>
                     </tr>
                 </tbody>
@@ -121,7 +120,7 @@
                 <tbody>
                     <tr>
                         <td class="w-5/6">Demande d'avance:</td>
-                        <td class="w-1/6">{{ $missionOrder->advance > 0 ? $missionOrder->advance : 'NON' }}</td>
+                        <td class="w-1/6">{{ $missionOrder->advance > 0 ? number_format($missionOrder->advance,2,'.',' ') : 'NON' }}</td>
                     </tr>
                     <tr>
                         <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
@@ -155,17 +154,17 @@
                     <tr>
                         <td class="w-full">
                             <div class="flex flex-col">
-                                <div class="-m-1.5 overflow-x-auto">
-                                    <div class="p-[2px] min-w-full inline-block align-middle">
+                                <div class="overflow-x-auto">
+                                    <div class="w-full inline-block align-middle">
                                         <div class="overflow-hidden">
-                                            <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                            <table class="w-full divide-y divide-gray-200 border border-gray-300">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"
-                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            class="pl-1 pr-0 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                                                             Type</th>
                                                         <th scope="col"
-                                                            class="px-1 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
+                                                            class="pl-1 pr-0 py-[2px] text-center text-xs font-medium text-gray-500 uppercase">
                                                             Nature de la dépense</th>
                                                     </tr>
                                                 </thead>
@@ -173,11 +172,11 @@
                                                     @forelse ($missionOrder->expenses as $expense)
                                                         <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                                             <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                class="pl-1 pr-0 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                                                                 {{ __($expense->type) }}
                                                             </td>
                                                             <td
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
+                                                                class="pl-1 pr-0 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                                                                 @if ($expense->type === 'transport')
                                                                     {{ __('expense.transport_types.' . $expense->transport_type) }}<br />
                                                                     @if ($expense->transport_type === 'car_rental_with_driver')
@@ -195,7 +194,7 @@
                                                     @empty
                                                         <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                                             <td colspan="6"
-                                                                class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
+                                                                class="pl-1 pr-0 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs font-medium text-gray-800">
                                                                 {{ __('No Expenses Found') }}
                                                             </td>
                                                         </tr>

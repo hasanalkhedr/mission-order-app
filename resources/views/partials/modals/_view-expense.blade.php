@@ -108,7 +108,7 @@
                         <div class="flex flex-wrap -mx-3 mb-0">
                             <x-label>Montant</x-label>
                             <x-readonly-text-input
-                                value="{{ number_format($expense->amount, 2) }} {{ $expense->currency }}" />
+                                value="{{ number_format($expense->amount,2,'.',' ') }} {{ $expense->currency }}" />
                         </div>
                     </div>
 

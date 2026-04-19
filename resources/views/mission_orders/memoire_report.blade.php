@@ -106,10 +106,10 @@
                     <tr>
                         <td class="w-full">
                             <div class="flex flex-col">
-                                <div class="-m-1.5 overflow-x-auto">
-                                    <div class="p-[2px] min-w-full inline-block align-middle">
+                                <div class="overflow-x-auto">
+                                    <div class="w-full inline-block align-middle">
                                         <div class="overflow-hidden">
-<table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+<table class="w-full divide-y divide-gray-200 border border-gray-300">
     <thead>
         <tr>
             <th scope="col"
@@ -145,7 +145,7 @@
                 {{ $missionOrder->no_meals }} <span class="text-red-600"> - {{$missionOrder->no_ded_meals}} = {{$missionOrder->no_meals - $missionOrder->no_ded_meals}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
+                {{ number_format(($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1),2,'.',' ') }}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 INR
@@ -157,7 +157,7 @@
                 --
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ ($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1) }}
+                {{ number_format(($missionOrder->no_meals - $missionOrder->no_ded_meals) * $missionOrder->bareme->meal_cost / ($current_rate ? $current_rate->eur_rate : 1),2,'.',' ') }}
             </td>
         </tr>
 
@@ -171,19 +171,19 @@
                 {{ $missionOrder->no_accomodation }}<span class="text-red-600"> - {{$missionOrder->no_ded_accomodation}} = {{$missionOrder->no_accomodation - $missionOrder->no_ded_accomodation}}</span>
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{$missionOrder->acc_reimbursement_amount}}
+                {{number_format($missionOrder->acc_reimbursement_amount,2,'.',' ')}}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 {{$missionOrder->acc_reimbursement_currency}}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{$missionOrder->acc_direct_amount}}
+                {{number_format($missionOrder->acc_direct_amount,2,'.',' ')}}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
                 {{$missionOrder->acc_direct_currency}}
             </td>
             <td class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                {{ $missionOrder->acc_total_inr }}
+                {{ number_format($missionOrder->acc_total_inr,2,'.',' ') }}
             </td>
         </tr>
         @endif
@@ -223,7 +223,7 @@
 
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                    {{ number_format($expense->reimbursement_amount,2) }}
+                    {{ number_format($expense->reimbursement_amount,2,'.',' ') }}
                 </td>
 
                 <!-- Amount -->
@@ -235,7 +235,7 @@
                 <!-- Currency -->
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                    {{ number_format($expense->direct_amount,2) }}
+                    {{ number_format($expense->direct_amount,2,'.',' ') }}
                 </td>
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
@@ -243,7 +243,7 @@
                 </td>
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                    {{ $expense->total_inr }}
+                    {{ number_format($expense->total_inr,2,'.',' ') }}
                 </td>
             </tr>
             @endif
@@ -264,7 +264,7 @@
                 </th>
                 <th
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ number_format($missionOrder->expense_reimbursement_total, 2) }}
+                    {{ number_format($missionOrder->expense_reimbursement_total,2,'.',' ') }}
                 </th>
                 <th
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
@@ -272,7 +272,7 @@
                 </th>
                 <th
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ number_format($missionOrder->expense_direct_total, 2) }}
+                    {{ number_format($missionOrder->expense_direct_total,2,'.',' ') }}
 
                 </th>
                 <th
@@ -281,7 +281,7 @@
                 </th>
                 <th
                     class="px-1 py-[2px] text-center text-xs font-bold text-blue-600 uppercase border border-gray-500">
-                    {{ number_format($missionOrder->expense_grand_total, 2) }}
+                    {{ number_format($missionOrder->expense_grand_total,2,'.',' ') }}
  INR
                 </th>
             </tr>
@@ -309,18 +309,18 @@
                             <table class="border border-gray-500 table-auto text-center w-full">
                                 <tr>
                                     <td rowspan="2" class="w-1/12 border border-gray-500 font-bold">Totaux</td>
-                                    <td class="border border-gray-500 w-3/12">A rembourser à l'agent</td>
-                                    <td class="border border-gray-500 w-3/12">Prise en charge directe</td>
+                                    <td class="border border-gray-500 w-2/12">A rembourser à l'agent</td>
+                                    <td class="border border-gray-500 w-2/12">Prise en charge directe</td>
                                     <td class="border border-gray-500 w-2/12">Avance</td>
-                                    {{-- <td class="border border-gray-500 w-3/12">Net à payer <span class="text-xxs">(A rembourser à l'agent - Avance)</span></td> --}}
-                                    <td class="border border-gray-500 w-3/12">Mission totale</td>
+                                    <td class="border border-gray-500 w-5/12">Net à payer <span class="text-xxs">(A rembourser à l'agent - Avance)</span></td>
+                                    {{-- <td class="border border-gray-500 w-3/12">Mission totale</td> --}}
                                 </tr>
                                 <tr>
-                                    <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total }}</td>
-                                    <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_direct_total }}
-                                    </td>
-                                    <td class="border border-gray-500 w-2/12">{{ $missionOrder->advance }}</td>
-                                    <td class="border border-gray-500 w-3/12">{{ $missionOrder->expense_reimbursement_total + $missionOrder->expense_direct_total }}
+                                    <td class="border border-gray-500 w-2/12">{{ number_format($missionOrder->expense_reimbursement_total,2,'.',' ') }}</td>
+                                    <td class="border border-gray-500 w-2/12">{{ number_format($missionOrder->expense_direct_total,2,'.',' ') }}</td>
+                                    <td class="border border-gray-500 w-2/12">{{ number_format($missionOrder->advance,2,'.',' ') }}</td>
+                                    <td class="border border-gray-500 w-5/12 font-bold {{ ($missionOrder->expense_reimbursement_total - $missionOrder->advance)>=0 ? 'text-blue-600' : 'text-red-600' }}">{{ number_format($missionOrder->expense_reimbursement_total - $missionOrder->advance,2,'.',' ') }}</td>
+                                    {{-- <td class="border border-gray-500 w-3/12">{{ number_format($missionOrder->expense_reimbursement_total + $missionOrder->expense_direct_total,2,'.',' ') }} --}}
                                     </td>
                                 </tr>
                             </table>
@@ -456,7 +456,7 @@
                 <tbody>
                     <tr>
                         <td class="px-2 py-[1px] w-1/2">
-                            <span class="font-bold text-lg text-center">Preparation de paiment:</span>
+                            <span class="font-bold text-lg text-center">Preparation de paiement:</span>
                             <span class="font-bold text-lg text-center">{{\App\Models\Employee::find($missionOrder->accountant_id)->first_name}} {{\App\Models\Employee::find($missionOrder->accountant_id)->last_name}}</span>
                         </td>
                     </tr>
@@ -506,7 +506,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="w-1/5">Objet/Motfits:</td>
+                        <td class="w-1/5">Objet/Motif:</td>
                         <td class="w-4/5">{{ $missionOrder->purpose }}</td>
                     </tr>
                     @if ($missionOrder->conge)
@@ -569,9 +569,8 @@
                     <tr>
                         <td class="w-full">
                             {{ $missionOrder->bareme->pays }}
-                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}
-                            / Repas:{{ $missionOrder->bareme->meal_cost }} /
-                            Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
+                            (Montant:{{ $missionOrder->bareme->pays_per_day . ' ' . $missionOrder->bareme->currency }}:
+                             Repas:{{ $missionOrder->bareme->meal_cost }} - Hebergement:{{ $missionOrder->bareme->accomodation_cost }})
                         </td>
                     </tr>
                 </tbody>
@@ -585,7 +584,7 @@
                 <tbody>
                     <tr>
                         <td class="w-5/6">Demande d'avance:</td>
-                        <td class="w-1/6">{{ $missionOrder->advance > 0 ? $missionOrder->advance : 'NON' }}</td>
+                        <td class="w-1/6">{{ $missionOrder->advance > 0 ? number_format($missionOrder->advance,2,'.',' ') : 'NON' }}</td>
                     </tr>
                     <tr>
                         <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
@@ -619,10 +618,10 @@
                     <tr>
                         <td class="w-full">
                             <div class="flex flex-col">
-                                <div class="-m-1.5 overflow-x-auto">
-                                    <div class="p-[2px] min-w-full inline-block align-middle">
+                                <div class="overflow-x-auto">
+                                    <div class="w-full inline-block align-middle">
                                         <div class="overflow-hidden">
-                                            <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                            <table class="w-full divide-y divide-gray-200 border border-gray-300">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"
@@ -780,7 +779,7 @@
                         <div id="pdf-viewer-{{ $missionOrder->id }}" class="pdf-container"
                             style="width: 100%; height: 240mm;"></div>
                     @else
-                        <img src="{{ asset('storage/public/' . $missionOrder->acc_expense_document) }}"
+                        <img src="{{ asset('storage/' . $missionOrder->acc_expense_document) }}"
                             style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
                     @endif
                 </div>
@@ -796,7 +795,7 @@
                         <div id="pdf-viewer-{{ $expense->id }}" class="pdf-container"
                             style="width: 100%; height: 240mm;"></div>
                     @else
-                        <img src="{{ asset('storage/public/' . $expense->expense_document) }}"
+                        <img src="{{ asset('storage/' . $expense->expense_document) }}"
                             style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
                     @endif
                 </div>
@@ -860,7 +859,7 @@
                         <!-- Modal header -->
                         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Preparation de paiment
+                                Preparation de paiement
                             </h3>
                             <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="validerModal-{{ $missionOrder->id }}">
                                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -1090,14 +1089,14 @@
             // Initialize all PDF viewers
             @if (pathinfo($missionOrder->acc_expense_document, PATHINFO_EXTENSION) === 'pdf')
                 renderPDF(
-                    "{{ asset('storage/public/' . $missionOrder->acc_expense_document) }}",
+                    "{{ asset('storage/' . $missionOrder->acc_expense_document) }}",
                     "pdf-viewer-{{ $missionOrder->id }}"
                 );
             @endif
             @foreach ($missionOrder->expenses as $expense)
                 @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                     renderPDF(
-                        "{{ asset('storage/public/' . $expense->expense_document) }}",
+                        "{{ asset('storage/' . $expense->expense_document) }}",
                         "pdf-viewer-{{ $expense->id }}"
                     );
                 @endif

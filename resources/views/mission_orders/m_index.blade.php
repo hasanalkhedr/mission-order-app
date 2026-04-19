@@ -103,8 +103,8 @@
                             end_date: '{{ $missionOrder->end_date->format('Y-m-d') }}',
                             status: '{{ $missionOrder->status }}'
                         })">
-                        <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer"
-                            onclick="window.location.href = '{{ url(route('mission_orders.m_show', $missionOrder->id)) }}'">
+                        <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                            {{-- onclick="window.location.href = '{{ url(route('mission_orders.m_show', $missionOrder->id)) }}'"> --}}
                             <div class="cursor-pointer">
                                 {{ $missionOrder->order_number }}
                             </div>

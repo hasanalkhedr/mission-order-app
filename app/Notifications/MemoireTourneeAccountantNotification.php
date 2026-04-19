@@ -21,7 +21,7 @@ class MemoireTourneeAccountantNotification extends BaseAnnouncement
     {
         $this->tournee = $tournee;
         $this->title = $this->tournee->firstDestination->arrive_location . ' - ' . $this->tournee->firstDestination->start_date->format('d/m/Y');
-        $this->body = 'Mémoire de frais (tournee) besoin de Preparation de paiment';
+        $this->body = 'Mémoire de frais (tournee) besoin de Preparation de paiement';
         $this->link = route('tournees.m_report', $tournee->id);
         $this->linkText = 'voir Mémoire de frais (tournee)';
         $this->icon = 'ok';

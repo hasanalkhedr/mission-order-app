@@ -21,7 +21,7 @@ class MemoireMissionOrderAccountantNotification extends BaseAnnouncement
     {
         $this->missionOrder = $missionOrder;
         $this->title = $this->missionOrder->arrive_location . ' - ' . $this->missionOrder->start_date->format('d/m/Y');
-        $this->body = 'Mémoire de frais besoin de Preparation de paiment';
+        $this->body = 'Mémoire de frais besoin de Preparation de paiement';
         $this->link = route('mission_orders.m_report', $missionOrder->id);
         $this->linkText = 'voir Mémoire de frais';
         $this->icon = 'ok';

@@ -31,7 +31,7 @@
                         {{ __('Roles') }}
                     </th>
                     <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
-                        {{ __('Preparation de paiment') }}
+                        {{ __('Preparation de paiement') }}
                     </th>
                     {{-- <th @click="sortByColumn" scope="col" class="cursor-pointer py-3 px-6 blue-color">
                         {{ __('Fonction Administrative') }}

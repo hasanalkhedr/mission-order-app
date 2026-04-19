@@ -166,7 +166,7 @@
         </div>
         <div class="relative z-0 mb-6 w-full group">
             <p class="mb-2 text-sm font-medium blue-color">
-                {{ __('Preparation de paiment') }}</p>
+                {{ __('Preparation de paiement') }}</p>
             <div class="mt-2 flex flex-row">
                 <input type="checkbox" disabled name="accountant" {{ $employee->accountant ? 'checked' : '' }}>
             </div>

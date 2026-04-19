@@ -113,7 +113,13 @@ class MissionOrderController extends Controller
             'arrive_location' => 'required',
             'departure_location' => 'required',
             'bareme_id' => 'required',
-            'start_date' => 'required|date|after:' . now()->addDays(2),
+            //'start_date' => 'required|date|after:' . now()->addDays(2),
+            'start_date' => ['required', 'date', function ($attribute, $value, $fail) {
+                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+                if ($value < $minDate) {
+                    $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
+                }
+            }],
             'end_date' => 'required|date|after_or_equal:start_date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
@@ -137,7 +143,7 @@ class MissionOrderController extends Controller
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
-                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal,2,'.',' ') . " Roupie indienne (INR))");
                     }
                 }
             ],
@@ -237,7 +243,13 @@ class MissionOrderController extends Controller
             'arrive_location' => 'required',
             'departure_location' => 'required',
             'bareme_id' => 'required',
-            'start_date' => 'required|date',
+            //'start_date' => 'required|date|after:' . now()->addDays(2),
+            'start_date' => ['required', 'date', function ($attribute, $value, $fail) {
+                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+                if ($value < $minDate) {
+                    $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
+                }
+            }],
             'end_date' => 'required|date|after_or_equal:start_date',
             'start_time' => 'required',
             'end_time' => 'required',
@@ -263,7 +275,7 @@ class MissionOrderController extends Controller
                     $maxAdvanceInLocal = ChancelleryRate::rateOfDate($missionOrder->start_date) ?
                         $maxAdvance / ChancelleryRate::rateOfDate($missionOrder->start_date)->eur_rate : 1;
                     if ($value > $maxAdvanceInLocal) {
-                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal,2,'.',' ') . " Roupie indienne (INR))");
                     }
                 }
             ],
@@ -471,7 +483,7 @@ class MissionOrderController extends Controller
     public function m_create(Request $request, MissionOrder $missionOrder)
     {
         //if($missionOrder->end_date <= now()) {
-        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? now());
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? $missionOrder->end_date);
         if ($current_rate) {
             return view('mission_orders.m_create', compact('missionOrder', 'current_rate'));
         } else {

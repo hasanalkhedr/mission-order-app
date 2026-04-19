@@ -67,7 +67,7 @@
 
                                 <!-- Amount Column -->
                                 <td class="px-6 text-center border border-gray-200 py-4 whitespace-nowrap text-sm text-gray-800">
-                                    {{ number_format($expense->amount, 2) }}
+                                    {{ number_format($expense->amount,2,'.',' ') }}
                                 </td>
 
                                 <!-- Currency Column -->
@@ -111,7 +111,7 @@
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">
-                                {{ number_format($currencyAmount, 2) }}
+                                {{ number_format($currencyAmount,2,'.',' ') }}
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 bg-gray-200 border border-gray-300 text-blue-700 font-bold text-md-center uppercase">

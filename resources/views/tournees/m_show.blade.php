@@ -199,7 +199,7 @@
                                         <!-- Amount -->
                                         <td
                                             class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
-                                            {{ number_format($expense->amount, 2) }}
+                                            {{ number_format($expense->amount,2,'.',' ') }}
                                         </td>
 
                                         <!-- Currency -->

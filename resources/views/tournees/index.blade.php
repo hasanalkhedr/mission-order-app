@@ -116,8 +116,8 @@
                             end_date: '{{ $tournee->lastDestination->end_date->format('Y-m-d') }}',
                             status: '{{ $tournee->status }}'
                         })">
-                        <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer"
-                            onclick="window.location.href = '{{ url(route('tournees.show', $tournee->id)) }}'">
+                        <td class="border-b py-4 px-6 font-bold text-gray-900 whitespace-nowrap cursor-pointer">
+                            {{-- onclick="window.location.href = '{{ url(route('tournees.show', $tournee->id)) }}'"> --}}
                             <div class="cursor-pointer">
                                 {{ $tournee->order_number }}
                             </div>

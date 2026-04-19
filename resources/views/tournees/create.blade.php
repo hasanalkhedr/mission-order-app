@@ -63,10 +63,10 @@
             </div>
         </div>
         <x-form-divider>Tournee</x-form-divider>
-        <div class="flex flex-wrap -mx-3 mb-2">
+        {{-- <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet/Motifs<span class="text-red-500">*</span>
+                    Objet/Motif<span class="text-red-500">*</span>
                 </x-label>
                 <textarea name="purpose" rows="2" required minlength="100"
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
@@ -111,6 +111,94 @@
                     }
                 });
             </script>
+        </div> --}}
+        <div class="flex flex-wrap -mx-3 mb-2">
+            <div class="w-full px-3">
+                <x-label>
+                    Objet/Motif<span class="text-red-500">*</span>
+                </x-label>
+                <textarea name="purpose" rows="2" required minlength="100" maxlength="500"
+                    class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-1 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
+                    oninput="updateCharCounter(this)">{{ old('purpose') }}</textarea>
+                <div class="flex justify-between items-center">
+                    <small class="text-gray-500">Minimum 100 caractères, Maximum 500 caractères</small>
+                    <small id="char-counter" class="text-gray-500">0/500</small>
+                </div>
+                <div id="purpose-error" class="text-red-500 hidden mt-1"></div>
+            </div>
+            <script>
+                // Initialize counter on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    updateCharCounter(textarea);
+                });
+
+                function updateCharCounter(textarea) {
+                    let charCount = textarea.value.length;
+                    const maxLength = 500;
+                    const minLength = 100;
+
+                    // Reject input beyond max length
+                    if (charCount > maxLength) {
+                        // Trim the text to max length
+                        textarea.value = textarea.value.substring(0, maxLength);
+                        charCount = maxLength;
+                    }
+
+                    const counterElement = document.getElementById('char-counter');
+                    counterElement.textContent = `${charCount}/${maxLength}`;
+
+                    // Update color based on character count
+                    if (charCount < minLength) {
+                        counterElement.classList.add('text-red-500');
+                        counterElement.classList.remove('text-gray-500', 'text-green-500', 'text-orange-500');
+                    } else if (charCount >= minLength && charCount <= maxLength - 50) {
+                        counterElement.classList.add('text-green-500');
+                        counterElement.classList.remove('text-gray-500', 'text-red-500', 'text-orange-500');
+                    } else if (charCount > maxLength - 50) {
+                        counterElement.classList.add('text-orange-500');
+                        counterElement.classList.remove('text-gray-500', 'text-red-500', 'text-green-500');
+                    }
+                }
+
+                // Prevent paste that exceeds max length
+                document.querySelector('textarea[name="purpose"]')?.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const currentText = this.value;
+                    const maxLength = 500;
+                    const remainingChars = maxLength - currentText.length;
+
+                    if (remainingChars > 0) {
+                        const textToPaste = pastedText.substring(0, remainingChars);
+                        this.value = currentText + textToPaste;
+                        updateCharCounter(this);
+                    }
+                });
+
+                // Validate on form submission
+                document.querySelector('#mainForm')?.addEventListener('submit', function(e) {
+                    const textarea = document.querySelector('textarea[name="purpose"]');
+                    const errorElement = document.getElementById('purpose-error');
+                    const charCount = textarea.value.length;
+                    const minLength = 100;
+                    const maxLength = 500;
+
+                    if (charCount < minLength) {
+                        e.preventDefault();
+                        errorElement.textContent = "Le texte doit contenir au moins 100 caractères.";
+                        errorElement.classList.remove('hidden');
+                        textarea.focus();
+                    } else if (charCount > maxLength) {
+                        e.preventDefault();
+                        errorElement.textContent = "Le texte ne peut pas dépasser 500 caractères.";
+                        errorElement.classList.remove('hidden');
+                        textarea.focus();
+                    } else {
+                        errorElement.classList.add('hidden');
+                    }
+                });
+            </script>
         </div>
         {{-- CONGE PENDANT MISSION --}}
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -126,8 +214,8 @@
         <div class="flex flex-wrap -mx-3 mb-2" id="conge_container" style="display: none;">
             <div class="w-1/2 px-3">
                 <textarea class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-1 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900"
-                        name="conge" value="{{ old('conge') }}"
-                        id="conge_input" disabled></textarea>
+                        name="conge"
+                        id="conge_input" disabled>{{ old('conge') }}</textarea>
             </div>
         </div>
         <script>
@@ -210,7 +298,7 @@
 
             <!-- Weekend Warning -->
             <div x-show="hasWeekend" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
-                <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motifs de la mission.</p>
+                <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motif de la mission.</p>
             </div>
 
             <!-- Hidden inputs for backend weekend data -->
@@ -661,22 +749,26 @@
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                                                                         <input type="checkbox" value="1"
                                                                                x-bind:name="`expenses[${index}][passenger]`"
-                                                                               x-model="expense.passenger">
+                                                                               x-model="expense.passenger"
+                                                                               :checked="expense.passenger === 1 || expense.passenger === true">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                                                                         <input type="checkbox" value="1"
                                                                                x-bind:name="`expenses[${index}][distance]`"
-                                                                               x-model="expense.distance">
+                                                                               x-model="expense.distance"
+                                                                               :checked="expense.distance === 1 || expense.distance === true">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                                                                         <input type="checkbox" value="1"
                                                                                x-bind:name="`expenses[${index}][material]`"
-                                                                               x-model="expense.material">
+                                                                               x-model="expense.material"
+                                                                               :checked="expense.material === 1 || expense.material === true">
                                                                     </td>
                                                                     <td class="py-2 text-center text-gray-600 border border-blue-600 text-xs">
                                                                         <input type="checkbox" value="1"
                                                                                x-bind:name="`expenses[${index}][visits]`"
-                                                                               x-model="expense.visits">
+                                                                               x-model="expense.visits"
+                                                                               :checked="expense.visits === 1 || expense.visits === true">
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -702,7 +794,7 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="au lieu de Frais d’receptions">au lieu de Frais d’receptions</option>
+                                                    <option value="Dépenses diverses">Dépenses diverses</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">
@@ -776,22 +868,35 @@
                         }
                     },
 
+                     normalizeCheckboxValues(expenses) {
+                        // Convert checkbox values from "1"/"0"/null to boolean
+                        return expenses.map(expense => ({
+                            ...expense,
+                            passenger: expense.passenger == 1 || expense.passenger === true,
+                            distance: expense.distance == 1 || expense.distance === true,
+                            material: expense.material == 1 || expense.material === true,
+                            visits: expense.visits == 1 || expense.visits === true
+                        }));
+                    },
+
                     init() {
                         // Initialize with old input if available
                         @if (old('expenses'))
-                            this.expenses = @json(old('expenses'));
+                            const oldExpenses = @json(old('expenses'));
+                            this.expenses = this.normalizeCheckboxValues(oldExpenses);
+                            console.log('Loaded from old:', this.expenses);
                         @else
-                            this.expenses = [];
-                            // this.expenses = [{
-                            //     type: '',
-                            //     description: '',
-                            //     transport_type: '',
-                            //     meal_location: '',
-                            //     passenger: false,
-                            //     distance: false,
-                            //     material: false,
-                            //     visits: false
-                            // }];
+                            // Default empty state - add one empty expense row
+                            this.expenses = [{
+                                type: '',
+                                description: '',
+                                transport_type: '',
+                                meal_location: '',
+                                passenger: false,
+                                distance: false,
+                                material: false,
+                                visits: false
+                            }];
                         @endif
                     }
                 }));

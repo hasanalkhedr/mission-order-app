@@ -69,7 +69,7 @@
         <div class="flex flex-wrap -mx-3 mb-2">
             <div class="w-full px-3">
                 <x-label>
-                    Objet/Motfits
+                    Objet/Motif
                 </x-label>
                 <textarea rows="2" readonly
                     class="appearance-none block w-full bg-white text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none border border-blue-700 focus:bg-white focus:border-blue-900">{{ $tournee->purpose }}</textarea>
@@ -142,7 +142,7 @@
         </div>
         @if($tournee->has_weekend)
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
-            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motifs de la mission.</p>
+            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motif de la mission.</p>
         </div>
         @endif
         <script>

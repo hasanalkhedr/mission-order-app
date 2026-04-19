@@ -42,7 +42,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="w-1/5">Objet/Motfits:</td>
+                    <td class="w-1/5">Objet/Motif:</td>
                     <td class="w-4/5">{{ $tournee->purpose }}</td>
                 </tr>
                 @if($tournee->conge)
@@ -109,9 +109,8 @@
                 <tr>
                     <td class="w-full">
                         {{ $tournee->bareme->pays }}
-                        (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }}
-                        / Repas:{{ $tournee->bareme->meal_cost }} /
-                        Hebergement:{{ $tournee->bareme->accomodation_cost }})
+                        (Montant:{{ $tournee->bareme->pays_per_day . ' ' . $tournee->bareme->currency }}:
+                         Repas:{{ $tournee->bareme->meal_cost }} - Hebergement:{{ $tournee->bareme->accomodation_cost }})
                     </td>
                 </tr>
             </tbody>
@@ -125,7 +124,7 @@
             <tbody>
                 <tr>
                     <td class="w-5/6">Demande d'avance:</td>
-                    <td class="w-1/6">{{ $tournee->advance >0 ? $tournee->advance : 'NON' }}</td>
+                    <td class="w-1/6">{{ $tournee->advance >0 ? number_format($tournee->advance,2,'.',' ') : 'NON' }}</td>
                 </tr>
                 <tr>
                     <td class="w-5/6">Prise en charge des frais de transport (Avion, Train):</td>
@@ -159,10 +158,10 @@
                 <tr>
                     <td class="w-full">
                         <div class="flex flex-col">
-                            <div class="-m-1.5 overflow-x-auto">
-                                <div class="p-[2px] min-w-full inline-block align-middle">
+                            <div class="overflow-x-auto">
+                                <div class="w-full inline-block align-middle">
                                     <div class="overflow-hidden">
-<table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+<table class="w-full divide-y divide-gray-200 border border-gray-300">
     <thead>
         <tr>
             <th scope="col"

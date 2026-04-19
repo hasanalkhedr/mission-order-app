@@ -109,7 +109,14 @@ class TourneeController extends Controller
             'destinations.*.departure_location' => 'required|string',
             'destinations.*.arrive_location' => 'required|string',
             'destinations.*.start_date' => 'required|date',
-            'destinations.0.start_date' => 'required|date|after:'.now()->addDays(2),
+            //'destinations.0.start_date' => 'required|date|after:'.now()->addDays(2),
+
+            'destinations.0.start_date' => ['required', 'date', function ($attribute, $value, $fail) {
+                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+                if ($value < $minDate) {
+                    $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
+                }
+            }],
             'destinations.*.start_time' => 'required',
             'destinations.*.end_date' => 'required|date',
             'destinations.*.end_time' => 'required',
@@ -132,7 +139,7 @@ class TourneeController extends Controller
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
-                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal,2,'.',' ') . " Roupie indienne (INR))");
                     }
                 }
             ],
@@ -228,6 +235,14 @@ class TourneeController extends Controller
             'destinations.*.departure_location' => 'required|string',
             'destinations.*.arrive_location' => 'required|string',
             'destinations.*.start_date' => 'required|date',
+            //'destinations.0.start_date' => 'required|date|after:'.now()->addDays(2),
+
+            'destinations.0.start_date' => ['required', 'date', function ($attribute, $value, $fail) {
+                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+                if ($value < $minDate) {
+                    $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
+                }
+            }],
             'destinations.*.start_time' => 'required',
             'destinations.*.end_date' => 'required|date',
             'destinations.*.end_time' => 'required',
@@ -250,7 +265,7 @@ class TourneeController extends Controller
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
                     if ($value > $maxAdvanceInLocal) {
-                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal, 2) . " Roupie indienne (INR))");
+                        $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal,2,'.',' ') . " Roupie indienne (INR))");
                     }
                 }
             ],
@@ -469,7 +484,7 @@ class TourneeController extends Controller
     public function m_create(Request $request, Tournee $tournee)
     {
         //if($tournee->end_date <= now()) {
-            $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? now());
+            $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? $tournee->end_date);
             if($current_rate) {
                 return view('tournees.m_create', compact('tournee', 'current_rate'));
             } else {
