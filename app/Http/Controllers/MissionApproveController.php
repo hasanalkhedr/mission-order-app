@@ -19,6 +19,15 @@ class MissionApproveController extends Controller
     {
         $action = $request->input('action');
         $newStatus = '';
+        $approval_role = '';
+        switch($missionOrder->status) {
+            case 'sup_approve' :
+                $approval_role = 'Chef de Service';
+                break;
+            case 'sg_approve' :
+                $approval_role = 'Ordonnateur';
+                break;
+        }
         switch ($action) {
             case 'review':
                 $newStatus = 'draft';
@@ -40,7 +49,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',', auth()->user()->employee->getRoles()),
+            'approval_role' => $approval_role,
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -72,6 +81,15 @@ class MissionApproveController extends Controller
     {
         $action = $request->input('action');
         $newStatus = '';
+        $approval_role = '';
+        switch($missionOrder->memor_status) {
+            case 'controller_approve' :
+                $approval_role = 'Gestionnaire';
+                break;
+            case 'sg_approve' :
+                $approval_role = 'Ordonnateur';
+                break;
+        }
         switch ($action) {
             case 'review':
                 $newStatus = 'draft';
@@ -94,7 +112,7 @@ class MissionApproveController extends Controller
         $missionApprove = MissionApprove::create([
             'mission_order_id' => $missionOrder->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',', auth()->user()->employee->getRoles()),
+            'approval_role' => $approval_role,
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);

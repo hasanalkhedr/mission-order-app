@@ -132,17 +132,23 @@ class MissionOrderController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2);
-                    $diffDays = abs($end->diffInDays($start));
+                    // Set India timezone
+                    $indiaTimezone = 'Asia/Kolkata';
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2, $indiaTimezone);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2, $indiaTimezone);
+                    // Reset to start of day for accurate date-only comparison
+                    $startDateOnly = $start->copy()->startOfDay();
+                    $endDateOnly = $end->copy()->startOfDay();
+
+                    // Calculate full calendar days difference (integer)
+                    $diffDays = abs($endDateOnly->diffInDays($startDateOnly));
                     $totalDays = $diffDays;
-                    // Add extra day if start time is before 5 AM
                     if ($start->hour < 5) {
                         $totalDays += 1;
                     }
                     $maxAdvance = $totalDays * $bareme->accomodation_cost * 0.75;
                     $maxAdvanceInLocal = $maxAdvance / (ChancelleryRate::currentRate() ? ChancelleryRate::currentRate()->eur_rate : 1);
-                    if ($value > $maxAdvanceInLocal) {
+                    if ($value > $maxAdvanceInLocal+1) {
                         $fail("Le montant dépasse 75% du total hébergement (max: " . number_format($maxAdvanceInLocal,2,'.',' ') . " Roupie indienne (INR))");
                     }
                 }
@@ -262,12 +268,17 @@ class MissionOrderController extends Controller
                 'min:0',
                 function ($attribute, $value, $fail) use ($request, $missionOrder) {
                     $bareme = Bareme::find($request->bareme_id);
-                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2);
-                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2);
-                    // Calculate full calendar days difference
-                    $diffDays = abs($end->diffInDays($start));
+                    // Set India timezone
+                    $indiaTimezone = 'Asia/Kolkata';
+                    $start = Carbon::parse($request->start_date . ' ' . $request->start_time2, $indiaTimezone);
+                    $end = Carbon::parse($request->end_date . ' ' . $request->end_time2, $indiaTimezone);
+                    // Reset to start of day for accurate date-only comparison
+                    $startDateOnly = $start->copy()->startOfDay();
+                    $endDateOnly = $end->copy()->startOfDay();
+
+                    // Calculate full calendar days difference (integer)
+                    $diffDays = abs($endDateOnly->diffInDays($startDateOnly));
                     $totalDays = $diffDays;
-                    // Add extra day if start time is before 5 AM
                     if ($start->hour < 5) {
                         $totalDays += 1;
                     }
@@ -313,7 +324,7 @@ class MissionOrderController extends Controller
         $advance = $request->advance ? $request->advance : 0;
         $missionOrder->update(array_merge(
             $request->except(['advance']),
-            ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]
+            ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance, 'order_date' => now()]
         ));
 
         $expenses = $request->input('expenses') ?? [];

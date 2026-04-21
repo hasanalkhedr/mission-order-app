@@ -291,7 +291,7 @@ class TourneeController extends Controller
             }
         }
         $advance = $request->advance ? $request->advance : 0;
-        $tournee->update(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance]));
+        $tournee->update(array_merge($request->except(['advance']), ['status' => $status, 'advance' => $advance, 'order_date' => now()]));
 
         // Get existing destination IDs
         $existingIds = $tournee->tourneeDestinations()->pluck('id')->toArray();

@@ -19,6 +19,15 @@ class TourneeApproveController extends Controller
     {
         $action = $request->input('action');
         $newStatus = '';
+        $approval_role = '';
+        switch($tournee->status) {
+            case 'sup_approve' :
+                $approval_role = 'Chef de Service';
+                break;
+            case 'sg_approve' :
+                $approval_role = 'Ordonnateur';
+                break;
+        }
         switch ($action) {
             case 'review':
                 $newStatus = 'draft';
@@ -40,7 +49,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->getRoles()) ,
+            'approval_role' => $approval_role ,
             'comment' => $request->input('comment'),
             'status' => $newStatus,
         ]);
@@ -73,6 +82,15 @@ class TourneeApproveController extends Controller
     {
         $action = $request->input('action');
         $newStatus = '';
+        $approval_role = '';
+        switch($tournee->memor_status) {
+            case 'controller_approve' :
+                $approval_role = 'Gestionnaire';
+                break;
+            case 'sg_approve' :
+                $approval_role = 'Ordonnateur';
+                break;
+        }
         switch ($action) {
             case 'review':
                 $newStatus = 'draft';
@@ -95,7 +113,7 @@ class TourneeApproveController extends Controller
         $tourneeApprove = TourneeApprove::create([
             'tournee_id' => $tournee->id,
             'approval_id' => auth()->user()->employee->id,
-            'approval_role' => implode(',',auth()->user()->employee->getRoles()) ,
+            'approval_role' => $approval_role ,
             'comment' => $request->input('comment'),
             'memor_status' => $newStatus,
         ]);
