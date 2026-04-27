@@ -2,7 +2,7 @@
 @section('title', $tournee->order_number . '-' . $tournee->employee->first_name . ' ' . $tournee->employee->last_name)
 @section('content')
 <div id="report-content">
-    <div class="report-page" style="width: 210mm; height: 297mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
+    <div class="report-page" style="width: 210mm; height: 290mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
         <!-- Header -->
         <div class="flex justify-between items-start mb-2">
             <x-application-logo class="h-16" />
@@ -482,7 +482,7 @@
     </div>
 
     <!-- OM REPORT -->
-    <div class="report-page" style="width: 210mm; height: 297mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
+    <div class="report-page" style="width: 210mm; height: 290mm; margin: 0 auto; padding: 8mm; box-sizing: border-box;">
         <!-- Header -->
         <div class="flex justify-between items-start mb-2">
             <x-application-logo class="h-16" />
@@ -1099,10 +1099,10 @@
                 filename: `Mémoire-{{ $tournee->order_number }}-{{ $tournee->employee->first_name }}_{{ $tournee->employee->last_name }}.pdf`,
                 image: {
                     type: 'jpeg',
-                    quality: 0.98
+                    quality: 1
                 },
                 html2canvas: {
-                    scale: 1.7,
+                    scale: 2,
                     useCORS: true,
                     allowTaint: true,
                     scrollX: 0,
