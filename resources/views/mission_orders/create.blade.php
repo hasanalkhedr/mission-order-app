@@ -622,6 +622,8 @@
                                                     <x-select-input x-bind:name="`expenses[${index}][transport_type]`" x-model="expense.transport_type" required x-on:change="handleTransportTypeChange(index)">
                                                         <option value="">--sélectionner--</option>
                                                         <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                                        <option value="Transport Avion">Transport Avion</option>
+                                                        <option value="Transport en commun / Taxi(uber)">Transport en commun / Taxi(uber)</option>
                                                         <option value="autre">autre</option>
                                                     </x-select-input>
                                                     <div x-show="expense.transport_type === 'car_rental_with_driver'" x-transition class="mt-4 p-3 border border-blue-200 rounded bg-blue-50">

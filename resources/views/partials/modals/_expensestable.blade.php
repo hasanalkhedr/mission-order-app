@@ -504,17 +504,26 @@
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                         <input type="number" name="expenses[{{ $index }}][direct_amount]"
                                             value="{{ $expense->direct_amount }}" step="0.01" min="0"
-                                            class="direct-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm"
-                                            data-currency="INR">
+                                            class="direct-input w-full px-2 py-1 border border-gray-300 rounded-md text-sm
+                                            {{ $expense->transport_type === 'Transport en commun / Taxi(uber)' ? 'bg-gray-200' : '' }}"
+                                            data-currency="INR"
+                                            {{ $expense->transport_type === 'Transport en commun / Taxi(uber)' ? 'disabled' : '' }}>
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm text-gray-800">
                                         <select name="expenses[{{ $index }}][direct_currency]"
+                                            {{ $expense->transport_type === 'Transport en commun / Taxi(uber)' ? 'disabled' : '' }}
                                             class="direct-currency currency-select w-full px-2 py-1 border border-gray-300 rounded-md text-sm">
                                             <option value="INR" @selected($expense->reimbursement_currency === 'INR')>INR</option>
                                             <option value="EUR" @selected($expense->reimbursement_currency === 'EUR')>EUR</option>
                                             {{-- <option value="USD" @selected($expense->reimbursement_currency === 'USD')>USD</option> --}}
                                         </select>
+                                        @if($expense->transport_type === 'Transport en commun / Taxi(uber)')
+                                            <input type="hidden" name="expenses[{{ $index }}][direct_amount]"
+                                            value="0">
+                                            <input type="hidden" name="expenses[{{ $index }}][direct_currency]"
+                                            value="INR">
+                                        @endif
                                     </td>
                                     <td
                                         class="px-3 py-2 text-center border border-gray-200 whitespace-nowrap text-sm font-medium text-gray-800 total-td">
@@ -561,10 +570,12 @@
                             @endforeach
 
                             <!-- Other Expenses Header -->
+                            @if($missionOrder->expenses->whereIn('type', ['visa', 'Receptions', 'other'])->count() > 0)
                             <tr>
                                 <td colspan="8" class="px-3 py-2 bg-blue-800 text-center font-bold text-white">
                                     AUTRES DEPENSES</td>
                             </tr>
+                            @endif
 
                             <!-- Other Expenses -->
                             @foreach ($missionOrder->expenses->whereIn('type', ['visa', 'Receptions', 'other']) as $expense)
@@ -1131,7 +1142,6 @@
                                     const rate = parseFloat(eurToInrInput.value);
                                     return (isNaN(rate) || !isFinite(rate)) ? 1 : rate;
                                     })();
-console.log("EURRATE: ", eurRate);
                                 // Calculate reimbursement amount
                                 const reimbursementAmount = noMeals * mealCost / eurRate;
 

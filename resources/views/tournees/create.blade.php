@@ -718,6 +718,8 @@
                                                         <option value="taxi_uber">Taxi/Uber</option>
                                                         <option value="public_transport">Transport public</option> --}}
                                                         <option value="car_rental_with_driver">Location de voiture avec chauffeur</option>
+                                                        <option value="Transport Avion">Transport Avion</option>
+                                                        <option value="Transport en commun / Taxi(uber)">Transport en commun / Taxi(uber)</option>
                                                         <option value="autre">autre</option>
                                                     </x-select-input>
 

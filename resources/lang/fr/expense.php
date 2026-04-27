@@ -12,5 +12,7 @@ return [
         'car_rental_with_driver' => 'Location de voiture avec chauffeur',
         'other' => 'autre',
         'autre' => 'autre',
+        'Transport Avion' => 'Transport Avion',
+        'Transport en commun / Taxi(uber)' => 'Transport en commun / Taxi(uber)',
     ],
 ];
