@@ -685,7 +685,7 @@ class MissionOrderController extends Controller
     public function m_report(Request $request, MissionOrder $missionOrder)
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
-        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date);
+        $current_rate = ChancelleryRate::rateOfDate($missionOrder->memor_date ?? $missionOrder->end_date);
         if ($current_rate) {
             return view('mission_orders.memoire_report', compact('missionOrder', 'director', 'current_rate'));
         } else {

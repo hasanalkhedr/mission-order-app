@@ -672,7 +672,7 @@ class TourneeController extends Controller
     public function m_report(Request $request, Tournee $tournee)
     {
         $director = Employee::whereJsonContains('roles', 'sg')->first();
-        $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date);
+        $current_rate = ChancelleryRate::rateOfDate($tournee->memor_date ?? $tournee->end_date);
         if($current_rate) {
             return view('tournees.memoire_report', compact('tournee', 'director', 'current_rate'));
         } else {
