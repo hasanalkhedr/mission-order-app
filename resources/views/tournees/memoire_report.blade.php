@@ -7,7 +7,7 @@
         <div class="flex justify-between items-start mb-2">
             <x-application-logo class="h-16" />
             <div class="text-right">
-                <p>New Delhi, {{ $tournee->memor_date->format('d/m/Y') }}</p>
+                <p>New Delhi, {{ $tournee->memor_date ? $tournee->memor_date->format('d/m/Y') : $tournee->end_date->format('d/m/Y') }}</p>
             </div>
         </div>
 
