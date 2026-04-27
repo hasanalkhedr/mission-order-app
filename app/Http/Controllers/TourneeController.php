@@ -184,6 +184,42 @@ class TourneeController extends Controller
                 ]
             ));
         }
+
+        TourneeExpense::create(
+                [
+                    'amount' => 0,
+                    'currency' => 'INR',
+                    'expense_date' => $tournee->firstDestination->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $tournee->id,
+                    'description' => '',
+                    'type' => 'transport',
+                    'transport_type' => 'Transport Avion',
+                    'reimbursement_amount' => 0,
+                    'reimbursement_currency' => 0,
+                    'direct_amount' => 0,
+                    'direct_currency' => 0,
+                    'total_inr' => 0,
+                ]
+            );
+
+        TourneeExpense::create(
+                [
+                    'amount' => 0,
+                    'currency' => 'INR',
+                    'expense_date' => $tournee->firstDestination->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $tournee->id,
+                    'description' => '',
+                    'type' => 'transport',
+                    'transport_type' => 'Transport en commun / Taxi(uber)',
+                    'reimbursement_amount' => 0,
+                    'reimbursement_currency' => 0,
+                    'direct_amount' => 0,
+                    'direct_currency' => 0,
+                    'total_inr' => 0,
+                ]
+            );
         $notification = new TourneeLevelNotification($tournee);
         switch ($tournee->status) {
             case 'sup_approve':

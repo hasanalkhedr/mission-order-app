@@ -202,6 +202,43 @@ class MissionOrderController extends Controller
                 ]
             ));
         }
+
+        Expense::create(
+                [
+                    'amount' => 0,
+                    'currency' => 'INR',
+                    'expense_date' => $missionOrder->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $missionOrder->id,
+                    'description' => '',
+                    'type' => 'transport',
+                    'transport_type' => 'Transport Avion',
+                    'reimbursement_amount' => 0,
+                    'reimbursement_currency' => 0,
+                    'direct_amount' => 0,
+                    'direct_currency' => 0,
+                    'total_inr' => 0,
+                ]
+            );
+
+        Expense::create(
+                [
+                    'amount' => 0,
+                    'currency' => 'INR',
+                    'expense_date' => $missionOrder->start_date,
+                    'expense_document' => '',
+                    'mission_order_id' => $missionOrder->id,
+                    'description' => '',
+                    'type' => 'transport',
+                    'transport_type' => 'Transport en commun / Taxi(uber)',
+                    'reimbursement_amount' => 0,
+                    'reimbursement_currency' => 0,
+                    'direct_amount' => 0,
+                    'direct_currency' => 0,
+                    'total_inr' => 0,
+                ]
+            );
+
         $notification = new MissionOrderLevelNotification($missionOrder);
         switch ($missionOrder->status) {
             case 'sup_approve':

@@ -173,7 +173,7 @@
         </tr>
     </thead>
     <tbody>
-        @forelse ($tournee->expenses as $expense)
+        @forelse ($tournee->expenses->whereNotIn('transport_type', ['Transport Avion', 'Transport en commun / Taxi(uber)']) as $expense)
             <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                 <td
                     class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">

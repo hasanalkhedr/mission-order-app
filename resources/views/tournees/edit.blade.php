@@ -707,7 +707,7 @@
 
         {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
-        <div class="flex flex-col" x-data="expensesManager({{ $tournee->expenses->toJson() }})">
+        <div class="flex flex-col" x-data="expensesManager({{ $tournee->expenses->whereNotIn('transport_type', ['Transport Avion', 'Transport en commun / Taxi(uber)'])->toJson() }})">
             <div class="-m-1.5 overflow-x-auto">
                 <div class="p-1.5 min-w-full inline-block align-middle">
                     <div class="overflow-hidden">
