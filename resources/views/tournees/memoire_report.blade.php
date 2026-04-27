@@ -451,7 +451,7 @@
                 </tr>
                 <tr>
                     <td class="w-1/3 px-2 py-[1px]">
-                        <span class="font-light text-md text-center">{{$tournee->memor_date->format('d/m/Y')}}</span>
+                        <span class="font-light text-md text-center">{{$tournee->memor_date ? $tournee->memor_date->format('d/m/Y') : $tournee->end_date->format('d/m/Y')}}</span>
                     </td>
                     <td class="w-1/3 px-2 py-[1px]">
                         <span class="font-light text-md text-center">
