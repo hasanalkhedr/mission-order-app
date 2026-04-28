@@ -524,13 +524,13 @@
 
             const defaultOptions = {
                 margin: 1,
-                filename: `Mémoire-{{ $tournee->order_number }}-{{ $tournee->employee->first_name }}_{{ $tournee->employee->last_name }}.pdf`,
+                filename: `Tournee-{{ $tournee->order_number }}-{{ $tournee->employee->first_name }}_{{ $tournee->employee->last_name }}.pdf`,
                 image: {
                     type: 'jpeg',
                     quality: 1
                 },
                 html2canvas: {
-                    scale: 2,
+                    scale: 3,
                     useCORS: true,
                     allowTaint: true,
                     scrollX: 0,
@@ -569,28 +569,53 @@
             // Open in new tab
             const newTab = window.open(blobUrl, '_blank');
 
-            // Set the filename for download by adding a suggested filename to the blob URL
-            // Note: This approach may not work in all browsers
             if (newTab) {
-                // Alternative approach: Use download attribute in an iframe
+                    // Add download functionality to the new window
+                    newTab.addEventListener('load', function() {
+                        // Create a download button in the new window
+                        const downloadBtn = newTab.document.createElement('button');
+                        downloadBtn.textContent = 'Download PDF';
+                        downloadBtn.style.cssText = `
+                            position: fixed;
+                            top: 10px;
+                            left: 25%;
+                            transform: translateX(-75%);
+                            z-index: 9999;
+                            padding: 10px 20px;
+                            background: #007bff;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        `;
+
+                        downloadBtn.onclick = function() {
+                            const downloadLink = newTab.document.createElement('a');
+                            downloadLink.href = blobUrl;
+                            downloadLink.download = filename;
+                            downloadLink.style.display = 'none';
+                            newTab.document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            newTab.document.body.removeChild(downloadLink);
+                        };
+
+                        newTab.document.body.appendChild(downloadBtn);
+                    });
+                }
+
+                // Clean up the blob URL after a reasonable time
                 setTimeout(() => {
-                    const iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = blobUrl;
-                    iframe.setAttribute('download', filename);
-                    document.body.appendChild(iframe);
-                    setTimeout(() => {
-                        document.body.removeChild(iframe);
-                    }, 100);
-                }, 1000);
-            }
+                    URL.revokeObjectURL(blobUrl);
+                }, 30000);
 
-            // Clean up the blob URL after some time
-            setTimeout(() => {
-                URL.revokeObjectURL(blobUrl);
-            }, 5000);
+                updateProgress(100, "Done!");
 
-            updateProgress(100, "Done!");
+                // Keep success message for a moment
+                setTimeout(() => {
+                    updateProgress(0, "");
+                }, 2000);
         } catch (error) {
             console.error("PDF generation failed:", error);
             updateProgress(0, "Failed to generate PDF");
