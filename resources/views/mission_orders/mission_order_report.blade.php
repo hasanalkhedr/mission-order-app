@@ -577,7 +577,7 @@
                     newTab.addEventListener('load', function() {
                         // Create a download button in the new window
                         const downloadBtn = newTab.document.createElement('button');
-                        downloadBtn.textContent = 'Download PDF';
+                        downloadBtn.textContent = 'Télécharger le PDF';
                         downloadBtn.style.cssText = `
                             position: fixed;
                             top: 10px;
