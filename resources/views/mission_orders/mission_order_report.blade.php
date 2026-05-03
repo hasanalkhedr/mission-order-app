@@ -138,6 +138,12 @@
                         <td class="w-5/6">Prise en charge frais de repas:</td>
                         <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
+                    @if ($missionOrder->repas == 1)
+                    <tr>
+                        <td class="w-5/6">Joindre un document justificatif pour les OM:</td>
+                        <td class="w-1/6">{{ $missionOrder->needs_document == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    @endif
                     {{-- <tr>
                     <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
                 </tr> --}}
@@ -305,6 +311,40 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Document Page -->
+        @if ($missionOrder->autre_document && $missionOrder->needs_document == 1)
+        <div class="report-page" style="width: 210mm; height: 290mm; margin: 0 auto; padding: 8mm; box-sizing: border-box; page-break-before: always;">
+            <!-- Header -->
+            {{-- <div class="flex justify-between items-start mb-2">
+                <x-application-logo class="h-16" />
+                <div class="text-right">
+                    <p>New Delhi, {{ $missionOrder->order_date->format('d/m/Y') }}</p>
+                </div>
+            </div> --}}
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-center mb-4">DOCUMENT JUSTIFICATIF POUR LES OM</h1>
+            {{-- <h2 class="text-xl font-bold text-center mb-4">ORDRE DE MISSION {{ $missionOrder->order_number }}</h2>
+            <p class="text-center mb-4">Agent: {{ $missionOrder->employee->first_name }} {{ $missionOrder->employee->last_name }}</p> --}}
+
+            <!-- Document Display -->
+            <div class="flex flex-col items-center justify-center" style="min-height: 180mm;">
+                @if (pathinfo($missionOrder->autre_document, PATHINFO_EXTENSION) === 'pdf')
+                    <!-- PDF Document -->
+                    <div id="pdf-viewer-autre-document" class="w-full" style="height: 180mm;">
+                        {{-- <canvas id="pdf-canvas-autre-document" class="w-full h-auto border border-gray-300"></canvas> --}}
+                    </div>
+                @else
+                    <!-- Image Document -->
+                    <div class="w-full flex justify-center">
+                        <img src="{{ asset('storage/' . $missionOrder->autre_document) }}"
+                             alt="Document justificatif"
+                             class="max-w-full max-h-[180mm] object-contain border border-gray-300">
+                    </div>
+                @endif
+            </div>
+        </div>
+        @endif
     </div>
     <!-- Action Buttons -->
     <div class="flex justify-center items-center p-6 space-x-2 rounded-b border-t border-gray-200">
@@ -472,6 +512,14 @@
                 );
             @endif
         @endforeach
+
+        // Initialize autre_document PDF viewer if it exists and is a PDF
+        @if ($missionOrder->autre_document && pathinfo($missionOrder->autre_document, PATHINFO_EXTENSION) === 'pdf')
+            renderPDF(
+                "{{ asset('storage/' . $missionOrder->autre_document) }}",
+                "pdf-viewer-autre-document"
+            );
+        @endif
     });
 
     document.getElementById("download-pdf").addEventListener("click", async function() {

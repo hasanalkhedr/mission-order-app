@@ -2,7 +2,7 @@
 @section('title', __('Edit Mission'))
 @section('content')
     <h2 class="text-2xl font-bold mb-6 text-blue-700">Edit Mission Order</h2>
-    <form id="mainForm" action="{{ route('mission_orders.update', $missionOrder->id) }}" method="POST" class="w-full">
+    <form id="mainForm" action="{{ route('mission_orders.update', $missionOrder->id) }}" method="POST" class="w-full" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="flex flex-wrap -mx-3 mb-2">
@@ -604,6 +604,41 @@
             </div>
         </div>
 
+        <!-- Document Upload Section for Meals -->
+        <div class="flex flex-wrap -mx-3 mb-2" id="autre_document_section" style="display: none;">
+            <div class="w-full px-3 py-1">
+                <x-label class="w-1/2 inline-flex">
+                    Joindre un document justificatif pour les OM
+                </x-label>
+                <input type="radio" value="1" name="needs_document" id="needs_document_yes"
+                    @checked(old('needs_document', $missionOrder->needs_document ?? 0) > 0)
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium mr-5 text-blue-400 dark:text-gray-500">OUI</label>
+                <input type="radio" value="0" name="needs_document" id="needs_document_no"
+                    @checked(old('needs_document', $missionOrder->needs_document ?? 0) == 0)
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border border-blue-700 focus:ring-blue-500 dark:focus:ring-blue-600 mr-0 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label class="ms-1 text-sm font-medium text-blue-400 dark:text-gray-500 mr-10">NON</label>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap -mx-3 mb-2" id="meal_file_container" style="display: none;">
+            <div class="w-full px-3">
+                <x-label>
+                    Document justificatif (PDF, JPG, PNG)
+                </x-label>
+                <input type="file" name="autre_document" id="autre_document_input"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    class="appearance-none block w-full bg-white text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-blue-900">
+                <small class="text-gray-500">Formats acceptés: PDF, JPG, PNG (Taille max: 5MB)</small>
+                @if($missionOrder->autre_document)
+                    <p class="text-sm text-green-600 mt-1">Document actuel: <a href="{{ asset('storage/' . $missionOrder->autre_document) }}" target="_blank" class="text-blue-600 hover:underline">Voir le document</a></p>
+                @endif
+                @if(old('autre_document'))
+                    <p class="text-sm text-green-600 mt-1">Fichier déjà téléchargé: {{ old('autre_document') }}</p>
+                @endif
+            </div>
+        </div>
+
         {{-- Pre Expenses --}}
         <x-form-divider>Dépenses prévues supplémentaires</x-form-divider>
         <div class="flex flex-col" x-data="expensesManager({{ $missionOrder->expenses->whereNotIn('transport_type', ['Transport Avion', 'Transport en commun / Taxi(uber)'])->toJson() }})">
@@ -728,7 +763,7 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Dépenses diverses">Dépenses diverses</option>
+                                                    <option value="Sur lieu de mission">Sur lieu de mission</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">
@@ -841,6 +876,81 @@
                     }
                 }));
             });
+
+        // Document upload functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const repasRadios = document.querySelectorAll('input[name="repas"]');
+            const autreDocumentSection = document.getElementById('autre_document_section');
+            const mealFileContainer = document.getElementById('meal_file_container');
+            const needsDocumentRadios = document.querySelectorAll('input[name="needs_document"]');
+            const autreDocumentInput = document.getElementById('autre_document_input');
+
+            function toggleAutreDocumentSection() {
+                const repasSelected = document.querySelector('input[name="repas"]:checked')?.value;
+
+                if (repasSelected === '1') {
+                    autreDocumentSection.style.display = 'flex';
+                    // If document radio was previously selected as OUI, show file input
+                    const documentSelected = document.querySelector('input[name="needs_document"]:checked')?.value;
+                    if (documentSelected === '1') {
+                        mealFileContainer.style.display = 'flex';
+                    }
+                } else {
+                    autreDocumentSection.style.display = 'none';
+                    mealFileContainer.style.display = 'none';
+                    // Reset to NON when repas is NO
+                    document.getElementById('needs_document_no').checked = true;
+                    autreDocumentInput.value = '';
+                }
+            }
+
+            function toggleMealFileContainer() {
+                const documentSelected = document.querySelector('input[name="needs_document"]:checked')?.value;
+
+                if (documentSelected === '1') {
+                    mealFileContainer.style.display = 'flex';
+                    autreDocumentInput.required = true;
+                } else {
+                    mealFileContainer.style.display = 'none';
+                    autreDocumentInput.required = false;
+                    autreDocumentInput.value = '';
+                }
+            }
+
+            // Initialize state
+            toggleAutreDocumentSection();
+
+            // Add event listeners
+            repasRadios.forEach(radio => {
+                radio.addEventListener('change', toggleAutreDocumentSection);
+            });
+
+            needsDocumentRadios.forEach(radio => {
+                radio.addEventListener('change', toggleMealFileContainer);
+            });
+
+            // File validation
+            autreDocumentInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB max)
+                    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                    if (file.size > maxSize) {
+                        alert('Le fichier est trop volumineux. Taille maximale autorisée: 5MB');
+                        e.target.value = '';
+                        return;
+                    }
+
+                    // Check file type
+                    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Type de fichier non autorisé. Formats acceptés: PDF, JPG, PNG');
+                        e.target.value = '';
+                        return;
+                    }
+                }
+            });
+        });
         </script>
 
         <x-form-divider>Observations</x-form-divider>

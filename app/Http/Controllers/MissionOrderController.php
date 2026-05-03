@@ -159,7 +159,9 @@ class MissionOrderController extends Controller
             'repas' => 'required',
             'endMission_location' => 'nullable',
             'start_time2' => 'nullable|date_format:H:i',
-            'end_time2' => 'nullable|date_format:H:i'
+            'end_time2' => 'nullable|date_format:H:i',
+            'needs_document' => 'nullable|boolean',
+            'autre_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,PNG,PDF,JPG,JPEG|max:5120'
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -188,7 +190,23 @@ class MissionOrderController extends Controller
             }
         }
         $advance = $request->advance ? $request->advance : 0;
-        $missionOrder = MissionOrder::create(array_merge($request->except(['advance']), ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance,]));
+
+        // Handle autre_document file upload
+        $otherDocumentPath = null;
+        if ($request->hasFile('autre_document') && $request->input('needs_document') == '1') {
+            $file = $request->file('autre_document');
+            $otherDocumentPath = $file->store('mission-order-documents', 'public');
+        }
+
+        $missionOrder = MissionOrder::create(array_merge(
+            $request->except(['advance', 'autre_document']),
+            [
+                'budget_text' => $budget_text,
+                'status' => $status,
+                'advance' => $advance,
+                'autre_document' => $otherDocumentPath
+            ]
+        ));
         $expenses = $request->input('expenses') ?? [];
         foreach ($expenses as $expense) {
             Expense::create(array_merge(
@@ -331,6 +349,8 @@ class MissionOrderController extends Controller
             'expenses.*.type' => 'nullable|string|in:transport,visa,Receptions,extra_meal,other',
             'expenses.*.description' => 'nullable|string',
             'repas' => 'required',
+            'needs_document' => 'nullable|boolean',
+            'autre_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png,PNG,PDF,JPG,JPEG|max:5120'
         ]);
         $ids = array_column(Bareme::where('pays', 'like', '%France%')->get('id')->toArray(), 'id');
         $bareme_id = $request->input('bareme_id');
@@ -359,9 +379,33 @@ class MissionOrderController extends Controller
             }
         }
         $advance = $request->advance ? $request->advance : 0;
+
+        // Handle autre_document file upload
+        $autreDocumentPath = $missionOrder->autre_document; // Keep existing document
+        if ($request->hasFile('autre_document') && $request->input('needs_document') == '1') {
+            // Delete old file if it exists
+            if ($missionOrder->autre_document) {
+                Storage::disk('public')->delete($missionOrder->autre_document);
+            }
+            $file = $request->file('autre_document');
+            $autreDocumentPath = $file->store('mission-order-documents', 'public');
+        } elseif ($request->input('needs_document') == '0') {
+            // If needs_document is set to NO, remove the document
+            if ($missionOrder->autre_document) {
+                Storage::disk('public')->delete($missionOrder->autre_document);
+            }
+            $autreDocumentPath = null;
+        }
+
         $missionOrder->update(array_merge(
-            $request->except(['advance']),
-            ['budget_text' => $budget_text, 'status' => $status, 'advance' => $advance, 'order_date' => now()]
+            $request->except(['advance', 'autre_document']),
+            [
+                'budget_text' => $budget_text,
+                'status' => $status,
+                'advance' => $advance,
+                'order_date' => now(),
+                'autre_document' => $autreDocumentPath
+            ]
         ));
 
         $expenses = $request->input('expenses') ?? [];
@@ -556,7 +600,7 @@ class MissionOrderController extends Controller
             'expenses.*.direct_amount' => 'required|numeric|min:0',
             'expenses.*.direct_currency' => 'required|string|in:INR,EUR,USD',
             'expenses.*.total_inr' => 'sometimes|numeric|min:0',
-            'expenses.*.receipt' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            'expenses.*.receipt' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,PNG,PDF,JPG,JPEG|max:2048',
             'expenses.*.existing_receipt' => 'nullable|string',
             'totals' => 'required|array',
             'totals.reimbursement' => 'required|numeric|min:0',
@@ -574,7 +618,7 @@ class MissionOrderController extends Controller
                         $validator->errors()->add("expenses.$index.receipt", "The receipt file is invalid.");
                     }
 
-                    $allowedMimes = ['jpeg', 'png', 'jpg', 'gif', 'pdf'];
+                    $allowedMimes = ['jpeg', 'png', 'jpg', 'gif', 'pdf','PNG','PDF','JPG','JPEG'];
                     if (!in_array($file->getClientOriginalExtension(), $allowedMimes)) {
                         $validator->errors()->add("expenses.$index.receipt", "The receipt must be a file of type: jpeg, png, jpg, gif, pdf.");
                     }

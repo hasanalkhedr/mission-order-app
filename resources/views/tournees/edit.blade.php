@@ -829,7 +829,7 @@
                                                 <x-select-input x-bind:name="`expenses[${index}][meal_location]`"
                                                     x-model="expense.meal_location" required>
                                                     <option value="">--sélectionner--</option>
-                                                    <option value="Dépenses diverses">Dépenses diverses</option>
+                                                    <option value="Sur lieu de mission">Sur lieu de mission</option>
                                                 </x-select-input>
                                             </template>
                                             <template x-if="expense.type === 'other'">

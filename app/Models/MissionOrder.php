@@ -114,6 +114,8 @@ class MissionOrder extends Model
         'accountant_id',
         'is_replicating',
         'reject_comment',
+        'needs_document',
+        'autre_document',
     ];
     protected $casts = [
         'order_date' => 'date',

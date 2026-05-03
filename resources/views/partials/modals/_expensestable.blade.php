@@ -14,6 +14,8 @@
                             <img id="image-preview" class="w-full h-64 object-contain border rounded-md hidden">
                             <iframe id="pdf-preview" class="w-full h-64 border rounded-md hidden"></iframe>
                         </div>
+                <small class="text-gray-500">Formats acceptés: PDF, JPG, PNG (Taille max: 2MB)</small>
+
                         <!-- Upload Controls -->
                         <div class="flex flex-col items-center mb-4">
                             <label for="expense-receipt"
