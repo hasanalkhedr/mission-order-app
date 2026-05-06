@@ -14,7 +14,7 @@
                             <img id="image-preview" class="w-full h-64 object-contain border rounded-md hidden">
                             <iframe id="pdf-preview" class="w-full h-64 border rounded-md hidden"></iframe>
                         </div>
-                <small class="text-gray-500">Formats acceptés: PDF, JPG, PNG (Taille max: 2MB)</small>
+                <small class="text-gray-500">Formats acceptés: PDF, JPG, PNG (Taille max: 5MB)</small>
 
                         <!-- Upload Controls -->
                         <div class="flex flex-col items-center mb-4">
@@ -871,11 +871,11 @@
                                         // This is an existing file from the server
                                         // Check if it's a PDF or image
                                         if (receiptPath.toLowerCase().endsWith('.pdf')) {
-                                            viewedPdf.src = '/storage/public/' + receiptPath;
+                                            viewedPdf.src = '/storage/' + receiptPath;
                                             viewedPdf.classList.remove('hidden');
                                             viewedImage.classList.add('hidden');
                                         } else {
-                                            viewedImage.src = '/storage/public/' + receiptPath;
+                                            viewedImage.src = '/storage/' + receiptPath;
                                             viewedImage.classList.remove('hidden');
                                             viewedPdf.classList.add('hidden');
                                         }

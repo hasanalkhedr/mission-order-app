@@ -600,7 +600,7 @@ class MissionOrderController extends Controller
             'expenses.*.direct_amount' => 'required|numeric|min:0',
             'expenses.*.direct_currency' => 'required|string|in:INR,EUR,USD',
             'expenses.*.total_inr' => 'sometimes|numeric|min:0',
-            'expenses.*.receipt' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,PNG,PDF,JPG,JPEG|max:2048',
+            'expenses.*.receipt' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,PNG,PDF,JPG,JPEG|max:5120',
             'expenses.*.existing_receipt' => 'nullable|string',
             'totals' => 'required|array',
             'totals.reimbursement' => 'required|numeric|min:0',
@@ -623,8 +623,8 @@ class MissionOrderController extends Controller
                         $validator->errors()->add("expenses.$index.receipt", "The receipt must be a file of type: jpeg, png, jpg, gif, pdf.");
                     }
 
-                    if ($file->getSize() > 2048 * 1024) { // 2MB in bytes
-                        $validator->errors()->add("expenses.$index.receipt", "The receipt may not be greater than 2MB.");
+                    if ($file->getSize() > 5120 * 1024) { // 5MB in bytes
+                        $validator->errors()->add("expenses.$index.receipt", "The receipt may not be greater than 5MB.");
                     }
                 });
             }
