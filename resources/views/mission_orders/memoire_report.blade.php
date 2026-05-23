@@ -633,7 +633,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @forelse ($missionOrder->expenses as $expense)
+                                                    @forelse ($missionOrder->expenses->whereNotIn('transport_type', ['Transport Avion', 'Transport en commun / Taxi(uber)']) as $expense)
                                                         <tr class="odd:bg-white even:bg-gray-100 hover:bg-gray-100">
                                                             <td
                                                                 class="px-1 text-center border border-gray-200 py-[2px] whitespace-nowrap text-xs text-gray-800">
@@ -788,12 +788,13 @@
 
         @foreach ($missionOrder->expenses as $expense)
         @if($expense->expense_document)
-            <div class="document-page" style="page-break-before: always; width: 210mm;">
+            {{-- <div class="document-page" style="page-break-before: always; width: 210mm; "> --}}
+            <div class="document-page" style="width: 210mm; ">
                 <h4 class="text-center font-bold mb-1">Document: {{ $expense->type }} {{$expense->transport_type? __('expense.transport_types.'. $expense->transport_type):''}} {{$expense->meal_location ?? ''}} {{$expense->description ?? ''}}</h4>
                 <div class="flex justify-center">
                     @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
                         <div id="pdf-viewer-{{ $expense->id }}" class="pdf-container"
-                            style="width: 100%; height: 240mm;"></div>
+                            style="width: 100%;"></div>
                     @else
                         <img src="{{ asset('storage/' . $expense->expense_document) }}"
                             style="max-width: 100%; max-height: 240mm; object-fit: contain;" alt="Expense Document">
@@ -999,19 +1000,19 @@
                 background: white !important;
             }
 
-            .report-page {
+            /* .report-page {
                 width: 210mm !important;
                 height: 297mm !important;
                 margin: 0 auto !important;
                 padding: 8mm !important;
                 transform: scale(1) !important;
-            }
+            } */
 
-            .document-page {
+            /* .document-page {
                 page-break-before: always !important;
                 width: 210mm !important;
-                height: 297mm !important;
-            }
+                height: 290mm !important;
+            } */
 
             .no-print {
                 display: none !important;
@@ -1028,7 +1029,7 @@
         .document-page {
             background: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
+            margin: 0 auto;
         }
 
         .btn-blue {
@@ -1055,52 +1056,90 @@
         function renderPDF(pdfUrl, containerId) {
             const container = document.getElementById(containerId);
 
-            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-                // Get first page
-                pdf.getPage(1).then(function(page) {
-                    const viewport = page.getViewport({
-                        scale: 1.0
-                    });
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'pdf-page';
-                    container.appendChild(canvas);
+            return pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                const pagePromises = [];
 
-                    // Calculate scale to fit container width
-                    const desiredWidth = container.clientWidth;
-                    const scale = desiredWidth / viewport.width;
-                    const scaledViewport = page.getViewport({
-                        scale
-                    });
+                // Loop through all pages
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const pagePromise = pdf.getPage(pageNum).then(function(page) {
+                        const viewport = page.getViewport({
+                            scale: 1.0
+                        });
 
-                    // Set canvas dimensions
-                    canvas.height = scaledViewport.height;
-                    canvas.width = scaledViewport.width;
+                        // Create a separate container for each page
+                        const pageContainer = document.createElement('div');
+                        pageContainer.className = 'pdf-page-container';
+                        // pageContainer.style.pageBreakAfter = 'always';
+                        // pageContainer.style.marginBottom = '10px';
+                        pageContainer.style.width = '100%';
+                        container.appendChild(pageContainer);
 
-                    // Render PDF page
-                    page.render({
-                        canvasContext: canvas.getContext('2d'),
-                        viewport: scaledViewport
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'pdf-page';
+                        pageContainer.appendChild(canvas);
+
+                        // Calculate scale to fit container width
+                        const desiredWidth = container.clientWidth;
+                        const scale = desiredWidth / viewport.width;
+                        const scaledViewport = page.getViewport({
+                            scale
+                        });
+
+                        // Set canvas dimensions
+                        canvas.height = scaledViewport.height;
+                        canvas.width = scaledViewport.width;
+
+                        // Render PDF page and convert to image
+                        return page.render({
+                            canvasContext: canvas.getContext('2d'),
+                            viewport: scaledViewport
+                        }).promise.then(() => {
+                            // Convert canvas to image for better html2canvas capture
+                            const img = document.createElement('img');
+                            img.src = canvas.toDataURL('image/jpeg', 1.0);
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            img.className = 'pdf-page-image';
+                            pageContainer.innerHTML = ''; // Remove canvas
+                            pageContainer.appendChild(img); // Add image
+                        });
                     });
-                });
+                    pagePromises.push(pagePromise);
+                }
+
+                // Wait for all pages to render
+                return Promise.all(pagePromises);
             });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all PDF viewers
+            // Initialize all PDF viewers and wait for all to render
+            const pdfRenderPromises = [];
+
             @if (pathinfo($missionOrder->acc_expense_document, PATHINFO_EXTENSION) === 'pdf')
-                renderPDF(
+                pdfRenderPromises.push(renderPDF(
                     "{{ asset('storage/' . $missionOrder->acc_expense_document) }}",
                     "pdf-viewer-{{ $missionOrder->id }}"
-                );
+                ));
             @endif
             @foreach ($missionOrder->expenses as $expense)
                 @if (pathinfo($expense->expense_document, PATHINFO_EXTENSION) === 'pdf')
-                    renderPDF(
+                    pdfRenderPromises.push(renderPDF(
                         "{{ asset('storage/' . $expense->expense_document) }}",
                         "pdf-viewer-{{ $expense->id }}"
-                    );
+                    ));
                 @endif
             @endforeach
+
+            // Wait for all PDFs to render
+            Promise.all(pdfRenderPromises).then(() => {
+                console.log('All PDF pages rendered successfully');
+            }).catch(error => {
+                console.error('Error rendering PDFs:', error);
+            });
+
+            // Store promises globally for download button to use
+            window.pdfRenderPromises = pdfRenderPromises;
         });
 
         document.getElementById("download-pdf").addEventListener("click", async function() {
@@ -1108,6 +1147,12 @@
             const loading = createLoadingIndicator();
 
             try {
+                // Wait for all PDFs to render before generating the final PDF
+                if (window.pdfRenderPromises && window.pdfRenderPromises.length > 0) {
+                    updateProgress(5, "Rendering PDF documents...");
+                    await Promise.all(window.pdfRenderPromises);
+                    updateProgress(10, "PDF documents rendered");
+                }
                 await generatePDF(element);
             } catch (error) {
                 alert("Failed to generate PDF. Please try printing instead (Ctrl+P).");
@@ -1178,9 +1223,11 @@
                         format: 'a4',
                         orientation: 'portrait'
                     },
-                    pagebreak: {
-                        before: '.document-page'
-                    }
+                    // pagebreak: {
+                    //     before: '.document-page',
+                    //     after: '.pdf-page-container',
+                    //     mode: ['css', 'legacy']
+                    // }
                 };
 
                 const options = {
