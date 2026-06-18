@@ -25,7 +25,8 @@ class MissionOrder extends Model
                 if (strtotime($missionOrder->start_time2) <= strtotime('05:00 AM')) {
                     $missionOrder->no_accomodation = $missionOrder->no_accomodation + 1;
                 }
-
+            }
+            if($missionOrder->repas) {
                 //calculate meals
                 $missionOrder->no_meals = 2 * ($missionOrder->start_date->diffInDays($missionOrder->end_date) - 1);
                 if (strtotime($missionOrder->start_time2) <= strtotime('12:00 PM')) {

@@ -16,9 +16,13 @@ class Tournee extends Model
         static::updating(function ($tournee) {
             if ($tournee->ijm) {
                 $tournee->no_accomodation = 0;
-                $tournee->no_meals = 0;
                 foreach ($tournee->tourneeDestinations as $destination) {
                     $tournee->no_accomodation += $destination->nbOfAccomodation();
+                }
+            }
+            if ($tournee->repas) {
+                $tournee->no_meals = 0;
+                foreach ($tournee->tourneeDestinations as $destination) {
                     $tournee->no_meals += $destination->nbOfMeals();
                 }
             }
