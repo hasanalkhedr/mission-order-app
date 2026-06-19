@@ -305,8 +305,8 @@ class MissionOrderController extends Controller
             'departure_location' => 'required',
             'bareme_id' => 'required',
             //'start_date' => 'required|date|after:' . now()->addDays(2),
-            'start_date' => ['required', 'date', function ($attribute, $value, $fail) {
-                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+            'start_date' => ['required', 'date', function ($attribute, $value, $fail) use ($missionOrder) {
+                $minDate = $missionOrder->created_at->addDays(2)->startOfDay()->format('Y-m-d');
                 if ($value < $minDate) {
                     $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
                 }

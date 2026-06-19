@@ -273,8 +273,8 @@ class TourneeController extends Controller
             'destinations.*.start_date' => 'required|date',
             //'destinations.0.start_date' => 'required|date|after:'.now()->addDays(2),
 
-            'destinations.0.start_date' => ['required', 'date', function ($attribute, $value, $fail) {
-                $minDate = now()->addDays(2)->startOfDay()->format('Y-m-d');
+            'destinations.0.start_date' => ['required', 'date', function ($attribute, $value, $fail) use($tournee) {
+                $minDate = $tournee->created_at->addDays(2)->startOfDay()->format('Y-m-d');
                 if ($value < $minDate) {
                     $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
                 }
