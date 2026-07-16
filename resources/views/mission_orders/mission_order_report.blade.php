@@ -138,12 +138,12 @@
                         <td class="w-5/6">Prise en charge frais de repas:</td>
                         <td class="w-1/6">{{ $missionOrder->repas == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
-                    @if ($missionOrder->repas == 1)
+                    {{-- @if ($missionOrder->repas == 1)
                     <tr>
                         <td class="w-5/6">Joindre un document justificatif pour les OM:</td>
                         <td class="w-1/6">{{ $missionOrder->needs_document == 1 ? 'OUI' : 'NON' }}</td>
                     </tr>
-                    @endif
+                    @endif --}}
                     {{-- <tr>
                     <td colspan="2" class="w-full">{{ $missionOrder->budget_text }}</td>
                 </tr> --}}

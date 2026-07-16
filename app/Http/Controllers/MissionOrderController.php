@@ -473,13 +473,20 @@ class MissionOrderController extends Controller
     {
         $request->validate([
             'order_date' => 'required|date|before_or_equal:start_date',
-            'start_date' => 'required|date|after-or_equal:order_date',
+            'start_date' => ['required', 'date', function ($attribute, $value, $fail) use ($missionOrder) {
+                $minDate = $missionOrder->created_at->addDays(2)->startOfDay()->format('Y-m-d');
+                if ($value < $minDate) {
+                    $fail("Le champ date de départ doit comporter une date postérieure au {$minDate} inclue.");
+                }
+            }],
             'end_date' => 'required|date|after_or_equal:start_date',
             'start_time' => 'required',
             'end_time' => 'required',
+            'start_time2' => 'required',
+            'end_time2' => 'required',
         ]);
         $missionOrder->update($request->all());
-        return redirect()->route('mission_orders.show', $missionOrder->id);
+        return redirect()->route('mission_orders.m_create', $missionOrder->id);
     }
     public function destroy(MissionOrder $missionOrder)
     {

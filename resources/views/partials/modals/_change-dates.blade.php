@@ -37,7 +37,7 @@
                             </x-date-time-input>
                         </div>
                     </div>
-                    <div class="flex flex-wrap -mx-3 mb-2">
+                    {{-- <div class="flex flex-wrap -mx-3 mb-2">
                         <div class="w-2/3 px-3">
                             <x-label>
                                 Débute le : Date & Heure :<span class="text-red-500">*</span>
@@ -62,7 +62,94 @@
                                 required>
                             </x-date-time-input>
                         </div>
-                    </div>
+                    </div> --}}
+                    <div class="flex flex-wrap -mx-3 mb-0 w-full">
+
+            <div class="w-1/2 px-1">
+                <x-label>Date de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_date" id="start_date" value="{{ old('start_date', $missionOrder->start_date->format('Y-m-d')) }}" type="date" required></x-date-time-input>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Heure de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_time" value="{{ old('start_time', $missionOrder->start_time) }}" type="time" required></x-date-time-input>
+            </div>
+            <div class="w-1/4 pl-1 pr-3">
+                <x-label>Heure d'arrivée<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="start_time2" value="{{ old('start_time2', $missionOrder->start_time2) }}" type="time" required></x-date-time-input>
+            </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-2 w-full">
+            <div class="w-1/2 px-1">
+                <x-label>Date de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_date" id="end_date" value="{{ old('end_date', $missionOrder->end_date->format('Y-m-d')) }}" type="date" required></x-date-time-input>
+            </div>
+            <div class="w-1/4 px-1">
+                <x-label>Heure de départ<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_time2" value="{{ old('end_time2', $missionOrder->end_time2) }}" type="time" required></x-date-time-input>
+            </div>
+            <div class="w-1/4 pl-1 pr-3">
+                <x-label>Heure d'arrivée<span class="text-red-500">*</span></x-label>
+                <x-date-time-input class="w-full h-12" name="end_time" value="{{ old('end_time', $missionOrder->end_time) }}" type="time" required></x-date-time-input>
+            </div>
+        </div>
+        <!-- Hidden input to send weekend flag to backend -->
+        <input type="hidden" name="has_weekend" id="has_weekend" value="{{old('has_weekend', $missionOrder->has_weekend)}}">
+
+        <div id="weekend-warning" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-3">
+            <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motif de la mission.</p>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const startDateInput = document.getElementById('start_date');
+                const endDateInput = document.getElementById('end_date');
+                const weekendWarning = document.getElementById('weekend-warning');
+                const hasWeekendInput = document.getElementById('has_weekend');
+
+                function checkForWeekend() {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+
+                    if (!startDateInput.value || !endDateInput.value) {
+                        // Reset flag if dates are not set
+                        hasWeekendInput.value = '0';
+                        return;
+                    }
+
+                    // Check if any day in the range is Saturday (6) or Sunday (0)
+                    let hasWeekend = false;
+                    const currentDate = new Date(startDate);
+
+                    while (currentDate <= endDate) {
+                        const day = currentDate.getDay();
+                        if (day === 0 || day === 6) {
+                            hasWeekend = true;
+                            break;
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+
+                    if (hasWeekend) {
+                        weekendWarning.classList.remove('hidden');
+                        hasWeekendInput.value = '1'; // Set flag to true
+                    } else {
+                        weekendWarning.classList.add('hidden');
+                        hasWeekendInput.value = '0'; // Set flag to false
+                    }
+                }
+
+                // Check on page load if there are existing values
+                if (startDateInput.value && endDateInput.value) {
+                    checkForWeekend();
+                }
+
+                startDateInput.addEventListener('change', checkForWeekend);
+                endDateInput.addEventListener('change', checkForWeekend);
+
+                // Also check when dates are cleared
+                startDateInput.addEventListener('input', checkForWeekend);
+                endDateInput.addEventListener('input', checkForWeekend);
+            });
+        </script>
                     <div class="flex justify-end items-center p-6 space-x-2 rounded-b border-t border-gray-200">
                         <div>
                             <button data-modal-toggle="editDatesModal-{{ $missionOrder->id }}" type="button"

@@ -93,6 +93,7 @@
         @endif
 
         <x-form-divider>Détail du déplacement résidence administrative - lieu de la mission</x-form-divider>
+
         <div class="flex flex-wrap -mx-3 mb-0 w-full">
             <div class="w-1/4 pr-1 pl-3">
                 <x-label>Lieu de départ</x-label>
@@ -137,6 +138,14 @@
                 <x-date-time-input class="w-full h-12" name="end_time" value="{{ $missionOrder->end_time }}" type="time" disabled></x-date-time-input>
             </div>
         </div>
+        <div class="flex mb-4 justify-end">
+    <x-primary-button
+        type="button"
+        class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-lg w-48 py-2.5 px-5 mr-10"
+        data-modal-toggle="editDatesModal-{{ $missionOrder->id }}">
+        {{ __('Modifier les dates et les heures') }}
+    </x-primary-button>
+</div>
 @if($missionOrder->has_weekend)
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 py-1 px-2 mb-1">
             <p>Attention: Votre mission comprend un weekend (samedi ou dimanche). Veuillez fournir une justification dans la zone Objet/Motif de la mission.</p>
@@ -246,5 +255,6 @@
         </div>
     </form>
     @include('partials.modals._create-expense')
+    @include('partials.modals._change-dates')
 
 @endsection

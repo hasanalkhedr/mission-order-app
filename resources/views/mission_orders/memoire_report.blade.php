@@ -95,6 +95,14 @@
                     <p>Ce Calendrier inclu un ou plusieurs jours de Weekend.</p>
                 </div>
             @endif
+            @if ($missionOrder->repas == 1)
+            <table class="table-auto w-full text-left">
+                    <tr>
+                        <td class="w-5/6">Joindre un document justificatif pour les OM:</td>
+                        <td class="w-1/6">{{ $missionOrder->needs_document == 1 ? 'OUI' : 'NON' }}</td>
+                    </tr>
+                    </table>
+                    @endif
             <!-- Expense Table -->
             <table class="table-auto w-full text-left">
                 <thead>
